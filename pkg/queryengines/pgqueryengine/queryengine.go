@@ -40,7 +40,7 @@ func (pgqe *PostgresQueryEngine) RunQuery(dbConn *models.DBConnection, query str
 		dbConn.DBPort = fmt.Sprintf("%d", sshTun.GetLocalEndpoint().Port)
 	}
 	port, _ = strconv.Atoi(string(dbConn.DBPort))
-	conn, err := pgqe.getConnection(dbConn.ID, string(dbConn.DBHost), uint16(port), string(dbConn.DBName), string(dbConn.DBUser), string(dbConn.DBPassword))
+	conn, err := pgqe.getConnection(dbConn.ID, string(dbConn.DBHost), uint16(port), string(dbConn.DBName), string(dbConn.DBUser), string(dbConn.DBPassword), dbConn.UseSSL)
 	if err != nil {
 		return nil, err
 	}
