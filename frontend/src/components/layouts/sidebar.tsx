@@ -25,7 +25,7 @@ const Sidebar = () => {
   const dbConnection: DBConnection | undefined = useAppSelector(selectDBConnection);
 
   return (
-    <ShadcnSidebar>
+    <ShadcnSidebar collapsible="icon">
       <SidebarHeader className='p-4'>
         <h2 className='text-lg font-semibold'>Slashbase</h2>
       </SidebarHeader>

@@ -1,7 +1,7 @@
 import React, { type FunctionComponent } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { selectIsShowingSidebar } from '../../redux/configSlice';
-import { useAppSelector } from '../../redux/hooks';
+import { selectIsShowingSidebar, setIsShowingSidebar } from '../../redux/configSlice';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { SidebarInset, SidebarProvider } from '../ui/sidebar';
 import Footer from './footer';
 import Header from './header';
@@ -10,13 +10,18 @@ import TabsBar from './tabsbar';
 
 const AppLayout: FunctionComponent = () => {
   const location = useLocation();
+  const dispatch = useAppDispatch();
 
   const isShowingSidebar: boolean = useAppSelector(selectIsShowingSidebar);
 
   const showTabsBar = location.pathname.startsWith('/db') ? true : false;
 
+  const handleSidebarOpenChange = (open: boolean) => {
+    dispatch(setIsShowingSidebar(open));
+  };
+
   return (
-    <SidebarProvider open={isShowingSidebar}>
+    <SidebarProvider open={isShowingSidebar} onOpenChange={handleSidebarOpenChange}>
       <div className='flex min-h-screen w-full'>
         <Sidebar />
         <SidebarInset className='flex flex-1 flex-col'>

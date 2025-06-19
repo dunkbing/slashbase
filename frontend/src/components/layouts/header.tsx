@@ -14,6 +14,7 @@ import {
 } from '../../redux/dbConnectionSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectProjects } from '../../redux/projectsSlice';
+import { SidebarTrigger } from '../ui/sidebar';
 import styles from './header.module.scss';
 import 'react-tooltip/dist/react-tooltip.css';
 
@@ -75,15 +76,7 @@ const Header = () => {
   return (
     <header className={styles.header}>
       <div className={styles.leftBtns}>
-        {!isShowingSidebar ? (
-          <button className={'button is-dark ' + [styles.btn].join(' ')} onClick={toggleSidebar}>
-            <i className='fas fa-bars' />
-          </button>
-        ) : (
-          <button className={'button is-dark ' + [styles.btn].join(' ')} onClick={toggleSidebar}>
-            <i className='fas fa-bars' />
-          </button>
-        )}
+        <SidebarTrigger className="" />
         <Link to={Constants.APP_PATHS.HOME.path}>
           <button
             className={
