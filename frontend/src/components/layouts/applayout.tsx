@@ -29,18 +29,18 @@ const AppLayout: FunctionComponent = () => {
       onOpenChange={handleSidebarOpenChange}
     >
       <AppSidebar />
-        <Header />
-        <SidebarInset className="flex flex-1 flex-col">
-          <div className="flex flex-1">
-            <main className="flex flex-1 flex-col">
-              {showTabsBar && <TabsBar />}
-              <div id="maincontent" className="flex-1 p-4">
-                <Outlet />
-              </div>
-            </main>
-          </div>
-        </SidebarInset>
-        <Footer />
+      <Header />
+      <SidebarInset className="flex flex-1 flex-col">
+        <div className="flex flex-1">
+          <main className="mt-10 flex flex-1 flex-col">
+            {showTabsBar && <TabsBar />}
+            <div id="maincontent" className="flex-1 p-4">
+              <Outlet />
+            </div>
+          </main>
+        </div>
+      </SidebarInset>
+      <Footer />
     </SidebarProvider>
   );
 };

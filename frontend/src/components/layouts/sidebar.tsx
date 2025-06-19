@@ -32,7 +32,7 @@ const AppSidebar = () => {
   return (
     <ShadcnSidebar collapsible="icon">
       <SidebarHeader className="p-4">
-        <h2 className="text-lg font-semibold">Slashbase</h2>
+        {/* <h2 className="text-lg font-semibold">Slashbase</h2> */}
       </SidebarHeader>
       <SidebarContent className="px-4">
         {sidebarView === SidebarViewType.HOME && <HomeSidebar />}

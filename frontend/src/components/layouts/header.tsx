@@ -1,5 +1,3 @@
-import { useState } from "react";
-import OutsideClickHandler from "react-outside-click-handler";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Home,
@@ -15,10 +13,6 @@ import type { DBConnection, Project } from "../../data/models";
 import { openInBrowser } from "../../lib/utils";
 import { selectAllDBConnections } from "../../redux/allDBConnectionsSlice";
 import {
-  selectIsShowingSidebar,
-  setIsShowingSidebar,
-} from "../../redux/configSlice";
-import {
   getDBDataModels,
   resetDBDataModels,
   selectDBConnection,
@@ -33,6 +27,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 const Header = () => {
   const location = useLocation();
@@ -45,23 +46,9 @@ const Header = () => {
   const dbConnections: DBConnection[] = useAppSelector(selectAllDBConnections);
   const currentDBConnection: DBConnection | undefined =
     useAppSelector(selectDBConnection);
-  const isShowingSidebar: boolean = useAppSelector(selectIsShowingSidebar);
 
-  const [isShowingDropDown, setIsShowingDropDown] = useState(false);
-  const [isShowingNavDropDown, setIsShowingNavDropDown] = useState(false);
-  const [isShowingDBDropDown, setIsShowingDBDropdown] = useState(false);
-
-  const onNavigate = (option: {
-    value: string;
-    label: string;
-    path: string;
-  }) => {
-    navigate(option.path);
-    setIsShowingNavDropDown(false);
-  };
-
-  const toggleSidebar = () => {
-    dispatch(setIsShowingSidebar(!isShowingSidebar));
+  const onNavigate = (path: string) => {
+    navigate(path);
   };
 
   let currentProjectOption: string | undefined = undefined;
@@ -98,45 +85,25 @@ const Header = () => {
 
   return (
     <TooltipProvider>
-      <header className="fixed top-0 flex flex-row h-fit w-full h-15 items-center justify-between bg-gray-800 px-4 text-white z-11">
-        {/* Left Side - Navigation */}
-        <div className="flex flex-row items-center space-x-1 ml-16">
-          {/* Home Button */}
-          <Link to={Constants.APP_PATHS.HOME.path}>
-            <Button
-              variant="ghost"
-              size="sm"
-              className={`h-10 bg-gray-700 text-white transition-colors hover:bg-black ${
-                currentProjectOption !== undefined
-                  ? 'relative rounded-l-lg rounded-r-none after:absolute after:top-0 after:left-full after:border-t-[20px] after:border-b-[20px] after:border-l-[8px] after:border-t-transparent after:border-b-transparent after:border-l-gray-700 after:content-[""] hover:after:border-l-black'
-                  : "rounded-lg"
-              } `}
-            >
-              <Home className="h-4 w-4" />
-            </Button>
-          </Link>
-
-          {/* Breadcrumb Navigation */}
-          <div className="flex h-10 items-center">
-            {/* Project Dropdown */}
+      <header className="fixed top-0 z-50 flex h-fit w-full flex-row items-center justify-between border-b border-gray-700 bg-gray-800 text-white">
+        <div className="flex flex-row justify-between">
+          <div className="flex flex-row">
+            <Link to={Constants.APP_PATHS.HOME.path} className="ml-20">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-10 bg-gray-700 px-3 text-white transition-colors hover:bg-gray-600"
+              >
+                <Home className="h-4 w-4" />
+              </Button>
+            </Link>
             {currentProjectOption !== undefined && (
-              <div className="relative">
-                <OutsideClickHandler
-                  onOutsideClick={() => {
-                    setIsShowingNavDropDown(false);
-                  }}
-                >
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={`h-10 bg-gray-700 pl-5 text-white transition-colors hover:bg-black ${
-                      currentDBOption === undefined
-                        ? 'relative rounded-r-lg before:absolute before:top-0 before:left-0 before:border-t-[20px] before:border-b-[20px] before:border-l-[8px] before:border-t-transparent before:border-b-transparent before:border-l-gray-800 before:content-[""]'
-                        : 'relative rounded-none before:absolute before:top-0 before:left-0 before:border-t-[20px] before:border-b-[20px] before:border-l-[8px] before:border-t-transparent before:border-b-transparent before:border-l-gray-800 before:content-[""] after:absolute after:top-0 after:left-full after:border-t-[20px] after:border-b-[20px] after:border-l-[8px] after:border-t-transparent after:border-b-transparent after:border-l-gray-700 after:content-[""] hover:after:border-l-black'
-                    } `}
-                    onClick={() => {
-                      setIsShowingNavDropDown(!isShowingNavDropDown);
-                    }}
+                    className="h-10 bg-gray-700 px-3 text-white transition-colors hover:bg-gray-600"
                   >
                     <Folder className="mr-2 h-4 w-4" />
                     <span className="mr-2">
@@ -148,52 +115,36 @@ const Header = () => {
                     </span>
                     <ChevronDown className="h-4 w-4" />
                   </Button>
-
-                  {isShowingNavDropDown && (
-                    <div className="absolute top-full left-0 z-50 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg">
-                      <div className="py-1">
-                        {projectOptions.map((x) => (
-                          <div key={x.value}>
-                            <button
-                              onClick={() => {
-                                onNavigate(x);
-                              }}
-                              className={`w-full px-4 py-2 text-left text-sm transition-colors ${
-                                x.value === currentProjectOption
-                                  ? "bg-blue-50 font-medium text-blue-700"
-                                  : "text-gray-700 hover:bg-gray-100"
-                              } `}
-                            >
-                              {x.label}
-                            </button>
-                            {x.value === "home" && (
-                              <hr className="my-1 border-gray-200" />
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </OutsideClickHandler>
-              </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  {projectOptions.map((x) => (
+                    <DropdownMenuItem
+                      key={x.value}
+                      onClick={() => onNavigate(x.path)}
+                      className={
+                        x.value === currentProjectOption
+                          ? "bg-blue-50 font-medium text-blue-700"
+                          : ""
+                      }
+                    >
+                      {x.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
+          </div>
 
-            {/* Database Dropdown */}
-            {currentProjectOption !== undefined &&
-              currentDBOption !== undefined && (
-                <div className="relative flex items-center">
-                  <OutsideClickHandler
-                    onOutsideClick={() => {
-                      setIsShowingDBDropdown(false);
-                    }}
-                  >
+          {/* Database Dropdown */}
+          {currentProjectOption !== undefined &&
+            currentDBOption !== undefined && (
+              <div className="flex items-center space-x-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="relative h-10 rounded-r-lg bg-gray-700 pl-5 text-white transition-colors before:absolute before:top-0 before:left-0 before:border-t-[20px] before:border-b-[20px] before:border-l-[8px] before:border-t-transparent before:border-b-transparent before:border-l-gray-800 before:content-[''] hover:bg-black"
-                      onClick={() => {
-                        setIsShowingDBDropdown(!isShowingDBDropDown);
-                      }}
+                      className="h-10 bg-gray-700 px-3 text-white transition-colors hover:bg-gray-600"
                     >
                       <Database className="mr-2 h-4 w-4" />
                       <span className="mr-2">
@@ -204,115 +155,85 @@ const Header = () => {
                       </span>
                       <ChevronDown className="h-4 w-4" />
                     </Button>
-
-                    {isShowingDBDropDown && (
-                      <div className="absolute top-full left-0 z-50 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg">
-                        <div className="py-1">
-                          {dbOptions.map((x) => (
-                            <div key={x.value}>
-                              <button
-                                onClick={() => {
-                                  onNavigate(x);
-                                }}
-                                className={`w-full px-4 py-2 text-left text-sm transition-colors ${
-                                  x.value === currentDBOption
-                                    ? "bg-blue-50 font-medium text-blue-700"
-                                    : "text-gray-700 hover:bg-gray-100"
-                                } `}
-                              >
-                                {x.label}
-                              </button>
-                              {x.value === "home" && (
-                                <hr className="my-1 border-gray-200" />
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </OutsideClickHandler>
-
-                  {/* Refresh Button */}
-                  {currentDBOption !== undefined && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="ml-2 h-8 w-8 bg-gray-700 p-0 text-white transition-colors hover:bg-black"
-                          onClick={refreshDataModels}
-                        >
-                          <RefreshCw className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Refresh data models</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-                </div>
-              )}
-          </div>
-        </div>
-
-        {/* Right Side - Settings Menu */}
-        <div className="relative">
-          <OutsideClickHandler
-            onOutsideClick={() => {
-              setIsShowingDropDown(false);
-            }}
-          >
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-10 bg-gray-700 text-white transition-colors hover:bg-black"
-              onClick={() => {
-                setIsShowingDropDown(!isShowingDropDown);
-              }}
-            >
-              <Settings className="h-4 w-4" />
-            </Button>
-
-            {isShowingDropDown && (
-              <div className="absolute top-full right-0 z-50 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg">
-                <div className="py-1">
-                  <button
-                    onClick={() => {
-                      openInBrowser(Constants.EXTERNAL_PATHS.CHANGELOG);
-                    }}
-                    className="flex w-full items-center px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-gray-100"
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    What's New?
-                  </button>
-                  <hr className="my-1 border-gray-200" />
-                  <Link
-                    to={Constants.APP_PATHS.SETTINGS_GENERAL.path}
-                    className="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100"
-                  >
-                    Settings
-                  </Link>
-                  <Link
-                    to={Constants.APP_PATHS.SETTINGS_SUPPORT.path}
-                    className="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100"
-                  >
-                    Support
-                  </Link>
-                  {Constants.Build === "server" && (
-                    <>
-                      <hr className="my-1 border-gray-200" />
-                      <Link
-                        to={Constants.APP_PATHS.LOGOUT.path}
-                        className="block px-4 py-2 text-sm text-red-600 transition-colors hover:bg-red-50"
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-48">
+                    {dbOptions.map((x) => (
+                      <DropdownMenuItem
+                        key={x.value}
+                        onClick={() => onNavigate(x.path)}
+                        className={
+                          x.value === currentDBOption
+                            ? "bg-blue-50 font-medium text-blue-700"
+                            : ""
+                        }
                       >
-                        Logout
-                      </Link>
-                    </>
-                  )}
-                </div>
+                        {x.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                {/* Refresh Button */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 bg-gray-700 p-0 text-white transition-colors hover:bg-gray-600"
+                      onClick={refreshDataModels}
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Refresh data models</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
             )}
-          </OutsideClickHandler>
+
+          {/* Right Side - Settings Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost">
+                <Settings className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem
+                onClick={() => {
+                  openInBrowser(Constants.EXTERNAL_PATHS.CHANGELOG);
+                }}
+              >
+                <ExternalLink className="mr-2 h-4 w-4" />
+                What's New?
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to={Constants.APP_PATHS.SETTINGS_GENERAL.path}>
+                  Settings
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to={Constants.APP_PATHS.SETTINGS_SUPPORT.path}>
+                  Support
+                </Link>
+              </DropdownMenuItem>
+              {Constants.Build === "server" && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to={Constants.APP_PATHS.LOGOUT.path}
+                      className="text-red-600 focus:text-red-600"
+                    >
+                      Logout
+                    </Link>
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
     </TooltipProvider>

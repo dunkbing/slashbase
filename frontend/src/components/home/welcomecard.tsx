@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo-icon.svg";
 import Constants from "../../constants";
 import type { Project } from "../../data/models";
-import { openInBrowser } from "../../lib/utils";
 import { loginUser, selectIsAuthenticated } from "../../redux/currentUserSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { selectProjects } from "../../redux/projectsSlice";
@@ -51,32 +50,6 @@ export const WelcomeCard: FunctionComponent<{}> = () => {
               Use any of the channels below to share your feedback or feature
               requests.
             </p>
-            <div className="buttons">
-              <Button
-                className="is-small is-white"
-                onClick={() => {
-                  openInBrowser(Constants.EXTERNAL_PATHS.DISCORD_COMMUNITY);
-                }}
-              >
-                Discord
-              </Button>
-              <Button
-                className="is-small is-white"
-                onClick={() => {
-                  openInBrowser(Constants.EXTERNAL_PATHS.REPORT_BUGS);
-                }}
-              >
-                Github
-              </Button>
-              <Button
-                className="is-small is-white"
-                onClick={() => {
-                  openInBrowser(Constants.EXTERNAL_PATHS.SUPPORT_MAIL);
-                }}
-              >
-                Email
-              </Button>
-            </div>
           </div>
         </div>
       </div>

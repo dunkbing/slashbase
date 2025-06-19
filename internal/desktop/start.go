@@ -23,7 +23,7 @@ func Start(assets embed.FS) {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:            "Slashbase",
+		Title:            "",
 		Width:            1024,
 		Height:           768,
 		WindowStartState: options.Maximised,
