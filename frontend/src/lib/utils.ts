@@ -1,9 +1,12 @@
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
 declare var window: any;
 
-const openInBrowser = (url: string) => {
-	window.runtime.BrowserOpenURL(url);
-};
-
-export default {
-	openInBrowser,
+export const openInBrowser = (url: string) => {
+  window.runtime.BrowserOpenURL(url);
 };
