@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import OutsideClickHandler from 'react-outside-click-handler';
-import { Link } from 'react-router-dom';
-import Constants from '../../../constants';
-import type { DBConnection } from '../../../data/models';
-import styles from './dbconncard.module.scss';
+import { useState } from "react";
+import OutsideClickHandler from "react-outside-click-handler";
+import { Link } from "react-router-dom";
+import { Database, MoreVertical, Trash2 } from "lucide-react";
+import Constants from "../../../constants";
+import type { DBConnection } from "../../../data/models";
+import { Button } from "../../ui/button";
 
 type DBConnCardPropType = {
   dbConn: DBConnection;
@@ -18,47 +19,47 @@ const DBConnCard = ({ dbConn, onDeleteDB }: DBConnCardPropType) => {
   };
 
   return (
-    <div className={'card ' + styles.cardContainer}>
-      <Link to={Constants.APP_PATHS.DB.path.replace('[id]', dbConn.id)} className={styles.cardLink}>
-        <div className={'card-content ' + styles.cardContent}>
-          <b>
-            <i className={'fas fa-database'} />
-            &nbsp;&nbsp;{dbConn.name}
-          </b>
+    <div className="my-4 max-w-[600px] rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+      <Link
+        to={Constants.APP_PATHS.DB.path.replace("[id]", dbConn.id)}
+        className="block text-inherit no-underline"
+      >
+        <div className="flex items-center justify-between p-4">
+          <div className="flex items-center font-semibold text-gray-900">
+            <Database className="mr-2 h-4 w-4" />
+            {dbConn.name}
+          </div>
           <div
-            className='dropdown is-active'
+            className="relative"
             onClick={(e) => {
               e.preventDefault();
             }}
           >
-            <div className='dropdown-trigger'>
-              <button
-                className='button'
-                aria-haspopup='true'
-                aria-controls='dropdown-menu'
-                onClick={toggleDropdown}
-              >
-                <span className='icon is-small'>
-                  <i className='fas fa-ellipsis-v' aria-hidden='true'></i>
-                </span>
-              </button>
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleDropdown}
+              className="h-8 w-8 p-0"
+            >
+              <MoreVertical className="h-4 w-4" />
+            </Button>
             {showDropdown && (
               <OutsideClickHandler
                 onOutsideClick={() => {
                   setShowDropdown(false);
                 }}
               >
-                <div className='dropdown-menu' id='dropdown-menu' role='menu'>
-                  <div className='dropdown-content'>
-                    <a
+                <div className="absolute right-0 z-10 mt-1 w-32 rounded-md border border-gray-200 bg-white shadow-lg">
+                  <div className="py-1">
+                    <button
                       onClick={() => {
                         onDeleteDB(dbConn.id);
                       }}
-                      className='dropdown-item'
+                      className="flex w-full items-center px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50"
                     >
+                      <Trash2 className="mr-2 h-3 w-3" />
                       Delete DB
-                    </a>
+                    </button>
                   </div>
                 </div>
               </OutsideClickHandler>

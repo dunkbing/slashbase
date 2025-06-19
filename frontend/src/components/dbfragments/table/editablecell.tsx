@@ -1,7 +1,7 @@
-import React from 'react';
-import { Button } from '../../ui/button';
-import styles from './table.module.scss';
-import { Check, X } from 'lucide-react';
+import React from "react";
+import { Button } from "../../ui/button";
+import styles from "./table.module.scss";
+import { Check, X } from "lucide-react";
 
 const EditableCell = ({
   value: initialValue,
@@ -11,10 +11,12 @@ const EditableCell = ({
   resetEditCell,
   onSaveCell,
 }: any) => {
-  initialValue = Array.isArray(initialValue) ? `{${initialValue.join(',')}}` : initialValue;
+  initialValue = Array.isArray(initialValue)
+    ? `{${initialValue.join(",")}}`
+    : initialValue;
 
   initialValue =
-    initialValue !== null && typeof initialValue === 'object'
+    initialValue !== null && typeof initialValue === "object"
       ? JSON.stringify(initialValue)
       : initialValue;
 
@@ -39,27 +41,28 @@ const EditableCell = ({
     onSaveCell(index, original, id, value);
   };
 
-  const isEditingCell = editCell.length == 2 && editCell[0] === index && editCell[1] === id;
+  const isEditingCell =
+    editCell.length == 2 && editCell[0] === index && editCell[1] === id;
 
   if (isEditingCell) {
     return (
-      <div className='field has-addons'>
-        <div className='control is-expanded'>
+      <div className="field has-addons">
+        <div className="control is-expanded">
           <input
-            className={'input is-small ' + styles.cellinput}
-            type='text'
-            placeholder={'Enter ' + id}
+            className={"input is-small " + styles.cellinput}
+            type="text"
+            placeholder={"Enter " + id}
             value={value}
             onChange={onChange}
           />
         </div>
-        <div className='control'>
-          <Button className='is-small' onClick={onSave}>
+        <div className="control">
+          <Button className="is-small" onClick={onSave}>
             <Check />
           </Button>
         </div>
-        <div className='control'>
-          <Button className='is-small' onClick={cancelEdit}>
+        <div className="control">
+          <Button className="is-small" onClick={cancelEdit}>
             <X />
           </Button>
         </div>

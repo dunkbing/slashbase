@@ -1,5 +1,5 @@
-import React, { type FunctionComponent } from 'react';
-import GeneralSettings from '../../components/settingfragments/general';
+import React, { type FunctionComponent } from "react";
+import GeneralSettings from "../../components/settingfragments/general";
 
 const GeneralSettingsPage: FunctionComponent<{}> = () => {
   return (

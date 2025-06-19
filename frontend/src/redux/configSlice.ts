@@ -1,7 +1,7 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import storage from '../data/storage';
-import type { AppState } from './store';
+import storage from "../data/storage";
+import type { AppState } from "./store";
 
 export interface ConfigState {
   isShowingSidebar: boolean | null;
@@ -11,7 +11,7 @@ const initialState: ConfigState = {
   isShowingSidebar: null,
 };
 
-export const getConfig = createAsyncThunk('config/getConfig', async () => {
+export const getConfig = createAsyncThunk("config/getConfig", async () => {
   const isShowingSidebar = await storage.isShowingSidebar();
   return {
     isShowingSidebar,
@@ -19,7 +19,7 @@ export const getConfig = createAsyncThunk('config/getConfig', async () => {
 });
 
 export const configSlice = createSlice({
-  name: 'config',
+  name: "config",
   initialState,
   reducers: {
     reset: () => initialState,
@@ -37,6 +37,7 @@ export const configSlice = createSlice({
 
 export const { reset, setIsShowingSidebar } = configSlice.actions;
 
-export const selectIsShowingSidebar = (state: AppState) => state.config.isShowingSidebar ?? true;
+export const selectIsShowingSidebar = (state: AppState) =>
+  state.config.isShowingSidebar ?? true;
 
 export default configSlice.reducer;

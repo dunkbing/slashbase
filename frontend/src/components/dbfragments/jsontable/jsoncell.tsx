@@ -1,12 +1,14 @@
-import { javascript } from '@codemirror/lang-javascript';
-import ReactCodeMirror, { type ReactCodeMirrorRef } from '@uiw/react-codemirror';
-import { js_beautify } from 'js-beautify';
-import _ from 'lodash';
-import React, { useRef } from 'react';
-import toast from 'react-hot-toast';
-import ReactJson from 'react-json-view';
-import { Button } from '../../ui/button';
-import { DownloadCloud, X } from 'lucide-react';
+import { javascript } from "@codemirror/lang-javascript";
+import ReactCodeMirror, {
+  type ReactCodeMirrorRef,
+} from "@uiw/react-codemirror";
+import { js_beautify } from "js-beautify";
+import _ from "lodash";
+import React, { useRef } from "react";
+import toast from "react-hot-toast";
+import ReactJson from "react-json-view";
+import { Button } from "../../ui/button";
+import { DownloadCloud, X } from "lucide-react";
 
 const JsonCell = ({
   row: { index, original },
@@ -16,7 +18,9 @@ const JsonCell = ({
 }: any) => {
   // We need to keep and update the state of the cell normally
   const [value, setValue] = React.useState(original);
-  const [editingValue, setEditingValue] = React.useState<string>(JSON.stringify(original));
+  const [editingValue, setEditingValue] = React.useState<string>(
+    JSON.stringify(original),
+  );
 
   const editorRef = useRef<ReactCodeMirrorRef | null>(null);
 
@@ -46,7 +50,7 @@ const JsonCell = ({
         toast.error(e.message);
         return;
       }
-      onSaveCell(jsonData._id, JSON.stringify(_.omit(jsonData, ['_id'])));
+      onSaveCell(jsonData._id, JSON.stringify(_.omit(jsonData, ["_id"])));
     };
 
     return (
@@ -57,12 +61,12 @@ const JsonCell = ({
           extensions={[javascript()]}
           onChange={onChange}
         />
-        <div className='column is-flex is-justify-content-flex-end'>
+        <div className="column is-flex is-justify-content-flex-end">
           <Button onClick={cancelEdit}>
             <X />
           </Button>
           <span>&nbsp;&nbsp;</span>
-          <Button className='is-primary is-small' onClick={onSave}>
+          <Button className="is-primary is-small" onClick={onSave}>
             <DownloadCloud />
           </Button>
         </div>

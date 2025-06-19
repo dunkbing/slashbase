@@ -1,14 +1,18 @@
-import React, { useContext, useRef, useState } from 'react';
-import toast from 'react-hot-toast';
-import { useRowSelect, useTable } from 'react-table';
-import type { DBConnection, DBQueryData, Tab } from '../../../data/models';
-import { deleteDBData, setQueryData, updateDBSingleData } from '../../../redux/dataModelSlice';
-import { useAppDispatch } from '../../../redux/hooks';
-import TabContext from '../../layouts/tabcontext';
-import ConfirmModal from '../../widgets/confirmModal';
-import AddModal from './addmodel';
-import JsonCell from './jsoncell';
-import styles from './jsontable.module.scss';
+import React, { useContext, useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { useRowSelect, useTable } from "react-table";
+import type { DBConnection, DBQueryData, Tab } from "../../../data/models";
+import {
+  deleteDBData,
+  setQueryData,
+  updateDBSingleData,
+} from "../../../redux/dataModelSlice";
+import { useAppDispatch } from "../../../redux/hooks";
+import TabContext from "../../layouts/tabcontext";
+import ConfirmModal from "../../widgets/confirmModal";
+import AddModal from "./addmodel";
+import JsonCell from "./jsoncell";
+import styles from "./jsontable.module.scss";
 
 type JsonTablePropType = {
   queryData: DBQueryData;
@@ -47,7 +51,7 @@ const JsonTable = ({
 
   const data = React.useMemo(() => queryData.data, [queryData]);
 
-  const displayColumns = ['data'];
+  const displayColumns = ["data"];
 
   const columns = React.useMemo(
     () =>
@@ -72,7 +76,11 @@ const JsonTable = ({
   const changeFilter = () => {
     let filter: string[] | undefined = undefined;
     const filterText = filterRef.current!.value.trim();
-    if (filterText !== '' && filterText.startsWith('{') && filterText.endsWith('}')) {
+    if (
+      filterText !== "" &&
+      filterText.startsWith("{") &&
+      filterText.endsWith("}")
+    ) {
       filter = [filterText];
     }
     onFilterChanged(filter);
@@ -84,7 +92,7 @@ const JsonTable = ({
     }
     let sort: string[] | undefined = undefined;
     const sortText = sortRef.current!.value.trim();
-    if (sortText !== '' && sortText.startsWith('{') && sortText.endsWith('}')) {
+    if (sortText !== "" && sortText.startsWith("{") && sortText.endsWith("}")) {
       sort = [sortText];
     }
     onSortChanged(sort);
@@ -94,15 +102,15 @@ const JsonTable = ({
     const result = await dispatch(
       updateDBSingleData({
         dbConnectionId: dbConnection.id,
-        schemaName: '',
+        schemaName: "",
         name: mName,
         id: underscoreId,
-        columnName: '',
+        columnName: "",
         newValue: newData,
       }),
     ).unwrap();
     if (result.success) {
-      const rowIdx = queryData!.data.findIndex((x) => x['_id'] == underscoreId);
+      const rowIdx = queryData!.data.findIndex((x) => x["_id"] == underscoreId);
       if (rowIdx) {
         const newQueryData: DBQueryData = {
           ...queryData!,
@@ -117,13 +125,20 @@ const JsonTable = ({
         // fetchData(false)
       }
       startEditing(null);
-      toast.success('1 row updated');
+      toast.success("1 row updated");
     } else {
       toast.error(result.error!);
     }
   };
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, state } = useTable(
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    state,
+  } = useTable(
     {
       columns,
       data,
@@ -136,7 +151,7 @@ const JsonTable = ({
       if (isInteractive && isEditing)
         hooks.visibleColumns.push((columns) => [
           {
-            id: 'selection',
+            id: "selection",
             Header: HeaderSelectionComponent,
             Cell: CellSelectionComponent,
           },
@@ -151,7 +166,7 @@ const JsonTable = ({
   );
   const selectedUnderscoreIDs = rows
     .filter((_, i) => selectedRows.includes(i))
-    .map((x) => (x.original as any)['_id'])
+    .map((x) => (x.original as any)["_id"])
     .filter((x) => x);
 
   const deleteRows = async () => {
@@ -159,14 +174,16 @@ const JsonTable = ({
       const result = await dispatch(
         deleteDBData({
           dbConnectionId: dbConnection.id,
-          schemaName: '',
+          schemaName: "",
           name: mName,
           selectedIDs: selectedUnderscoreIDs,
         }),
       ).unwrap();
       if (result.success) {
-        toast.success('rows deleted');
-        const filteredRows = queryData!.data.filter((_, i) => !selectedRows.includes(i));
+        toast.success("rows deleted");
+        const filteredRows = queryData!.data.filter(
+          (_, i) => !selectedRows.includes(i),
+        );
         const newQueryData: DBQueryData = { ...queryData!, data: filteredRows };
         dispatch(setQueryData({ data: newQueryData, tabId: activeTab.id }));
       } else {
@@ -180,36 +197,36 @@ const JsonTable = ({
     <React.Fragment>
       {(showHeader || (isInteractive && isEditing)) && (
         <div className={styles.tableHeader}>
-          <div className='columns'>
-            <div className='column is-3'>
-              <div className='field has-addons'>
-                <p className='control'>
+          <div className="columns">
+            <div className="column is-3">
+              <div className="field has-addons">
+                <p className="control">
                   <input
                     ref={filterRef}
-                    className='input'
-                    type='text'
+                    className="input"
+                    type="text"
                     placeholder="{ field: 'Value'}"
                   />
                 </p>
-                <p className='control'>
-                  <button className='button' onClick={changeFilter}>
+                <p className="control">
+                  <button className="button" onClick={changeFilter}>
                     Filter
                   </button>
                 </p>
               </div>
             </div>
-            <div className='column is-6'>
-              <div className='field has-addons'>
-                <p className='control'>
+            <div className="column is-6">
+              <div className="field has-addons">
+                <p className="control">
                   <input
                     ref={sortRef}
-                    className='input'
-                    type='text'
-                    placeholder='{ field: 1 or -1}'
+                    className="input"
+                    type="text"
+                    placeholder="{ field: 1 or -1}"
                   />
                 </p>
-                <p className='control'>
-                  <button className='button' onClick={changeSort}>
+                <p className="control">
+                  <button className="button" onClick={changeSort}>
                     Sort
                   </button>
                 </p>
@@ -217,22 +234,22 @@ const JsonTable = ({
             </div>
             {isInteractive && !isEditing && (
               <React.Fragment>
-                <div className='column is-3 is-flex is-justify-content-flex-end'>
-                  <button className='button is-secondary' onClick={onRefresh}>
-                    <span className='icon is-small'>
-                      <i className='fas fa-refresh' />
+                <div className="column is-3 is-flex is-justify-content-flex-end">
+                  <button className="button is-secondary" onClick={onRefresh}>
+                    <span className="icon is-small">
+                      <i className="fas fa-refresh" />
                     </span>
                   </button>
                   &nbsp;&nbsp;
                   {!isReadOnly && (
                     <button
-                      className='button is-primary'
+                      className="button is-primary"
                       onClick={() => {
                         setIsEditing(true);
                       }}
                     >
-                      <span className='icon is-small'>
-                        <i className='fas fa-pen' />
+                      <span className="icon is-small">
+                        <i className="fas fa-pen" />
                       </span>
                     </button>
                   )}
@@ -241,38 +258,38 @@ const JsonTable = ({
             )}
             {isInteractive && isEditing && (
               <React.Fragment>
-                <div className='column is-3 is-flex is-justify-content-flex-end'>
+                <div className="column is-3 is-flex is-justify-content-flex-end">
                   <button
-                    className='button'
+                    className="button"
                     disabled={selectedUnderscoreIDs.length === 0}
                     onClick={() => {
                       setIsDeleting(true);
                     }}
                   >
-                    <span className='icon is-small'>
-                      <i className='fas fa-trash' />
+                    <span className="icon is-small">
+                      <i className="fas fa-trash" />
                     </span>
                   </button>
                   &nbsp;&nbsp;
                   <button
-                    className='button is-secondary'
+                    className="button is-secondary"
                     onClick={() => {
                       setIsAdding(true);
                     }}
                   >
-                    <span className='icon is-small'>
-                      <i className='fas fa-plus' />
+                    <span className="icon is-small">
+                      <i className="fas fa-plus" />
                     </span>
                   </button>
                   &nbsp;&nbsp;
                   <button
-                    className='button is-primary'
+                    className="button is-primary"
                     onClick={() => {
                       setIsEditing(false);
                     }}
                   >
-                    <span className='icon is-small'>
-                      <i className='fas fa-check' />
+                    <span className="icon is-small">
+                      <i className="fas fa-check" />
                     </span>
                   </button>
                 </div>
@@ -299,17 +316,19 @@ const JsonTable = ({
           }}
         />
       )}
-      <div className='table-container'>
+      <div className="table-container">
         <table
           {...getTableProps()}
-          className={'is-bordered is-striped is-narrow is-hoverable is-fullwidth table'}
+          className={
+            "is-bordered is-striped is-narrow is-hoverable is-fullwidth table"
+          }
         >
           <thead>
             {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()} key={'header'}>
+              <tr {...headerGroup.getHeaderGroupProps()} key={"header"}>
                 {headerGroup.headers.map((column) => (
                   <th {...column.getHeaderProps()} key={column.id}>
-                    {column.render('Header')}
+                    {column.render("Header")}
                   </th>
                 ))}
               </tr>
@@ -323,16 +342,16 @@ const JsonTable = ({
                 <tr
                   {...row.getRowProps()}
                   key={row.id}
-                  className={selectedRow.isSelected ? 'is-selected' : ''}
+                  className={selectedRow.isSelected ? "is-selected" : ""}
                 >
                   {row.cells.map((cell) => {
                     return (
                       <td
                         {...cell.getCellProps()}
                         onDoubleClick={() => startEditing(rowIndex)}
-                        key={row.id + '' + cell.column.id}
+                        key={row.id + "" + cell.column.id}
                       >
-                        {cell.render('Cell')}
+                        {cell.render("Cell")}
                       </td>
                     );
                   })}
@@ -346,23 +365,24 @@ const JsonTable = ({
   );
 };
 
-const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, { indeterminate: boolean }>(
-  ({ indeterminate, ...rest }, ref) => {
-    const defaultRef = useRef(null);
-    const resolvedRef: any = ref || defaultRef;
+const IndeterminateCheckbox = React.forwardRef<
+  HTMLInputElement,
+  { indeterminate: boolean }
+>(({ indeterminate, ...rest }, ref) => {
+  const defaultRef = useRef(null);
+  const resolvedRef: any = ref || defaultRef;
 
-    React.useEffect(() => {
-      resolvedRef.current.indeterminate = indeterminate;
-    }, [resolvedRef, indeterminate]);
+  React.useEffect(() => {
+    resolvedRef.current.indeterminate = indeterminate;
+  }, [resolvedRef, indeterminate]);
 
-    return (
-      <>
-        <input type='checkbox' ref={resolvedRef} {...rest} />
-      </>
-    );
-  },
-);
-IndeterminateCheckbox.displayName = 'IndeterminateCheckbox';
+  return (
+    <>
+      <input type="checkbox" ref={resolvedRef} {...rest} />
+    </>
+  );
+});
+IndeterminateCheckbox.displayName = "IndeterminateCheckbox";
 
 const HeaderSelectionComponent = ({ getToggleAllRowsSelectedProps }: any) => (
   <div>

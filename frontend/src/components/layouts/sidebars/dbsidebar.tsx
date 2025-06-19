@@ -1,26 +1,26 @@
-import { Database, File, Plus, Sparkles, Terminal, Wrench } from 'lucide-react';
-import React, { useState } from 'react';
-import { DBConnType, TabType } from '../../../data/defaults';
-import type { DBConnection, DBDataModel, DBQuery } from '../../../data/models';
+import { Database, File, Plus, Sparkles, Terminal, Wrench } from "lucide-react";
+import React, { useState } from "react";
+import { DBConnType, TabType } from "../../../data/defaults";
+import type { DBConnection, DBDataModel, DBQuery } from "../../../data/models";
 import {
   selectDBConnection,
   selectDBDQueries,
   selectDBDataModels,
-} from '../../../redux/dbConnectionSlice';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { createTab } from '../../../redux/tabsSlice';
+} from "../../../redux/dbConnectionSlice";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { createTab } from "../../../redux/tabsSlice";
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '../../ui/sidebar';
+} from "../../ui/sidebar";
 
 enum DBSidebarTabType {
-  DATABASE = 'DATABASE',
-  QUERIES = 'QUERIES',
-  TOOLBOX = 'TOOLBOX',
+  DATABASE = "DATABASE",
+  QUERIES = "QUERIES",
+  TOOLBOX = "TOOLBOX",
 }
 
 type DatabaseSidebarPropType = {};
@@ -32,7 +32,8 @@ const DatabaseSidebar = (_: DatabaseSidebarPropType) => {
     DBSidebarTabType.DATABASE,
   );
 
-  const dbConnection: DBConnection | undefined = useAppSelector(selectDBConnection);
+  const dbConnection: DBConnection | undefined =
+    useAppSelector(selectDBConnection);
   const dbDataModels: DBDataModel[] = useAppSelector(selectDBDataModels);
   const dbQueries: DBQuery[] = useAppSelector(selectDBDQueries);
 
@@ -91,17 +92,19 @@ const DatabaseSidebar = (_: DatabaseSidebarPropType) => {
   }) => (
     <button
       className={`rounded-md p-2 transition-colors ${
-        isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'hover:bg-sidebar-accent/50'
+        isActive
+          ? "bg-sidebar-accent text-sidebar-accent-foreground"
+          : "hover:bg-sidebar-accent/50"
       }`}
       onClick={() => switchSidebarTab(type)}
     >
-      <Icon className='h-4 w-4' />
+      <Icon className="h-4 w-4" />
     </button>
   );
 
   return (
     <React.Fragment>
-      <div className='mb-4 flex justify-center gap-1 border-b p-2'>
+      <div className="mb-4 flex justify-center gap-1 border-b p-2">
         <TabButton
           type={DBSidebarTabType.DATABASE}
           icon={Database}
@@ -131,9 +134,11 @@ const DatabaseSidebar = (_: DatabaseSidebarPropType) => {
               return (
                 <SidebarMenuItem key={dataModel.schemaName + dataModel.name}>
                   <SidebarMenuButton
-                    onClick={() => openDataTab(dataModel.schemaName ?? '', dataModel.name)}
+                    onClick={() =>
+                      openDataTab(dataModel.schemaName ?? "", dataModel.name)
+                    }
                   >
-                    <Database className='h-4 w-4' />
+                    <Database className="h-4 w-4" />
                     <span>{label}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -151,15 +156,15 @@ const DatabaseSidebar = (_: DatabaseSidebarPropType) => {
               return (
                 <SidebarMenuItem key={dbQuery.id}>
                   <SidebarMenuButton onClick={() => openQueryTab(dbQuery.id)}>
-                    <File className='h-4 w-4' />
+                    <File className="h-4 w-4" />
                     <span>{dbQuery.name}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               );
             })}
             <SidebarMenuItem>
-              <SidebarMenuButton onClick={() => openQueryTab('new')}>
-                <Plus className='h-4 w-4' />
+              <SidebarMenuButton onClick={() => openQueryTab("new")}>
+                <Plus className="h-4 w-4" />
                 <span>New Query</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -173,13 +178,13 @@ const DatabaseSidebar = (_: DatabaseSidebarPropType) => {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton onClick={() => openConsoleTab()}>
-                <Terminal className='h-4 w-4' />
+                <Terminal className="h-4 w-4" />
                 <span>Console</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton onClick={() => openGenerateSQLTab()}>
-                <Sparkles className='h-4 w-4' />
+                <Sparkles className="h-4 w-4" />
                 <span>Generate SQL</span>
               </SidebarMenuButton>
             </SidebarMenuItem>

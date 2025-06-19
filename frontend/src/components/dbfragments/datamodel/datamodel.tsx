@@ -1,22 +1,21 @@
-import React, { useContext, useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
-import { Tooltip } from 'react-tooltip';
-import { DBConnType } from '../../../data/defaults';
-import type { DBConnection, Tab } from '../../../data/models';
+import React, { useContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { Tooltip } from "react-tooltip";
+import { Key, Circle, DotIcon, Check, Pen, Plus, Trash2 } from "lucide-react";
+import { DBConnType } from "../../../data/defaults";
+import type { DBConnection, Tab } from "../../../data/models";
 import {
   deleteDBDataModelField,
   deleteDBDataModelIndex,
   getSingleDataModel,
   selectSingleDataModel,
-} from '../../../redux/dataModelSlice';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import TabContext from '../../layouts/tabcontext';
-import { Button } from '../../ui/button';
-import ConfirmModal from '../../widgets/confirmModal';
-import AddFieldModal from './addfieldmodal';
-import AddIndexModal from './addindexmodal';
-import styles from './datamodel.module.scss';
-import { Check, Pen, Plus, Trash2 } from 'lucide-react';
+} from "../../../redux/dataModelSlice";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import TabContext from "../../layouts/tabcontext";
+import { Button } from "../../ui/button";
+import ConfirmModal from "../../widgets/confirmModal";
+import AddFieldModal from "./addfieldmodal";
+import AddIndexModal from "./addindexmodal";
 
 type DataModelPropType = {
   dbConn: DBConnection;
@@ -25,7 +24,12 @@ type DataModelPropType = {
   isEditable: boolean;
 };
 
-const DataModel = ({ dbConn, mschema, mname, isEditable }: DataModelPropType) => {
+const DataModel = ({
+  dbConn,
+  mschema,
+  mname,
+  isEditable,
+}: DataModelPropType) => {
   const dispatch = useAppDispatch();
 
   const currentTab: Tab = useContext(TabContext)!;
@@ -33,10 +37,12 @@ const DataModel = ({ dbConn, mschema, mname, isEditable }: DataModelPropType) =>
 
   const [isEditingModel, setIsEditingModel] = useState<boolean>(false);
   const [isEditingIndex, setIsEditingIndex] = useState<boolean>(false);
-  const [showingAddFieldModal, setShowingAddFieldModal] = useState<boolean>(false);
-  const [showingAddIndexModal, setShowingAddIndexModal] = useState<boolean>(false);
-  const [deletingField, setDeletingField] = useState<string>('');
-  const [deletingIndex, setDeletingIndex] = useState<string>('');
+  const [showingAddFieldModal, setShowingAddFieldModal] =
+    useState<boolean>(false);
+  const [showingAddIndexModal, setShowingAddIndexModal] =
+    useState<boolean>(false);
+  const [deletingField, setDeletingField] = useState<string>("");
+  const [deletingIndex, setDeletingIndex] = useState<string>("");
   const [refresh, setRefresh] = useState<number>(Date.now());
 
   useEffect(() => {
@@ -76,7 +82,7 @@ const DataModel = ({ dbConn, mschema, mname, isEditable }: DataModelPropType) =>
     if (result.success) {
       toast.success(`deleted field ${deletingField}`);
       refreshModel();
-      setDeletingField('');
+      setDeletingField("");
     } else {
       toast.error(result.error!);
     }
@@ -94,148 +100,216 @@ const DataModel = ({ dbConn, mschema, mname, isEditable }: DataModelPropType) =>
     if (result.success) {
       toast.success(`deleted index ${deletingIndex}`);
       refreshModel();
-      setDeletingIndex('');
+      setDeletingIndex("");
     } else {
       toast.error(result.error!);
     }
   };
 
   return (
-    <React.Fragment>
-      <div>
-        <table className={'is-bordered is-striped is-narrow is-hoverable table'}>
-          <thead>
-            <tr>
-              <th
-                colSpan={
-                  dbConn.type === DBConnType.POSTGRES || dbConn.type === DBConnType.MYSQL ? 4 : 5
-                }
-              >
-                {label}
-                {isEditable && (
-                  <Button
-                    className='is-small'
-                    style={{ float: 'right' }}
-                    onClick={() => {
-                      setIsEditingModel(!isEditingModel);
-                    }}
-                  >
-                    {isEditingIndex ? <Check /> : <Pen />}
-                  </Button>
-                )}
-              </th>
-              {(dbConn.type === DBConnType.POSTGRES || dbConn.type === DBConnType.MYSQL) &&
-                isEditingModel && (
-                  <th>
-                    <Button
-                      onClick={() => {
-                        setShowingAddFieldModal(true);
-                      }}
-                    >
-                      <Plus />
-                    </Button>
-                  </th>
-                )}
-            </tr>
-          </thead>
-          <tbody>
-            {dataModel.fields?.map((field) => (
-              <tr key={field.name}>
-                <td>
-                  {field.isPrimary ? (
-                    <i className='fas fa-key fa-rotate-315' data-tip='Primary key' />
-                  ) : field.isNullable ? (
-                    <i className='fas fa-dot-circle' data-tip='Nullable' />
-                  ) : (
-                    <i className='fas fa-circle' data-tip='Not Nullable' />
-                  )}
-                </td>
-                <td>{field.name}</td>
-                <td colSpan={dbConn.type === DBConnType.MONGO ? 2 : 1}>{field.type}</td>
-                {(dbConn.type === DBConnType.POSTGRES || dbConn.type === DBConnType.MYSQL) && (
-                  <td>
-                    {field.tags.length > 0 &&
-                      field.tags
-                        .map<React.ReactNode>((tag) => (
-                          <span key={tag} className='tag is-info is-light'>
-                            {tag}
-                          </span>
-                        ))
-                        .reduce((prev, curr) => [prev, ' ', curr])}
-                  </td>
-                )}
-                {isEditingModel && (
-                  <td>
-                    <Button
-                      style={{ float: 'right' }}
-                      onClick={() => {
-                        setDeletingField(field.name);
-                      }}
-                      variant='destructive'
-                    >
-                      <Trash2 />
-                    </Button>
-                  </td>
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {dataModel.indexes && dataModel.indexes.length > 0 && (
-          <table className={'is-bordered is-striped is-narrow is-hoverable table'}>
-            <thead>
+    <>
+      <div className="space-y-6">
+        {/* Fields Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full rounded-lg border border-gray-200 bg-white">
+            <thead className="bg-gray-50">
               <tr>
-                <th colSpan={2}>
-                  Indexes
-                  {isEditable && (
-                    <Button
-                      style={{ float: 'right' }}
-                      onClick={() => {
-                        setIsEditingIndex(!isEditingIndex);
-                      }}
-                    >
-                      {isEditingIndex ? <Check /> : <Pen />}
-                    </Button>
-                  )}
-                </th>
-                {isEditingIndex && (
-                  <th>
-                    <Button
-                      className='is-primary is-small'
-                      onClick={() => {
-                        setShowingAddIndexModal(true);
-                      }}
-                    >
-                      <Plus />
-                    </Button>
-                  </th>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {dataModel.indexes?.map((idx) => (
-                <tr key={idx.name}>
-                  <td>{idx.name}</td>
-                  <td>{idx.indexDef}</td>
-                  {isEditingIndex && (
-                    <td>
+                <th
+                  colSpan={
+                    dbConn.type === DBConnType.POSTGRES ||
+                    dbConn.type === DBConnType.MYSQL
+                      ? 4
+                      : 5
+                  }
+                  className="border-b border-gray-200 px-6 py-3 text-left text-sm font-semibold text-gray-900"
+                >
+                  <div className="flex items-center justify-between">
+                    <span>{label}</span>
+                    {isEditable && (
                       <Button
-                        variant='destructive'
-                        style={{ float: 'right' }}
+                        size="sm"
+                        variant="outline"
                         onClick={() => {
-                          setDeletingIndex(idx.name);
+                          setIsEditingModel(!isEditingModel);
                         }}
                       >
-                        <Trash2 />
+                        {isEditingModel ? (
+                          <Check className="h-4 w-4" />
+                        ) : (
+                          <Pen className="h-4 w-4" />
+                        )}
                       </Button>
+                    )}
+                  </div>
+                </th>
+                {(dbConn.type === DBConnType.POSTGRES ||
+                  dbConn.type === DBConnType.MYSQL) &&
+                  isEditingModel && (
+                    <th className="border-b border-gray-200 px-6 py-3">
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          setShowingAddFieldModal(true);
+                        }}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </th>
+                  )}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {dataModel.fields?.map((field) => (
+                <tr
+                  key={field.name}
+                  className="transition-colors hover:bg-gray-50"
+                >
+                  <td className="px-6 py-3 whitespace-nowrap">
+                    {field.isPrimary ? (
+                      <Key
+                        className="h-4 w-4 rotate-45 text-yellow-600"
+                        data-tip="Primary key"
+                      />
+                    ) : field.isNullable ? (
+                      <DotIcon
+                        className="h-4 w-4 text-gray-400"
+                        data-tip="Nullable"
+                      />
+                    ) : (
+                      <Circle
+                        className="h-4 w-4 fill-current text-gray-600"
+                        data-tip="Not Nullable"
+                      />
+                    )}
+                  </td>
+                  <td className="px-6 py-3 text-sm font-medium text-gray-900">
+                    {field.name}
+                  </td>
+                  <td
+                    className={`px-6 py-3 text-sm text-gray-600 ${
+                      dbConn.type === DBConnType.MONGO ? "col-span-2" : ""
+                    }`}
+                  >
+                    {field.type}
+                  </td>
+                  {(dbConn.type === DBConnType.POSTGRES ||
+                    dbConn.type === DBConnType.MYSQL) && (
+                    <td className="px-6 py-3">
+                      {field.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          {field.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </td>
+                  )}
+                  {isEditingModel && (
+                    <td className="px-6 py-3">
+                      <div className="flex justify-end">
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => {
+                            setDeletingField(field.name);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </td>
                   )}
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Indexes Table */}
+        {dataModel.indexes && dataModel.indexes.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full rounded-lg border border-gray-200 bg-white">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th
+                    colSpan={2}
+                    className="border-b border-gray-200 px-6 py-3 text-left text-sm font-semibold text-gray-900"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>Indexes</span>
+                      {isEditable && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setIsEditingIndex(!isEditingIndex);
+                          }}
+                        >
+                          {isEditingIndex ? (
+                            <Check className="h-4 w-4" />
+                          ) : (
+                            <Pen className="h-4 w-4" />
+                          )}
+                        </Button>
+                      )}
+                    </div>
+                  </th>
+                  {isEditingIndex && (
+                    <th className="border-b border-gray-200 px-6 py-3">
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          setShowingAddIndexModal(true);
+                        }}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </th>
+                  )}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {dataModel.indexes?.map((idx) => (
+                  <tr
+                    key={idx.name}
+                    className="transition-colors hover:bg-gray-50"
+                  >
+                    <td className="px-6 py-3 text-sm font-medium text-gray-900">
+                      {idx.name}
+                    </td>
+                    <td className="px-6 py-3 font-mono text-sm text-gray-600">
+                      {idx.indexDef}
+                    </td>
+                    {isEditingIndex && (
+                      <td className="px-6 py-3">
+                        <div className="flex justify-end">
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => {
+                              setDeletingIndex(idx.name);
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
-        {(dbConn.type === DBConnType.POSTGRES || dbConn.type === DBConnType.MYSQL) &&
+
+        {/* Modals */}
+        {(dbConn.type === DBConnType.POSTGRES ||
+          dbConn.type === DBConnType.MYSQL) &&
           showingAddFieldModal && (
             <AddFieldModal
               dbConn={dbConn}
@@ -258,27 +332,27 @@ const DataModel = ({ dbConn, mschema, mname, isEditable }: DataModelPropType) =>
             }}
           />
         )}
-        {deletingField !== '' && (
+        {deletingField !== "" && (
           <ConfirmModal
             message={`Delete field: ${deletingField}?`}
             onConfirm={deleteField}
             onClose={() => {
-              setDeletingField('');
+              setDeletingField("");
             }}
           />
         )}
-        {deletingIndex !== '' && (
+        {deletingIndex !== "" && (
           <ConfirmModal
             message={`Delete index: ${deletingIndex}?`}
             onConfirm={deleteIndex}
             onClose={() => {
-              setDeletingIndex('');
+              setDeletingIndex("");
             }}
           />
         )}
-        <Tooltip place='bottom' variant='dark' />
+        <Tooltip place="bottom" variant="dark" />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

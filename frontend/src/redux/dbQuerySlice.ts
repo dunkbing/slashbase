@@ -1,7 +1,7 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { DBQuery } from '../data/models';
-import apiService from '../network/apiService';
-import type { AppState } from './store';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import type { DBQuery } from "../data/models";
+import apiService from "../network/apiService";
+import type { AppState } from "./store";
 
 export interface DBQueryState {
   [tabId: string]: {
@@ -19,24 +19,33 @@ const createInitialDBQueryState = (state: DBQueryState, tabId: string) => {
   }
 };
 
-export const getDBQuery = createAsyncThunk('dbQuery/getDBQuery', async (payload: any, {}: any) => {
-  const { queryId } = payload;
-  const result = await apiService.getSingleDBQuery(queryId);
-  return result;
-});
+export const getDBQuery = createAsyncThunk(
+  "dbQuery/getDBQuery",
+  async (payload: any, {}: any) => {
+    const { queryId } = payload;
+    const result = await apiService.getSingleDBQuery(queryId);
+    return result;
+  },
+);
 
-export const runQuery = createAsyncThunk('dbQuery/runQuery', async (payload: any, {}: any) => {
-  const { dbConnectionId, query } = payload;
-  const result = await apiService.runQuery(dbConnectionId, query);
-  return result;
-});
+export const runQuery = createAsyncThunk(
+  "dbQuery/runQuery",
+  async (payload: any, {}: any) => {
+    const { dbConnectionId, query } = payload;
+    const result = await apiService.runQuery(dbConnectionId, query);
+    return result;
+  },
+);
 
 export const dbQuerySlice = createSlice({
-  name: 'dbQuery',
+  name: "dbQuery",
   initialState,
   reducers: {
     reset: () => initialState,
-    setDBQuery: (state, { payload }: { payload: { data: DBQuery | undefined; tabId: string } }) => {
+    setDBQuery: (
+      state,
+      { payload }: { payload: { data: DBQuery | undefined; tabId: string } },
+    ) => {
       createInitialDBQueryState(state, payload.tabId);
       state[payload.tabId].dbQuery = payload.data;
     },
@@ -54,6 +63,8 @@ export const dbQuerySlice = createSlice({
 export const { reset, setDBQuery } = dbQuerySlice.actions;
 
 export const selectDBQuery = (state: AppState) =>
-  state.tabs.activeTabId ? state.dbQuery[String(state.tabs.activeTabId)]?.dbQuery : undefined;
+  state.tabs.activeTabId
+    ? state.dbQuery[String(state.tabs.activeTabId)]?.dbQuery
+    : undefined;
 
 export default dbQuerySlice.reducer;

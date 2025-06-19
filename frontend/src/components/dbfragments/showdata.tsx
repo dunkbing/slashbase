@@ -1,29 +1,38 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { DBConnType } from '../../data/defaults';
-import type { DBConnection, DBDataModel, Project, Tab } from '../../data/models';
-import { selectIsShowingSidebar } from '../../redux/configSlice';
+import React, { useContext, useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { DBConnType } from "../../data/defaults";
+import type {
+  DBConnection,
+  DBDataModel,
+  Project,
+  Tab,
+} from "../../data/models";
+import { selectIsShowingSidebar } from "../../redux/configSlice";
 import {
   getDBDataInDataModel,
   selectIsFetchingQueryData,
   selectQueryData,
-} from '../../redux/dataModelSlice';
-import { selectDBConnection, selectDBDataModels } from '../../redux/dbConnectionSlice';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+} from "../../redux/dataModelSlice";
+import {
+  selectDBConnection,
+  selectDBDataModels,
+} from "../../redux/dbConnectionSlice";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import {
   type ProjectPermissions,
   selectCurrentProject,
   selectProjectMemberPermissions,
-} from '../../redux/projectsSlice';
-import TabContext from '../layouts/tabcontext';
-import { Button } from '../ui/button';
-import JsonTable from './jsontable/jsontable';
-import styles from './showdata.module.scss';
-import Table from './table/table';
+} from "../../redux/projectsSlice";
+import TabContext from "../layouts/tabcontext";
+import { Button } from "../ui/button";
+import JsonTable from "./jsontable/jsontable";
+import Table from "./table/table";
 
 const DBShowDataFragment = () => {
   const dispatch = useAppDispatch();
 
-  const dbConnection: DBConnection | undefined = useAppSelector(selectDBConnection);
+  const dbConnection: DBConnection | undefined =
+    useAppSelector(selectDBConnection);
   const dbDataModels: DBDataModel[] = useAppSelector(selectDBDataModels);
   const isShowingSidebar: boolean = useAppSelector(selectIsShowingSidebar);
   const project: Project | undefined = useAppSelector(selectCurrentProject);
@@ -39,19 +48,24 @@ const DBShowDataFragment = () => {
   const [queryCount, setQueryCount] = useState<number | undefined>(undefined);
   const [queryLimit] = useState(
     dbConnection
-      ? dbConnection.type === DBConnType.POSTGRES || dbConnection.type === DBConnType.MYSQL
+      ? dbConnection.type === DBConnType.POSTGRES ||
+        dbConnection.type === DBConnType.MYSQL
         ? 200
         : 50
       : 100,
   );
-  const [queryFilter, setQueryFilter] = useState<string[] | undefined>(undefined);
+  const [queryFilter, setQueryFilter] = useState<string[] | undefined>(
+    undefined,
+  );
   const [querySort, setQuerySort] = useState<string[] | undefined>(undefined);
 
   const mschema = currentTab.metadata.schema;
   const mname = currentTab.metadata.name;
 
   useEffect(() => {
-    const dModel = dbDataModels.find((x) => x.schemaName === mschema && x.name === mname);
+    const dModel = dbDataModels.find(
+      (x) => x.schemaName === mschema && x.name === mname,
+    );
     if (dModel) {
       setDataModel(dModel);
     }
@@ -78,7 +92,7 @@ const DBShowDataFragment = () => {
         getDBDataInDataModel({
           tabId: currentTab.id,
           dbConnectionId: dbConnection!.id,
-          schemaName: dataModel!.schemaName ?? '',
+          schemaName: dataModel!.schemaName ?? "",
           name: dataModel!.name,
           queryLimit,
           queryOffset,
@@ -128,77 +142,98 @@ const DBShowDataFragment = () => {
       : queryData.data.length
     : 0;
   const queryOffsetRangeEnd =
-    (rowsLength ?? 0) === queryLimit ? queryOffset + queryLimit : queryOffset + (rowsLength ?? 0);
+    (rowsLength ?? 0) === queryLimit
+      ? queryOffset + queryLimit
+      : queryOffset + (rowsLength ?? 0);
 
   return (
-    <div className={currentTab.isActive ? 'db-tab-active' : 'db-tab'}>
-      {project && dbConnection && queryData && dbConnection.type === DBConnType.POSTGRES && (
-        <Table
-          dbConnection={dbConnection}
-          mSchema={String(mschema)}
-          mName={String(mname)}
-          queryData={queryData}
-          querySort={querySort}
-          isInteractive={true}
-          isReadOnly={projectMemberPermissions.readOnly}
-          showHeader={true}
-          onRefresh={onRefresh}
-          onFilterChanged={onFilterChanged}
-          onSortChanged={onSortChanged}
-        />
-      )}
-      {project && dbConnection && queryData && dbConnection.type === DBConnType.MYSQL && (
-        <Table
-          dbConnection={dbConnection}
-          mSchema={String(mschema)}
-          mName={String(mname)}
-          queryData={queryData}
-          querySort={querySort}
-          isInteractive={true}
-          isReadOnly={projectMemberPermissions.readOnly}
-          showHeader={true}
-          onRefresh={onRefresh}
-          onFilterChanged={onFilterChanged}
-          onSortChanged={onSortChanged}
-        />
-      )}
-      {project && dbConnection && queryData && dbConnection.type === DBConnType.MONGO && (
-        <JsonTable
-          dbConnection={dbConnection}
-          mName={String(mname)}
-          queryData={queryData}
-          isInteractive={true}
-          isReadOnly={projectMemberPermissions.readOnly}
-          showHeader={true}
-          onRefresh={onRefresh}
-          onFilterChanged={onFilterChanged}
-          onSortChanged={onSortChanged}
-        />
-      )}
-      <br />
-      <br />
-      <br />
-      <div className={styles.bottomBar + (isShowingSidebar ? ' withsidebar' : '')}>
+    <div className={currentTab.isActive ? "db-tab-active" : "db-tab"}>
+      {project &&
+        dbConnection &&
+        queryData &&
+        dbConnection.type === DBConnType.POSTGRES && (
+          <Table
+            dbConnection={dbConnection}
+            mSchema={String(mschema)}
+            mName={String(mname)}
+            queryData={queryData}
+            querySort={querySort}
+            isInteractive={true}
+            isReadOnly={projectMemberPermissions.readOnly}
+            showHeader={true}
+            onRefresh={onRefresh}
+            onFilterChanged={onFilterChanged}
+            onSortChanged={onSortChanged}
+          />
+        )}
+      {project &&
+        dbConnection &&
+        queryData &&
+        dbConnection.type === DBConnType.MYSQL && (
+          <Table
+            dbConnection={dbConnection}
+            mSchema={String(mschema)}
+            mName={String(mname)}
+            queryData={queryData}
+            querySort={querySort}
+            isInteractive={true}
+            isReadOnly={projectMemberPermissions.readOnly}
+            showHeader={true}
+            onRefresh={onRefresh}
+            onFilterChanged={onFilterChanged}
+            onSortChanged={onSortChanged}
+          />
+        )}
+      {project &&
+        dbConnection &&
+        queryData &&
+        dbConnection.type === DBConnType.MONGO && (
+          <JsonTable
+            dbConnection={dbConnection}
+            mName={String(mname)}
+            queryData={queryData}
+            isInteractive={true}
+            isReadOnly={projectMemberPermissions.readOnly}
+            showHeader={true}
+            onRefresh={onRefresh}
+            onFilterChanged={onFilterChanged}
+            onSortChanged={onSortChanged}
+          />
+        )}
+
+      {/* Fixed bottom pagination bar */}
+      <div
+        className={`fixed right-0 bottom-5 w-full border-t border-gray-200 bg-white p-3 ${isShowingSidebar ? "withsidebar" : ""}`}
+      >
         {dataLoading ? (
-          <progress className='progress is-primary' max='100'>
-            loading
-          </progress>
+          <div className="flex items-center justify-center gap-2 text-blue-600">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span className="text-sm">Loading...</span>
+          </div>
         ) : (
-          <nav
-            className='pagination is-centered is-rounded'
-            role='navigation'
-            aria-label='pagination'
-          >
-            <Button className='pagination-previous' onClick={onPreviousPage}>
+          <div className="flex items-center justify-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onPreviousPage}
+              disabled={queryOffset === 0}
+            >
+              <ChevronLeft className="mr-1 h-4 w-4" />
               Previous
             </Button>
-            <Button className='pagination-next' onClick={onNextPage}>
-              Next
-            </Button>
-            <ul className='pagination-list'>
+            <span className="text-sm text-gray-600">
               Showing {queryOffset} - {queryOffsetRangeEnd} of {queryCount}
-            </ul>
-          </nav>
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onNextPage}
+              disabled={queryOffset + queryLimit >= (queryCount ?? 0)}
+            >
+              Next
+              <ChevronRight className="ml-1 h-4 w-4" />
+            </Button>
+          </div>
         )}
       </div>
     </div>

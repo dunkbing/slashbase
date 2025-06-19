@@ -1,18 +1,22 @@
-import { javascript } from '@codemirror/lang-javascript';
-import CodeMirror, { type ReactCodeMirrorRef } from '@uiw/react-codemirror';
-import React, { useContext, useRef, useState } from 'react';
-import toast from 'react-hot-toast';
+import { javascript } from "@codemirror/lang-javascript";
+import CodeMirror, { type ReactCodeMirrorRef } from "@uiw/react-codemirror";
+import React, { useContext, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import type {
   AddDataResponse,
   ApiResult,
   DBConnection,
   DBQueryData,
   Tab,
-} from '../../../data/models';
-import { addDBData, selectQueryData, setQueryData } from '../../../redux/dataModelSlice';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import TabContext from '../../layouts/tabcontext';
-import { Button } from '../../ui/button';
+} from "../../../data/models";
+import {
+  addDBData,
+  selectQueryData,
+  setQueryData,
+} from "../../../redux/dataModelSlice";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import TabContext from "../../layouts/tabcontext";
+import { Button } from "../../ui/button";
 
 type AddModal = {
   dbConnection: DBConnection;
@@ -41,13 +45,13 @@ const AddModal = ({ dbConnection, mName, onClose }: AddModal) => {
       addDBData({
         tabId: activeTab.id,
         dbConnectionId: dbConnection.id,
-        schemaName: '',
+        schemaName: "",
         name: mName,
         data: jsonData,
       }),
     ).unwrap();
     if (result.success) {
-      toast.success('data added');
+      toast.success("data added");
       const mNewData = { _id: result.data.newId, ...jsonData };
       const updatedRows = [mNewData, ...queryData!.data];
       const updateQueryData: DBQueryData = { ...queryData!, data: updatedRows };
@@ -63,14 +67,18 @@ const AddModal = ({ dbConnection, mName, onClose }: AddModal) => {
   }, []);
 
   return (
-    <div className='modal is-active'>
-      <div className='modal-background'></div>
-      <div className='modal-card'>
-        <header className='modal-card-head'>
-          <p className='modal-card-title'>Add new data to {mName}</p>
-          <button className='delete' aria-label='close' onClick={onClose}></button>
+    <div className="modal is-active">
+      <div className="modal-background"></div>
+      <div className="modal-card">
+        <header className="modal-card-head">
+          <p className="modal-card-title">Add new data to {mName}</p>
+          <button
+            className="delete"
+            aria-label="close"
+            onClick={onClose}
+          ></button>
         </header>
-        <section className='modal-card-body'>
+        <section className="modal-card-body">
           <CodeMirror
             ref={editorRef}
             value={newData}
@@ -78,9 +86,9 @@ const AddModal = ({ dbConnection, mName, onClose }: AddModal) => {
             onChange={onChange}
           />
         </section>
-        <footer className='modal-card-foot'>
+        <footer className="modal-card-foot">
           <Button onClick={startAdding}>Add</Button>
-          <Button variant='ghost' onClick={onClose}>
+          <Button variant="ghost" onClick={onClose}>
             Cancel
           </Button>
         </footer>

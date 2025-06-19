@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import apiService from '../network/apiService';
-import type { AppState } from './store';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import apiService from "../network/apiService";
+import type { AppState } from "./store";
 
 export interface OutputBlock {
   text: string;
@@ -18,14 +18,20 @@ const initialState: ConsoleState = {
 };
 
 export const runConsoleCmd = createAsyncThunk(
-  'tabs/runConsoleCmd',
-  async (payload: { dbConnId: string; cmdString: string }, { rejectWithValue, getState }: any) => {
+  "tabs/runConsoleCmd",
+  async (
+    payload: { dbConnId: string; cmdString: string },
+    { rejectWithValue, getState }: any,
+  ) => {
     const dbConnectionId = payload.dbConnId;
     const cmdString = payload.cmdString;
-    if (cmdString === '') {
-      return rejectWithValue('empty command');
+    if (cmdString === "") {
+      return rejectWithValue("empty command");
     }
-    const result = await apiService.runConsoleCommand(dbConnectionId, cmdString);
+    const result = await apiService.runConsoleCommand(
+      dbConnectionId,
+      cmdString,
+    );
     if (result.success) {
       return {
         text: result.data,
@@ -37,7 +43,7 @@ export const runConsoleCmd = createAsyncThunk(
 );
 
 export const consoleSlice = createSlice({
-  name: 'console',
+  name: "console",
   initialState,
   reducers: {
     reset: () => initialState,

@@ -1,22 +1,33 @@
-import React, { useContext, useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
-import { DBConnType, TabType } from '../../data/defaults';
-import type { DBConnection, DBQueryData, DBQueryResult, Tab } from '../../data/models';
-import { selectDBConnection } from '../../redux/dbConnectionSlice';
-import { getDBQuery, runQuery, selectDBQuery, setDBQuery } from '../../redux/dbQuerySlice';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { closeTab, updateActiveTab } from '../../redux/tabsSlice';
-import TabContext from '../layouts/tabcontext';
-import Chart from './chart/chart';
-import JsonTable from './jsontable/jsontable';
-import styles from './query.module.scss';
-import QueryEditor from './queryeditor/queryeditor';
-import Table from './table/table';
+import { useContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { Table as TableIcon, BarChart3 } from "lucide-react";
+import { DBConnType, TabType } from "../../data/defaults";
+import type {
+  DBConnection,
+  DBQueryData,
+  DBQueryResult,
+  Tab,
+} from "../../data/models";
+import { selectDBConnection } from "../../redux/dbConnectionSlice";
+import {
+  getDBQuery,
+  runQuery,
+  selectDBQuery,
+  setDBQuery,
+} from "../../redux/dbQuerySlice";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { closeTab, updateActiveTab } from "../../redux/tabsSlice";
+import TabContext from "../layouts/tabcontext";
+import Chart from "./chart/chart";
+import JsonTable from "./jsontable/jsontable";
+import QueryEditor from "./queryeditor/queryeditor";
+import Table from "./table/table";
 
 const DBQueryFragment = () => {
   const dispatch = useAppDispatch();
 
-  const dbConnection: DBConnection | undefined = useAppSelector(selectDBConnection);
+  const dbConnection: DBConnection | undefined =
+    useAppSelector(selectDBConnection);
   const dbQuery = useAppSelector(selectDBQuery);
 
   const currentTab: Tab = useContext(TabContext)!;
@@ -30,10 +41,12 @@ const DBQueryFragment = () => {
 
   useEffect(() => {
     (async () => {
-      if (queryId && queryId !== 'new') {
-        dispatch(getDBQuery({ queryId: String(queryId), tabId: currentTab.id }));
+      if (queryId && queryId !== "new") {
+        dispatch(
+          getDBQuery({ queryId: String(queryId), tabId: currentTab.id }),
+        );
       }
-      if (queryId === 'new') {
+      if (queryId === "new") {
         dispatch(setDBQuery({ data: undefined, tabId: currentTab.id }));
       }
     })();
@@ -46,9 +59,11 @@ const DBQueryFragment = () => {
   }, [queryId]);
 
   const onRunQueryBtn = async (query: string, callback: () => void) => {
-    const result = await dispatch(runQuery({ dbConnectionId: dbConnection!.id, query })).unwrap();
+    const result = await dispatch(
+      runQuery({ dbConnectionId: dbConnection!.id, query }),
+    ).unwrap();
     if (result.success) {
-      toast.success('Success');
+      toast.success("Success");
       if ((result.data as DBQueryResult).message) {
         setQueryResult(result.data as DBQueryResult);
         setQueryData(undefined);
@@ -80,55 +95,64 @@ const DBQueryFragment = () => {
   };
 
   return (
-    <div className={currentTab.isActive ? 'db-tab-active' : 'db-tab'}>
-      {dbConnection && ((queryId === 'new' && !dbQuery) || (dbQuery && dbQuery.id === queryId)) && (
-        <QueryEditor
-          initialValue={queryId === 'new' ? tabQuery : (dbQuery?.query ?? '')}
-          initQueryName={dbQuery?.name ?? ''}
-          queryId={queryId === 'new' ? '' : String(queryId)}
-          dbType={dbConnection!.type}
-          runQuery={onRunQueryBtn}
-          onSave={onQuerySaved}
-          onDelete={onDelete}
-        />
-      )}
-      <br />
+    <div className={currentTab.isActive ? "db-tab-active" : "db-tab"}>
+      {dbConnection &&
+        ((queryId === "new" && !dbQuery) ||
+          (dbQuery && dbQuery.id === queryId)) && (
+          <QueryEditor
+            initialValue={queryId === "new" ? tabQuery : (dbQuery?.query ?? "")}
+            initQueryName={dbQuery?.name ?? ""}
+            queryId={queryId === "new" ? "" : String(queryId)}
+            dbType={dbConnection!.type}
+            runQuery={onRunQueryBtn}
+            onSave={onQuerySaved}
+            onDelete={onDelete}
+          />
+        )}
+
       {queryData && (
-        <div className='tabs is-small is-centered is-toggle is-toggle-rounded tabs-set'>
-          <ul>
-            <li className={!isChartEnabled ? 'is-active' : ''}>
-              <a onClick={toggleIsChartEnabled}>
-                <span className='icon is-small'>
-                  <i className='fas fa-table' aria-hidden='true' />
-                </span>
-                <span>Data</span>
-              </a>
-            </li>
-            <li className={isChartEnabled ? 'is-active' : ''}>
-              <a onClick={toggleIsChartEnabled}>
-                <span className='icon is-small'>
-                  <i className='fas fa-chart-bar' aria-hidden='true' />
-                </span>
-                <span>Chart</span>
-              </a>
-            </li>
-          </ul>
+        <div className="mt-6 mb-4">
+          <div className="flex justify-center">
+            <div className="inline-flex rounded-lg bg-gray-100 p-1">
+              <button
+                onClick={() => setIsChartEnabled(false)}
+                className={`flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+                  !isChartEnabled
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                <TableIcon className="mr-2 h-4 w-4" />
+                Data
+              </button>
+              <button
+                onClick={() => setIsChartEnabled(true)}
+                className={`flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+                  isChartEnabled
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                <BarChart3 className="mr-2 h-4 w-4" />
+                Chart
+              </button>
+            </div>
+          </div>
         </div>
       )}
+
       {queryData ? (
         isChartEnabled ? (
-          <React.Fragment>
-            <Chart dbConn={dbConnection!} queryData={queryData} />
-          </React.Fragment>
+          <Chart dbConn={dbConnection!} queryData={queryData} />
         ) : (
-          <React.Fragment>
+          <>
             {(dbConnection!.type === DBConnType.POSTGRES ||
               dbConnection!.type === DBConnType.MYSQL) && (
               <Table
                 dbConnection={dbConnection!}
                 queryData={queryData}
-                mSchema={''}
-                mName={''}
+                mSchema={""}
+                mName={""}
                 isReadOnly={true}
                 onFilterChanged={() => {}}
                 onSortChanged={() => {}}
@@ -140,7 +164,7 @@ const DBQueryFragment = () => {
               <JsonTable
                 dbConnection={dbConnection!}
                 queryData={queryData}
-                mName={''}
+                mName={""}
                 isReadOnly={true}
                 onFilterChanged={() => {}}
                 onSortChanged={() => {}}
@@ -148,14 +172,17 @@ const DBQueryFragment = () => {
                 isInteractive={false}
               />
             )}
-          </React.Fragment>
+          </>
         )
       ) : null}
+
       {queryResult && (
-        <span>
-          <b>Result of Query: </b>
-          {queryResult.message}
-        </span>
+        <div className="mt-4 rounded-lg border border-green-200 bg-green-50 p-4">
+          <span className="text-green-800">
+            <strong>Result of Query: </strong>
+            {queryResult.message}
+          </span>
+        </div>
       )}
     </div>
   );

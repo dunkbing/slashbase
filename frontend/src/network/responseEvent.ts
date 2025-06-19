@@ -1,4 +1,4 @@
-import { EventsOnce } from '../../wailsjs/runtime/runtime';
+import { EventsOnce } from "../../wailsjs/runtime/runtime";
 
 function responseEvent<T>(eventName: string) {
   return new Promise<T>((resolve) => {

@@ -1,11 +1,14 @@
-import type React from 'react';
-import { useContext, useEffect, useRef, useState } from 'react';
-import type { Tab } from '../../data/models';
-import { initConsole, runConsoleCmd, selectBlocks } from '../../redux/consoleSlice';
-import { selectDBConnection } from '../../redux/dbConnectionSlice';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import TabContext from '../layouts/tabcontext';
-import styles from './console.module.scss';
+import type React from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import type { Tab } from "../../data/models";
+import {
+  initConsole,
+  runConsoleCmd,
+  selectBlocks,
+} from "../../redux/consoleSlice";
+import { selectDBConnection } from "../../redux/dbConnectionSlice";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import TabContext from "../layouts/tabcontext";
 
 type DBConsolePropType = {};
 
@@ -19,23 +22,24 @@ const DBConsoleFragment = ({}: DBConsolePropType) => {
 
   const dbConnection = useAppSelector(selectDBConnection);
   const output = useAppSelector(selectBlocks);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [nfocus, setFocus] = useState<number>(0);
   const history = output
     .filter((e) => e.cmd)
-    .filter((e) => e.text !== '')
+    .filter((e) => e.text !== "")
     .map((e) => e.text);
+
   useEffect(() => {
     dispatch(initConsole(dbConnection!.id));
   }, [dbConnection]);
 
   useEffect(() => {
-    scrollToBottom('smooth');
+    scrollToBottom("smooth");
   }, [output]);
 
   const confirmInput = () => {
     dispatch(runConsoleCmd({ dbConnId: dbConnection!.id, cmdString: input }));
-    setInput('');
+    setInput("");
   };
 
   const focus = (e: any) => {
@@ -55,8 +59,8 @@ const DBConsoleFragment = ({}: DBConsolePropType) => {
 
   return (
     <div
-      className={styles.console + ' ' + (currentTab.isActive ? 'db-tab-active' : 'db-tab')}
-      id='console'
+      className={`h-full cursor-text font-mono ${currentTab.isActive ? "db-tab-active" : "db-tab"}`}
+      id="console"
       ref={consoleRef}
       onClick={focus}
     >
@@ -77,7 +81,7 @@ const DBConsoleFragment = ({}: DBConsolePropType) => {
         confirmInput={confirmInput}
         history={history}
       />
-      <div id='consoleend' className={styles.consoleend} ref={consoleEndRef}></div>
+      <div id="consoleend" className="h-24" ref={consoleEndRef}></div>
     </div>
   );
 };
@@ -85,16 +89,23 @@ const DBConsoleFragment = ({}: DBConsolePropType) => {
 export default DBConsoleFragment;
 
 const OutputBlock = ({ block }: any) => {
-  return <p className={styles.block + ' ' + (block.cmd ? styles.cmd : '')}>{block.text}</p>;
+  return (
+    <p
+      className={`whitespace-pre ${block.cmd ? 'before:mr-1 before:content-["〉"]' : ""}`}
+    >
+      {block.text}
+    </p>
+  );
 };
 
 const PromptInputWithRef = (props: any) => {
-  const defaultValue = useRef('');
+  const defaultValue = useRef("");
   const inputRef = useRef<HTMLParagraphElement>(null);
   const [pointer, setPointer] = useState<number>(-1);
+
   useEffect(() => {
     if (props.isActive) {
-      props.scrollToBottom('instant');
+      props.scrollToBottom("instant");
       inputRef.current?.focus();
     }
   }, [props.isActive, props.nfocus]);
@@ -110,28 +121,29 @@ const PromptInputWithRef = (props: any) => {
       inputRef.current.textContent = cmd;
     }
   };
+
   const handleKeyUp = (event: React.KeyboardEvent) => {
-    if (props.confirmInput && event.key.toLocaleLowerCase() === 'enter') {
+    if (props.confirmInput && event.key.toLocaleLowerCase() === "enter") {
       props.confirmInput();
       if (inputRef.current) {
-        inputRef.current.innerText = '';
+        inputRef.current.innerText = "";
       }
       setPointer(-1);
     }
     const updateInputFromPointer = (newPointer: number) => {
       let text = props.history.at(props.history.length - 1 - newPointer);
       if (!text) {
-        text = '';
+        text = "";
       }
       setInputRef(text);
     };
-    if (event.key.toLocaleLowerCase() === 'arrowup') {
+    if (event.key.toLocaleLowerCase() === "arrowup") {
       if (pointer !== props.history.length - 1) {
         setPointer(() => pointer + 1);
         updateInputFromPointer(pointer + 1);
       }
     }
-    if (event.key.toLocaleLowerCase() === 'arrowdown') {
+    if (event.key.toLocaleLowerCase() === "arrowdown") {
       let newPointer;
       if (pointer < 0) {
         newPointer = -1;
@@ -146,11 +158,11 @@ const PromptInputWithRef = (props: any) => {
   return (
     <p
       ref={inputRef}
-      className={styles.prompt}
+      className="relative pl-5 outline-none before:absolute before:left-0 before:content-['〉']"
       contentEditable={true}
       onInput={handleInput}
       onKeyUp={handleKeyUp}
-      spellCheck='false'
+      spellCheck="false"
       dangerouslySetInnerHTML={{ __html: defaultValue.current }}
     />
   );

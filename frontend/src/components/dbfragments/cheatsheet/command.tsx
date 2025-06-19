@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './cheatsheet.module.scss';
+import React from "react";
+import styles from "./cheatsheet.module.scss";
 
 type CheatsheetCommandPropType = {
   cmd: { title: string; description: string; command: string };

@@ -1,21 +1,27 @@
-import { useContext } from 'react';
-import type { DBConnection, Tab } from '../../data/models';
-import { selectDBConnection } from '../../redux/dbConnectionSlice';
-import { useAppSelector } from '../../redux/hooks';
-import TabContext from '../layouts/tabcontext';
-import DataModel from './datamodel/datamodel';
+import { useContext } from "react";
+import type { DBConnection, Tab } from "../../data/models";
+import { selectDBConnection } from "../../redux/dbConnectionSlice";
+import { useAppSelector } from "../../redux/hooks";
+import TabContext from "../layouts/tabcontext";
+import DataModel from "./datamodel/datamodel";
 
 const DBShowModelFragment = () => {
-  const dbConnection: DBConnection | undefined = useAppSelector(selectDBConnection);
+  const dbConnection: DBConnection | undefined =
+    useAppSelector(selectDBConnection);
   const currentTab: Tab = useContext(TabContext)!;
 
   const mschema = currentTab.metadata.schema;
   const mname = currentTab.metadata.name;
 
   return (
-    <div className={currentTab.isActive ? 'db-tab-active' : 'db-tab'}>
+    <div className={currentTab.isActive ? "db-tab-active" : "db-tab"}>
       {mname && dbConnection && (
-        <DataModel dbConn={dbConnection!} mschema={mschema!} mname={mname} isEditable={true} />
+        <DataModel
+          dbConn={dbConnection!}
+          mschema={mschema!}
+          mname={mname}
+          isEditable={true}
+        />
       )}
     </div>
   );

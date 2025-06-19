@@ -1,6 +1,5 @@
-import type { User } from '../../../data/models';
-import ProfileImage from '../../user/profileimage';
-import styles from './usercard.module.scss';
+import type { User } from "../../../data/models";
+import ProfileImage from "../../user/profileimage";
 
 type UserCardPropType = {
   user: User;
@@ -8,19 +7,18 @@ type UserCardPropType = {
 
 const UserCard = ({ user }: UserCardPropType) => {
   return (
-    <div className={'card ' + styles.cardContainer}>
-      <div className='card-content'>
-        <div className='columns is-2'>
-          <div className='column'>
+    <div className="my-4 max-w-[600px] rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+      <div className="p-4">
+        <div className="flex items-center gap-4">
+          <div className="h-12 w-12 flex-shrink-0">
             <ProfileImage imageUrl={user.profileImageUrl} />
           </div>
-          <div className='column is-10'>
-            <b>{user.name ?? user.email}</b>
+          <div className="min-w-0 flex-1">
+            <div className="font-semibold text-gray-900">
+              {user.name ?? user.email}
+            </div>
             {user.name && (
-              <b className='subtitle is-6'>
-                <br />
-                {user.email}
-              </b>
+              <div className="mt-1 text-sm text-gray-600">{user.email}</div>
             )}
           </div>
         </div>

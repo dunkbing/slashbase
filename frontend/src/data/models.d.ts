@@ -1,4 +1,4 @@
-import type { DBConnType } from './defaults';
+import type { DBConnType } from "./defaults";
 
 export interface User {
   id: string;

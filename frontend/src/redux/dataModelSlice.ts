@@ -1,7 +1,7 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { DBDataModel, DBQueryData } from '../data/models';
-import apiService from '../network/apiService';
-import type { AppState } from './store';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import type { DBDataModel, DBQueryData } from "../data/models";
+import apiService from "../network/apiService";
+import type { AppState } from "./store";
 
 export interface QueryDataModelState {
   [tabId: string]: {
@@ -30,7 +30,7 @@ const createInitialTabState = (state: QueryDataModelState, tabId: string) => {
 };
 
 export const getDBDataInDataModel = createAsyncThunk(
-  'dataModel/getDBDataInDataModel',
+  "dataModel/getDBDataInDataModel",
   async (payload: any, { rejectWithValue }: any) => {
     const {
       dbConnectionId,
@@ -62,7 +62,7 @@ export const getDBDataInDataModel = createAsyncThunk(
   },
   {
     condition: (_, { getState }: any) => {
-      const { isFetchingData } = getState()['dataModel'] as QueryDataModelState;
+      const { isFetchingData } = getState()["dataModel"] as QueryDataModelState;
       if (isFetchingData) {
         return false;
       }
@@ -72,7 +72,7 @@ export const getDBDataInDataModel = createAsyncThunk(
 );
 
 export const getSingleDataModel = createAsyncThunk(
-  'dataModel/getSingleDataModel',
+  "dataModel/getSingleDataModel",
   async (payload: any, { rejectWithValue }: any) => {
     const { dbConnectionId, schemaName, name } = payload;
     const result = await apiService.getDBSingleDataModelByConnectionId(
@@ -90,16 +90,25 @@ export const getSingleDataModel = createAsyncThunk(
   },
 );
 
-export const addDBData = createAsyncThunk('dataModel/addDBData', async (payload: any, {}: any) => {
-  const { dbConnectionId, schemaName, name, data } = payload;
-  const result = await apiService.addDBData(dbConnectionId, schemaName, name, data);
-  return result;
-});
+export const addDBData = createAsyncThunk(
+  "dataModel/addDBData",
+  async (payload: any, {}: any) => {
+    const { dbConnectionId, schemaName, name, data } = payload;
+    const result = await apiService.addDBData(
+      dbConnectionId,
+      schemaName,
+      name,
+      data,
+    );
+    return result;
+  },
+);
 
 export const updateDBSingleData = createAsyncThunk(
-  'dataModel/updateDBSingleData',
+  "dataModel/updateDBSingleData",
   async (payload: any, { getState, rejectWithValue }: any) => {
-    const { dbConnectionId, schemaName, name, id, columnName, newValue } = payload;
+    const { dbConnectionId, schemaName, name, id, columnName, newValue } =
+      payload;
     const result = await apiService.updateDBSingleData(
       dbConnectionId,
       schemaName,
@@ -113,16 +122,21 @@ export const updateDBSingleData = createAsyncThunk(
 );
 
 export const deleteDBData = createAsyncThunk(
-  'dataModel/deleteDBData',
+  "dataModel/deleteDBData",
   async (payload: any, {}: any) => {
     const { dbConnectionId, schemaName, name, selectedIDs } = payload;
-    const result = await apiService.deleteDBData(dbConnectionId, schemaName, name, selectedIDs);
+    const result = await apiService.deleteDBData(
+      dbConnectionId,
+      schemaName,
+      name,
+      selectedIDs,
+    );
     return result;
   },
 );
 
 export const addDBDataModelField = createAsyncThunk(
-  'dataModel/addDBDataModelField',
+  "dataModel/addDBDataModelField",
   async (payload: any, {}: any) => {
     const { dbConnectionId, schemaName, name, fieldName, dataType } = payload;
     const result = await apiService.addDBSingleDataModelField(
@@ -137,7 +151,7 @@ export const addDBDataModelField = createAsyncThunk(
 );
 
 export const deleteDBDataModelField = createAsyncThunk(
-  'dataModel/deleteDBDataModelField',
+  "dataModel/deleteDBDataModelField",
   async (payload: any, {}: any) => {
     const { dbConnectionId, schemaName, name, fieldName } = payload;
     const result = await apiService.deleteDBSingleDataModelField(
@@ -151,9 +165,16 @@ export const deleteDBDataModelField = createAsyncThunk(
 );
 
 export const addDBDataModelIndex = createAsyncThunk(
-  'dataModel/addDBDataModelIndex',
+  "dataModel/addDBDataModelIndex",
   async (payload: any, {}: any) => {
-    const { dbConnectionId, schemaName, name, indexName, fieldNames, isUnique } = payload;
+    const {
+      dbConnectionId,
+      schemaName,
+      name,
+      indexName,
+      fieldNames,
+      isUnique,
+    } = payload;
     const result = await apiService.addDBSingleDataModelIndex(
       dbConnectionId,
       schemaName,
@@ -167,7 +188,7 @@ export const addDBDataModelIndex = createAsyncThunk(
 );
 
 export const deleteDBDataModelIndex = createAsyncThunk(
-  'dataModel/deleteDBDataModelIndex',
+  "dataModel/deleteDBDataModelIndex",
   async (payload: any, {}: any) => {
     const { dbConnectionId, schemaName, name, indexName } = payload;
     const result = await apiService.deleteDBSingleDataModelIndex(
@@ -181,7 +202,7 @@ export const deleteDBDataModelIndex = createAsyncThunk(
 );
 
 export const dataModelSlice = createSlice({
-  name: 'dataModel',
+  name: "dataModel",
   initialState,
   reducers: {
     reset: () => initialState,
@@ -226,12 +247,18 @@ export const dataModelSlice = createSlice({
 export const { reset, setQueryData } = dataModelSlice.actions;
 
 export const selectQueryData = (state: AppState) =>
-  state.tabs.activeTabId ? state.dataModel[String(state.tabs.activeTabId)]?.queryData : undefined;
+  state.tabs.activeTabId
+    ? state.dataModel[String(state.tabs.activeTabId)]?.queryData
+    : undefined;
 
 export const selectIsFetchingQueryData = (state: AppState) =>
-  state.tabs.activeTabId ? state.dataModel[String(state.tabs.activeTabId)]?.isFetching.data : false;
+  state.tabs.activeTabId
+    ? state.dataModel[String(state.tabs.activeTabId)]?.isFetching.data
+    : false;
 
 export const selectSingleDataModel = (state: AppState) =>
-  state.tabs.activeTabId ? state.dataModel[String(state.tabs.activeTabId)]?.dataModel : undefined;
+  state.tabs.activeTabId
+    ? state.dataModel[String(state.tabs.activeTabId)]?.dataModel
+    : undefined;
 
 export default dataModelSlice.reducer;

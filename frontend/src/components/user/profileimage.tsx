@@ -1,8 +1,8 @@
 export enum ProfileImageSize {
-  TINY = 'TINY',
-  SMALL = 'SMALL',
-  MEDIUM = 'MEDIUM',
-  LARGE = 'LARGE',
+  TINY = "TINY",
+  SMALL = "SMALL",
+  MEDIUM = "MEDIUM",
+  LARGE = "LARGE",
 }
 
 type ProfileImagePropType = {
@@ -31,19 +31,23 @@ const ProfileImage = ({ imageUrl, classes, size }: ProfileImagePropType) => {
     height = 25;
   }
 
-  if (imageUrl === '')
+  if (imageUrl === "")
     return (
       <div
         style={{ width, height }}
-        className={['profileImageDefault', ...(classes ?? [])].join(' ')}
+        className={["profileImageDefault", ...(classes ?? [])].join(" ")}
       >
-        <i className={'fas fa-user ' + (size !== ProfileImageSize.SMALL ? 'fa-2x' : '')}></i>
+        <i
+          className={
+            "fas fa-user " + (size !== ProfileImageSize.SMALL ? "fa-2x" : "")
+          }
+        ></i>
       </div>
     );
 
   return (
     <img
-      className={['profileImage', ...(classes ?? [])].join(' ')}
+      className={["profileImage", ...(classes ?? [])].join(" ")}
       src={imageUrl}
       width={width}
       height={height}

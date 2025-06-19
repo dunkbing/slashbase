@@ -1,41 +1,48 @@
-import { useLocation } from 'react-router-dom';
-import type { DBConnection } from '../../data/models';
-import { selectDBConnection } from '../../redux/dbConnectionSlice';
-import { useAppSelector } from '../../redux/hooks';
-import { Sidebar as ShadcnSidebar, SidebarContent, SidebarHeader } from '../ui/sidebar';
-import DatabaseSidebar from './sidebars/dbsidebar';
-import HomeSidebar from './sidebars/homesidebar';
-import SettingSidebar from './sidebars/settingsidebar';
+import { useLocation } from "react-router-dom";
+import type { DBConnection } from "../../data/models";
+import { selectDBConnection } from "../../redux/dbConnectionSlice";
+import { useAppSelector } from "../../redux/hooks";
+import {
+  Sidebar as ShadcnSidebar,
+  SidebarContent,
+  SidebarHeader,
+} from "../ui/sidebar";
+import DatabaseSidebar from "./sidebars/dbsidebar";
+import HomeSidebar from "./sidebars/homesidebar";
+import SettingSidebar from "./sidebars/settingsidebar";
 
 enum SidebarViewType {
-  HOME = 'HOME', // home sidebar
-  DATABASE = 'DATABASE', // Used to show elements of database screen
-  SETTINGS = 'SETTINGS', // Used to show elements of settings screen
+  HOME = "HOME", // home sidebar
+  DATABASE = "DATABASE", // Used to show elements of database screen
+  SETTINGS = "SETTINGS", // Used to show elements of settings screen
 }
 
-const Sidebar = () => {
+const AppSidebar = () => {
   const location = useLocation();
 
-  const sidebarView: SidebarViewType = location.pathname.startsWith('/db')
+  const sidebarView: SidebarViewType = location.pathname.startsWith("/db")
     ? SidebarViewType.DATABASE
-    : location.pathname.startsWith('/settings')
+    : location.pathname.startsWith("/settings")
       ? SidebarViewType.SETTINGS
       : SidebarViewType.HOME;
 
-  const dbConnection: DBConnection | undefined = useAppSelector(selectDBConnection);
+  const dbConnection: DBConnection | undefined =
+    useAppSelector(selectDBConnection);
 
   return (
     <ShadcnSidebar collapsible="icon">
-      <SidebarHeader className='p-4'>
-        <h2 className='text-lg font-semibold'>Slashbase</h2>
+      <SidebarHeader className="p-4">
+        <h2 className="text-lg font-semibold">Slashbase</h2>
       </SidebarHeader>
-      <SidebarContent className='px-4'>
+      <SidebarContent className="px-4">
         {sidebarView === SidebarViewType.HOME && <HomeSidebar />}
-        {sidebarView === SidebarViewType.DATABASE && dbConnection && <DatabaseSidebar />}
+        {sidebarView === SidebarViewType.DATABASE && dbConnection && (
+          <DatabaseSidebar />
+        )}
         {sidebarView === SidebarViewType.SETTINGS && <SettingSidebar />}
       </SidebarContent>
     </ShadcnSidebar>
   );
 };
 
-export default Sidebar;
+export default AppSidebar;

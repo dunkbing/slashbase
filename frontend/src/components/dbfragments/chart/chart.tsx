@@ -7,13 +7,13 @@ import {
   LinearScale,
   PointElement,
   Tooltip,
-} from 'chart.js';
-import React, { useRef, useState } from 'react';
-import { Bar, Line, Pie } from 'react-chartjs-2';
-import { DBConnType } from '../../../data/defaults';
-import type { DBConnection, DBQueryData } from '../../../data/models';
-import { Button } from '../../ui/button';
-import styles from './chart.module.scss';
+} from "chart.js";
+import React, { useRef, useState } from "react";
+import { Bar, Line, Pie } from "react-chartjs-2";
+import { DBConnType } from "../../../data/defaults";
+import type { DBConnection, DBQueryData } from "../../../data/models";
+import { Button } from "../../ui/button";
+import styles from "./chart.module.scss";
 
 ChartJS.register(
   CategoryScale,
@@ -44,14 +44,16 @@ type ChartDataType = {
 };
 
 enum ChartViewType {
-  NONE = 'NONE', // default
-  BARCHART = 'BARCHART',
-  LINECHART = 'LINECHART',
-  PIECHART = 'PIECHART',
+  NONE = "NONE", // default
+  BARCHART = "BARCHART",
+  LINECHART = "LINECHART",
+  PIECHART = "PIECHART",
 }
 
 const Chart = ({ dbConn, queryData }: ChartPropType) => {
-  const [chartViewType, setChartViewType] = useState<ChartViewType>(ChartViewType.NONE);
+  const [chartViewType, setChartViewType] = useState<ChartViewType>(
+    ChartViewType.NONE,
+  );
   const [chartData, setChartData] = useState<ChartDataType>();
 
   const selectChartTypeRef = useRef<HTMLSelectElement>(null);
@@ -68,7 +70,10 @@ const Chart = ({ dbConn, queryData }: ChartPropType) => {
     const yaxis = selectYAxisRef.current!.value;
     let labels: string[];
     let data: number[];
-    if (dbConn.type === DBConnType.POSTGRES || dbConn.type === DBConnType.MYSQL) {
+    if (
+      dbConn.type === DBConnType.POSTGRES ||
+      dbConn.type === DBConnType.MYSQL
+    ) {
       const xColIdx = keys.findIndex((x) => x === xaxis);
       const yColIdx = keys.findIndex((y) => y === yaxis);
       labels = queryData.rows.map((row) => row[xColIdx]);
@@ -78,7 +83,9 @@ const Chart = ({ dbConn, queryData }: ChartPropType) => {
       data = queryData.data.map((d) => d[yaxis]);
     }
     setChartViewType(
-      ChartViewType[selectChartTypeRef.current!.value.toString() as keyof typeof ChartViewType],
+      ChartViewType[
+        selectChartTypeRef.current!.value.toString() as keyof typeof ChartViewType
+      ],
     );
     setChartData({
       xaxis: xaxis,
@@ -89,7 +96,7 @@ const Chart = ({ dbConn, queryData }: ChartPropType) => {
           {
             label: yaxis,
             data: data,
-            backgroundColor: '#615f9c',
+            backgroundColor: "#615f9c",
           },
         ],
       },
@@ -98,28 +105,34 @@ const Chart = ({ dbConn, queryData }: ChartPropType) => {
 
   return (
     <React.Fragment>
-      <div className='card'>
-        <div className='card-content'>
-          <div className={'content ' + styles.contentCenter}>
+      <div className="card">
+        <div className="card-content">
+          <div className={"content " + styles.contentCenter}>
             {chartViewType === ChartViewType.NONE && (
               <React.Fragment>
-                <h2 className='title is-2'>Create chart from the data</h2>
-                <div className='field'>
-                  <label className='label'>Select chart type:</label>
-                  <div className='control'>
-                    <div className='select'>
+                <h2 className="title is-2">Create chart from the data</h2>
+                <div className="field">
+                  <label className="label">Select chart type:</label>
+                  <div className="control">
+                    <div className="select">
                       <select ref={selectChartTypeRef}>
-                        <option value={ChartViewType.BARCHART}>Bar Chart</option>
-                        <option value={ChartViewType.LINECHART}>Line Chart</option>
-                        <option value={ChartViewType.PIECHART}>Pie Chart</option>
+                        <option value={ChartViewType.BARCHART}>
+                          Bar Chart
+                        </option>
+                        <option value={ChartViewType.LINECHART}>
+                          Line Chart
+                        </option>
+                        <option value={ChartViewType.PIECHART}>
+                          Pie Chart
+                        </option>
                       </select>
                     </div>
                   </div>
                 </div>
-                <div className='field'>
-                  <label className='label'>Select x-axis:</label>
-                  <div className='control'>
-                    <div className='select'>
+                <div className="field">
+                  <label className="label">Select x-axis:</label>
+                  <div className="control">
+                    <div className="select">
                       <select ref={selectXAxisRef}>
                         {keys.map((key) => (
                           <option key={key} value={key}>
@@ -130,10 +143,10 @@ const Chart = ({ dbConn, queryData }: ChartPropType) => {
                     </div>
                   </div>
                 </div>
-                <div className='field'>
-                  <label className='label'>Select y-axis:</label>
-                  <div className='control'>
-                    <div className='select'>
+                <div className="field">
+                  <label className="label">Select y-axis:</label>
+                  <div className="control">
+                    <div className="select">
                       <select ref={selectYAxisRef}>
                         {keys.map((key) => (
                           <option key={key} value={key}>
@@ -145,14 +158,14 @@ const Chart = ({ dbConn, queryData }: ChartPropType) => {
                   </div>
                 </div>
                 <br />
-                <div className='control'>
+                <div className="control">
                   <Button onClick={createChart}>Create</Button>
                 </div>
               </React.Fragment>
             )}
             {chartViewType === ChartViewType.BARCHART && (
               <React.Fragment>
-                <h2 className='title is-2'>Bar chart</h2>
+                <h2 className="title is-2">Bar chart</h2>
                 <div className={styles.barChartWrapper}>
                   <Bar data={chartData!.data} />
                 </div>
@@ -160,7 +173,7 @@ const Chart = ({ dbConn, queryData }: ChartPropType) => {
             )}
             {chartViewType === ChartViewType.LINECHART && (
               <React.Fragment>
-                <h2 className='title is-2'>Line chart</h2>
+                <h2 className="title is-2">Line chart</h2>
                 <div className={styles.lineChartWrapper}>
                   <Line data={chartData!.data} />
                 </div>
@@ -168,7 +181,7 @@ const Chart = ({ dbConn, queryData }: ChartPropType) => {
             )}
             {chartViewType === ChartViewType.PIECHART && (
               <React.Fragment>
-                <h2 className='title is-2'>Pie chart</h2>
+                <h2 className="title is-2">Pie chart</h2>
                 <div className={styles.pieChartWrapper}>
                   <Pie data={chartData!.data} />
                 </div>

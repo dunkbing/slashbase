@@ -1,18 +1,18 @@
-import type React from 'react';
-import { useContext, useState } from 'react';
-import toast from 'react-hot-toast';
-import { DBConnType } from '../../../data/defaults';
+import type React from "react";
+import { useContext, useState } from "react";
+import toast from "react-hot-toast";
+import { DBConnType } from "../../../data/defaults";
 import type {
   AddDataResponse,
   ApiResult,
   DBConnection,
   DBQueryData,
   Tab,
-} from '../../../data/models';
-import { addDBData, setQueryData } from '../../../redux/dataModelSlice';
-import { useAppDispatch } from '../../../redux/hooks';
-import TabContext from '../../layouts/tabcontext';
-import { Button } from '../../ui/button';
+} from "../../../data/models";
+import { addDBData, setQueryData } from "../../../redux/dataModelSlice";
+import { useAppDispatch } from "../../../redux/hooks";
+import TabContext from "../../layouts/tabcontext";
+import { Button } from "../../ui/button";
 
 type AddModal = {
   queryData: DBQueryData;
@@ -22,14 +22,23 @@ type AddModal = {
   onClose: () => void;
 };
 
-const AddModal = ({ queryData, dbConnection, mSchema, mName, onClose }: AddModal) => {
+const AddModal = ({
+  queryData,
+  dbConnection,
+  mSchema,
+  mName,
+  onClose,
+}: AddModal) => {
   const dispatch = useAppDispatch();
 
   const activeTab: Tab = useContext(TabContext)!;
 
   const [newData, setNewData] = useState<any>({});
 
-  const onFieldChange = (e: React.ChangeEvent<HTMLInputElement>, col: string) => {
+  const onFieldChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    col: string,
+  ) => {
     const tmpData = { ...newData };
     tmpData[col] = e.target.value;
     setNewData(tmpData);
@@ -45,7 +54,7 @@ const AddModal = ({ queryData, dbConnection, mSchema, mName, onClose }: AddModal
       }),
     ).unwrap();
     if (result.success) {
-      toast.success('data added');
+      toast.success("data added");
       let mNewData: any;
       if (dbConnection.type === DBConnType.POSTGRES && result.data.data) {
         mNewData = { ...result.data.data, 0: result.data.newId };
@@ -71,39 +80,43 @@ const AddModal = ({ queryData, dbConnection, mSchema, mName, onClose }: AddModal
   };
 
   return (
-    <div className='modal is-active'>
-      <div className='modal-background'></div>
-      <div className='modal-card'>
-        <header className='modal-card-head'>
-          <p className='modal-card-title'>
+    <div className="modal is-active">
+      <div className="modal-background"></div>
+      <div className="modal-card">
+        <header className="modal-card-head">
+          <p className="modal-card-title">
             Add new {mSchema}.{mName}
           </p>
-          <button className='delete' aria-label='close' onClick={onClose}></button>
+          <button
+            className="delete"
+            aria-label="close"
+            onClick={onClose}
+          ></button>
         </header>
-        <section className='modal-card-body'>
+        <section className="modal-card-body">
           {queryData.columns
-            .filter((col) => col !== 'ctid')
+            .filter((col) => col !== "ctid")
             .map((col) => {
               return (
-                <div className='field' key={col}>
-                  <label className='label'>{col}</label>
-                  <div className='control'>
+                <div className="field" key={col}>
+                  <label className="label">{col}</label>
+                  <div className="control">
                     <input
-                      className='input'
-                      type='text'
+                      className="input"
+                      type="text"
                       value={newData[col]}
                       onChange={(e) => {
                         onFieldChange(e, col);
                       }}
-                      placeholder='Enter input'
+                      placeholder="Enter input"
                     />
                   </div>
                 </div>
               );
             })}
         </section>
-        <footer className='modal-card-foot'>
-          <Button className='is-primary' onClick={startAdding}>
+        <footer className="modal-card-foot">
+          <Button className="is-primary" onClick={startAdding}>
             Add
           </Button>
           <Button onClick={onClose}>Cancel</Button>

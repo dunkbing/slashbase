@@ -1,8 +1,8 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import type { DBConnection, DBDataModel, DBQuery } from '../data/models';
-import apiService from '../network/apiService';
-import type { AppState } from './store';
+import type { DBConnection, DBDataModel, DBQuery } from "../data/models";
+import apiService from "../network/apiService";
+import type { AppState } from "./store";
 
 export interface DBConnectionState {
   dbConnection?: DBConnection;
@@ -25,9 +25,11 @@ const initialState: DBConnectionState = {
 };
 
 export const getDBConnection = createAsyncThunk(
-  'dbConnection/getDBConnection',
+  "dbConnection/getDBConnection",
   async (payload: { dbConnId: string }, { rejectWithValue, getState }: any) => {
-    const { dbConnection } = (getState() as any)['dbConnection'] as DBConnectionState;
+    const { dbConnection } = (getState() as any)[
+      "dbConnection"
+    ] as DBConnectionState;
     if (dbConnection && dbConnection.id === payload.dbConnId) {
       return {
         dbConnection: dbConnection,
@@ -48,11 +50,11 @@ export const getDBConnection = createAsyncThunk(
 );
 
 export const checkConnection = createAsyncThunk(
-  'dbConnection/checkConnection',
+  "dbConnection/checkConnection",
   async (_, { getState, rejectWithValue }: any) => {
     const { dbConnection } = getState().dbConnection as DBConnectionState;
     if (!dbConnection) {
-      return rejectWithValue('no active db connection');
+      return rejectWithValue("no active db connection");
     }
     const result = await apiService.checkConnection(dbConnection!.id);
     if (result.success) {
@@ -67,9 +69,11 @@ export const checkConnection = createAsyncThunk(
 );
 
 export const getDBDataModels = createAsyncThunk(
-  'dbConnection/getDBDataModels',
+  "dbConnection/getDBDataModels",
   async (payload: { dbConnId: string }, { rejectWithValue, getState }: any) => {
-    const result = await apiService.getDBDataModelsByConnectionId(payload.dbConnId);
+    const result = await apiService.getDBDataModelsByConnectionId(
+      payload.dbConnId,
+    );
     if (result.success) {
       const dataModels = result.data;
       return {
@@ -81,14 +85,16 @@ export const getDBDataModels = createAsyncThunk(
   },
   {
     condition: (_, { getState }: any) => {
-      const { isDBDataModelsFetched } = getState()['dbConnection'] as DBConnectionState;
+      const { isDBDataModelsFetched } = getState()[
+        "dbConnection"
+      ] as DBConnectionState;
       return !isDBDataModelsFetched;
     },
   },
 );
 
 export const getDBQueries = createAsyncThunk(
-  'dbConnection/getDBQueries',
+  "dbConnection/getDBQueries",
   async (payload: { dbConnId: string }, { rejectWithValue, getState }: any) => {
     const result = await apiService.getDBQueriesInDBConn(payload.dbConnId);
     if (result.success) {
@@ -102,7 +108,9 @@ export const getDBQueries = createAsyncThunk(
   },
   {
     condition: (_, { getState }: any) => {
-      const { isDBQueriesFetched } = getState()['dbConnection'] as DBConnectionState;
+      const { isDBQueriesFetched } = getState()[
+        "dbConnection"
+      ] as DBConnectionState;
       return !isDBQueriesFetched;
     },
   },
@@ -111,7 +119,7 @@ export const getDBQueries = createAsyncThunk(
 export const saveDBQuery = createAsyncThunk<
   { dbQuery: DBQuery },
   { dbConnId: string; queryId: string; name: string; query: string }
->('dbConnection/saveDBQuery', async (payload, { rejectWithValue }: any) => {
+>("dbConnection/saveDBQuery", async (payload, { rejectWithValue }: any) => {
   const result = await apiService.saveDBQuery(
     payload.dbConnId,
     payload.name,
@@ -128,20 +136,20 @@ export const saveDBQuery = createAsyncThunk<
   }
 });
 
-export const deleteDBQuery = createAsyncThunk<{ queryId: string }, { queryId: string }>(
-  'dbConnection/deleteDBQuery',
-  async (payload, { rejectWithValue }: any) => {
-    const result = await apiService.deleteDBQuery(payload.queryId);
-    if (result.success) {
-      return { queryId: payload.queryId };
-    } else {
-      return rejectWithValue(result.error);
-    }
-  },
-);
+export const deleteDBQuery = createAsyncThunk<
+  { queryId: string },
+  { queryId: string }
+>("dbConnection/deleteDBQuery", async (payload, { rejectWithValue }: any) => {
+  const result = await apiService.deleteDBQuery(payload.queryId);
+  if (result.success) {
+    return { queryId: payload.queryId };
+  } else {
+    return rejectWithValue(result.error);
+  }
+});
 
 export const dbConnectionSlice = createSlice({
-  name: 'dbConnection',
+  name: "dbConnection",
   initialState,
   reducers: {
     reset: (state) => initialState,
@@ -174,7 +182,9 @@ export const dbConnectionSlice = createSlice({
         state.isDBQueriesFetched = true;
       })
       .addCase(saveDBQuery.fulfilled, (state, action: any) => {
-        const idx = state.dbQueries.findIndex((x) => x.id === action.payload.dbQuery.id);
+        const idx = state.dbQueries.findIndex(
+          (x) => x.id === action.payload.dbQuery.id,
+        );
         if (idx === -1) {
           state.dbQueries.push(action.payload.dbQuery);
         } else {
@@ -182,7 +192,9 @@ export const dbConnectionSlice = createSlice({
         }
       })
       .addCase(deleteDBQuery.fulfilled, (state, action: any) => {
-        state.dbQueries = state.dbQueries.filter((x) => x.id !== action.payload.queryId);
+        state.dbQueries = state.dbQueries.filter(
+          (x) => x.id !== action.payload.queryId,
+        );
       })
       .addCase(checkConnection.fulfilled, (state, action: any) => {
         state.isDBConnected = action.payload.result;
@@ -192,10 +204,14 @@ export const dbConnectionSlice = createSlice({
 
 export const { reset, resetDBDataModels } = dbConnectionSlice.actions;
 
-export const selectDBConnection = (state: AppState) => state.dbConnection.dbConnection;
-export const selectIsDBConnected = (state: AppState) => state.dbConnection.isDBConnected;
-export const selectDBDataModels = (state: AppState) => state.dbConnection.dbDataModels;
-export const selectDBDQueries = (state: AppState) => state.dbConnection.dbQueries;
+export const selectDBConnection = (state: AppState) =>
+  state.dbConnection.dbConnection;
+export const selectIsDBConnected = (state: AppState) =>
+  state.dbConnection.isDBConnected;
+export const selectDBDataModels = (state: AppState) =>
+  state.dbConnection.dbDataModels;
+export const selectDBDQueries = (state: AppState) =>
+  state.dbConnection.dbQueries;
 export const selectIsFetchingDBDataModels = (state: AppState) =>
   state.dbConnection.isFetchingDBDataModels;
 

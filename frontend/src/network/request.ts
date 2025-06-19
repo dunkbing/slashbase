@@ -1,18 +1,18 @@
-import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
-import { toast } from 'react-hot-toast';
-import { GetAPIConfig } from '../constants';
+import axios, { type AxiosInstance, type AxiosResponse } from "axios";
+import { toast } from "react-hot-toast";
+import { GetAPIConfig } from "../constants";
 
 const apiInstance: AxiosInstance = axios.create({
   baseURL: GetAPIConfig().API_URL,
-  headers: { 'content-type': 'application/json' },
+  headers: { "content-type": "application/json" },
   withCredentials: true,
 });
 
 apiInstance.interceptors.response.use(
   async (response: AxiosResponse<any>) => Promise.resolve(response),
   async (error: any) => {
-    if (error.code === 'ERR_NETWORK') {
-      toast.error('There was some problem connecting slashbase server');
+    if (error.code === "ERR_NETWORK") {
+      toast.error("There was some problem connecting slashbase server");
       return Promise.reject(error);
     }
     const status = error.status || error.response.status;

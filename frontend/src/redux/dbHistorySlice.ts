@@ -1,7 +1,7 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { DBQueryLog } from '../data/models';
-import apiService from '../network/apiService';
-import type { AppState } from './store';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import type { DBQueryLog } from "../data/models";
+import apiService from "../network/apiService";
+import type { AppState } from "./store";
 
 export interface DBHistoryState {
   dbQueryLogs: DBQueryLog[];
@@ -14,9 +14,9 @@ const initialState: DBHistoryState = {
 };
 
 export const getDBQueryLogs = createAsyncThunk(
-  'dbHistory/getDBQueryLogs',
+  "dbHistory/getDBQueryLogs",
   async (payload: any, { getState }: any) => {
-    const { dbQueryLogsNext } = getState()['dbHistory'] as DBHistoryState;
+    const { dbQueryLogsNext } = getState()["dbHistory"] as DBHistoryState;
     const { dbConnId } = payload;
     const result = await apiService.getDBHistory(dbConnId, dbQueryLogsNext);
     return result;
@@ -24,7 +24,7 @@ export const getDBQueryLogs = createAsyncThunk(
 );
 
 export const dbHistorySlice = createSlice({
-  name: 'dbHistory',
+  name: "dbHistory",
   initialState,
   reducers: {
     reset: () => initialState,
@@ -32,7 +32,9 @@ export const dbHistorySlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getDBQueryLogs.fulfilled, (state, action: any) => {
       if (action.payload.success) {
-        state.dbQueryLogs = state.dbQueryLogs.concat(...action.payload.data.list);
+        state.dbQueryLogs = state.dbQueryLogs.concat(
+          ...action.payload.data.list,
+        );
         state.dbQueryLogsNext = action.payload.data.next;
       }
     });
@@ -41,8 +43,10 @@ export const dbHistorySlice = createSlice({
 
 export const { reset } = dbHistorySlice.actions;
 
-export const selectDBQueryLogs = (state: AppState) => state.dbHistory.dbQueryLogs;
+export const selectDBQueryLogs = (state: AppState) =>
+  state.dbHistory.dbQueryLogs;
 
-export const selectDBQueryLogsNext = (state: AppState) => state.dbHistory.dbQueryLogsNext;
+export const selectDBQueryLogsNext = (state: AppState) =>
+  state.dbHistory.dbQueryLogsNext;
 
 export default dbHistorySlice.reducer;

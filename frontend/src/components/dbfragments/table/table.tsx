@@ -1,17 +1,21 @@
-import { Check, CircleX, Pen, Plus, RefreshCcw, Trash2 } from 'lucide-react';
-import React, { useContext, useState } from 'react';
-import toast from 'react-hot-toast';
-import { type Cell, useRowSelect, useTable } from 'react-table';
-import { DBConnType } from '../../../data/defaults';
-import type { DBConnection, DBQueryData, Tab } from '../../../data/models';
-import { deleteDBData, setQueryData, updateDBSingleData } from '../../../redux/dataModelSlice';
-import { useAppDispatch } from '../../../redux/hooks';
-import TabContext from '../../layouts/tabcontext';
-import { Button } from '../../ui/button';
-import ConfirmModal from '../../widgets/confirmModal';
-import AddModal from './addmodal';
-import EditableCell from './editablecell';
-import styles from './table.module.scss';
+import { Check, CircleX, Pen, Plus, RefreshCcw, Trash2 } from "lucide-react";
+import React, { useContext, useState } from "react";
+import toast from "react-hot-toast";
+import { type Cell, useRowSelect, useTable } from "react-table";
+import { DBConnType } from "../../../data/defaults";
+import type { DBConnection, DBQueryData, Tab } from "../../../data/models";
+import {
+  deleteDBData,
+  setQueryData,
+  updateDBSingleData,
+} from "../../../redux/dataModelSlice";
+import { useAppDispatch } from "../../../redux/hooks";
+import TabContext from "../../layouts/tabcontext";
+import { Button } from "../../ui/button";
+import ConfirmModal from "../../widgets/confirmModal";
+import AddModal from "./addmodal";
+import EditableCell from "./editablecell";
+import styles from "./table.module.scss";
 
 type TablePropType = {
   queryData: DBQueryData;
@@ -49,16 +53,22 @@ const Table = ({
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
-  const [filterValue, setFilterValue] = useState<string[]>(['default', 'default', '']);
+  const [filterValue, setFilterValue] = useState<string[]>([
+    "default",
+    "default",
+    "",
+  ]);
 
   const data = React.useMemo(() => queryData.rows, [queryData]);
 
   const displayColumns = queryData.columns
     ? dbConnection.type === DBConnType.POSTGRES
-      ? queryData.columns.filter((col) => col !== 'ctid')
+      ? queryData.columns.filter((col) => col !== "ctid")
       : queryData.columns
     : [];
-  const ctidExists = queryData.columns ? queryData.columns.length !== displayColumns.length : false;
+  const ctidExists = queryData.columns
+    ? queryData.columns.length !== displayColumns.length
+    : false;
 
   const columns = React.useMemo(
     () =>
@@ -67,15 +77,15 @@ const Table = ({
           <>
             {col}
             {querySort && querySort[0] === col ? (
-              querySort[1] === 'ASC' ? (
+              querySort[1] === "ASC" ? (
                 <>
                   &nbsp;
-                  <i className='fas fa-caret-up' />
+                  <i className="fas fa-caret-up" />
                 </>
               ) : (
                 <>
                   &nbsp;
-                  <i className='fas fa-caret-down' />
+                  <i className="fas fa-caret-down" />
                 </>
               )
             ) : undefined}
@@ -100,17 +110,23 @@ const Table = ({
     columnIdx: string,
     newValue: string,
   ) => {
-    if (dbConnection.type === DBConnType.MYSQL && queryData.pkeys?.length === 0) {
-      return toast.error('to perform edit operation primary keys are required on the table!');
+    if (
+      dbConnection.type === DBConnType.MYSQL &&
+      queryData.pkeys?.length === 0
+    ) {
+      return toast.error(
+        "to perform edit operation primary keys are required on the table!",
+      );
     }
     const columnName = queryData.columns[Number.parseInt(columnIdx)];
     const uniqueId =
       dbConnection.type === DBConnType.POSTGRES
-        ? originalValue['0']
+        ? originalValue["0"]
         : JSON.stringify(
             queryData
               .pkeys!.map((pkey) => ({
-                [pkey]: originalValue[queryData.columns.findIndex((x) => x === pkey)],
+                [pkey]:
+                  originalValue[queryData.columns.findIndex((x) => x === pkey)],
               }))
               .reduce((r, c) => Object.assign(r, c), {}),
           );
@@ -145,13 +161,20 @@ const Table = ({
         // fetchData(false)
       }
       resetEditCell();
-      toast.success('1 row updated');
+      toast.success("1 row updated");
     } else {
       toast.error(result.error!);
     }
   };
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, state } = useTable(
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    state,
+  } = useTable(
     {
       columns,
       data,
@@ -164,7 +187,7 @@ const Table = ({
       if (isInteractive && isEditing)
         hooks.visibleColumns.push((columns) => [
           {
-            id: 'selection',
+            id: "selection",
             Header: HeaderSelectionComponent,
             Cell: CellSelectionComponent,
           },
@@ -173,26 +196,35 @@ const Table = ({
     },
   );
 
-  const selectedRows: number[] = Object.keys(state.selectedRowIds).map((x) => Number.parseInt(x));
+  const selectedRows: number[] = Object.keys(state.selectedRowIds).map((x) =>
+    Number.parseInt(x),
+  );
   const selectedIDs =
     dbConnection.type === DBConnType.POSTGRES
       ? rows
           .filter((_, i) => selectedRows.includes(i))
-          .map((x) => (x.original as any)['0'])
+          .map((x) => (x.original as any)["0"])
           .filter((x) => x)
       : rows
           .filter((_, i) => selectedRows.includes(i))
           .map((x) =>
             queryData.pkeys!.map((pkey) => ({
-              [pkey]: (x.original as any)[queryData.columns.findIndex((x) => x === pkey)],
+              [pkey]: (x.original as any)[
+                queryData.columns.findIndex((x) => x === pkey)
+              ],
             })),
           )
           .map((x) => x.reduce((r, c) => Object.assign(r, c), {}))
           .map((x) => JSON.stringify(x));
 
   const deleteRows = async () => {
-    if (dbConnection.type === DBConnType.MYSQL && queryData.pkeys?.length === 0) {
-      return toast.error('to perform delete operation primary keys are required on the table!');
+    if (
+      dbConnection.type === DBConnType.MYSQL &&
+      queryData.pkeys?.length === 0
+    ) {
+      return toast.error(
+        "to perform delete operation primary keys are required on the table!",
+      );
     }
     if (selectedIDs.length > 0) {
       const result = await dispatch(
@@ -204,8 +236,10 @@ const Table = ({
         }),
       ).unwrap();
       if (result.success) {
-        toast.success('rows deleted');
-        const filteredRows = queryData!.rows.filter((_, i) => !selectedRows.includes(i));
+        toast.success("rows deleted");
+        const filteredRows = queryData!.rows.filter(
+          (_, i) => !selectedRows.includes(i),
+        );
         const newQueryData: DBQueryData = { ...queryData!, rows: filteredRows };
         dispatch(setQueryData({ data: newQueryData, tabId: activeTab.id }));
       } else {
@@ -216,14 +250,15 @@ const Table = ({
   };
 
   const startEditing = (cell: Cell<any, any>) => {
-    if (isInteractive && isEditing) setEditCell([cell.row.index, cell.column.id]);
+    if (isInteractive && isEditing)
+      setEditCell([cell.row.index, cell.column.id]);
   };
 
   const onFilter = () => {
     let filter: string[] | undefined = undefined;
-    if (filterValue[0] !== 'default' && filterValue[1] !== 'default') {
+    if (filterValue[0] !== "default" && filterValue[1] !== "default") {
       const operator = filterValue[1];
-      if (operator === 'IS NULL' || operator === 'IS NOT NULL') {
+      if (operator === "IS NULL" || operator === "IS NOT NULL") {
         filter = [filterValue[0], operator];
       } else {
         filter = [filterValue[0], operator, filterValue[2]];
@@ -233,12 +268,12 @@ const Table = ({
   };
   const onFilterClear = () => {
     const filter: string[] | undefined = undefined;
-    setFilterValue(['default', 'default', '']);
+    setFilterValue(["default", "default", ""]);
     onFilterChanged(filter);
   };
 
   const changeSort = (newSortIdx: string) => {
-    if (!isInteractive || newSortIdx === 'selection') {
+    if (!isInteractive || newSortIdx === "selection") {
       return;
     }
     const newSortName: string = displayColumns.find((_, i) => {
@@ -246,13 +281,13 @@ const Table = ({
       return colIdx.toString() === newSortIdx;
     })!;
     if (querySort && newSortName === querySort[0]) {
-      if (querySort[1] === 'ASC') {
-        onSortChanged([querySort[0], 'DESC']);
-      } else if (querySort[1] === 'DESC') {
+      if (querySort[1] === "ASC") {
+        onSortChanged([querySort[0], "DESC"]);
+      } else if (querySort[1] === "DESC") {
         onSortChanged(undefined);
       }
     } else {
-      onSortChanged([newSortName, 'ASC']);
+      onSortChanged([newSortName, "ASC"]);
     }
   };
 
@@ -270,50 +305,57 @@ const Table = ({
     <React.Fragment>
       {(showHeader || (isInteractive && isEditing)) && (
         <div className={styles.tableHeader}>
-          <div className='columns'>
-            <div className='column is-9'>
-              <div className='field has-addons'>
-                <p className='control'>
-                  <span className='select'>
-                    <select value={filterValue[0]} onChange={(e) => handleFilterChange(e, 0)}>
-                      <option value='default'>Select column</option>
+          <div className="columns">
+            <div className="column is-9">
+              <div className="field has-addons">
+                <p className="control">
+                  <span className="select">
+                    <select
+                      value={filterValue[0]}
+                      onChange={(e) => handleFilterChange(e, 0)}
+                    >
+                      <option value="default">Select column</option>
                       {displayColumns.map((x) => (
                         <option key={x}>{x}</option>
                       ))}
                     </select>
                   </span>
                 </p>
-                <p className='control'>
-                  <span className='select'>
-                    <select value={filterValue[1]} onChange={(e) => handleFilterChange(e, 1)}>
-                      <option value='default'>Select operator</option>
-                      <option value='='>=</option>
-                      <option value='!='>≠</option>
-                      <option value='<'>&lt;</option>
-                      <option value='>'>&gt;</option>
-                      <option value='>='>≥</option>
-                      <option value='<='>≤</option>
-                      <option value='IS NULL'>is null</option>
-                      <option value='IS NOT NULL'>not null</option>
-                      <option value='LIKE'>like</option>
-                      <option value='NOT LIKE'>not like</option>
+                <p className="control">
+                  <span className="select">
+                    <select
+                      value={filterValue[1]}
+                      onChange={(e) => handleFilterChange(e, 1)}
+                    >
+                      <option value="default">Select operator</option>
+                      <option value="=">=</option>
+                      <option value="!=">≠</option>
+                      <option value="<">&lt;</option>
+                      <option value=">">&gt;</option>
+                      <option value=">=">≥</option>
+                      <option value="<=">≤</option>
+                      <option value="IS NULL">is null</option>
+                      <option value="IS NOT NULL">not null</option>
+                      <option value="LIKE">like</option>
+                      <option value="NOT LIKE">not like</option>
                     </select>
                   </span>
                 </p>
-                <p className='control'>
+                <p className="control">
                   <input
-                    className='input'
-                    type='text'
-                    placeholder='Value'
+                    className="input"
+                    type="text"
+                    placeholder="Value"
                     value={filterValue[2]}
                     onChange={(e) => handleFilterChange(e, 2)}
                   />
                 </p>
-                <p className='control'>
+                <p className="control">
                   <Button onClick={onFilter}>Filter</Button>
                 </p>
-                {(filterValue[0] !== 'default' || filterValue[1] !== 'default') && (
-                  <p className='control'>
+                {(filterValue[0] !== "default" ||
+                  filterValue[1] !== "default") && (
+                  <p className="control">
                     <Button onClick={onFilterClear}>
                       <CircleX />
                     </Button>
@@ -323,13 +365,16 @@ const Table = ({
             </div>
             {isInteractive && !isEditing && (
               <React.Fragment>
-                <div className='column is-3 is-flex is-justify-content-flex-end gap-3'>
-                  <Button className='is-secondary mgr-medium' onClick={onRefresh}>
+                <div className="column is-3 is-flex is-justify-content-flex-end gap-3">
+                  <Button
+                    className="is-secondary mgr-medium"
+                    onClick={onRefresh}
+                  >
                     <RefreshCcw />
                   </Button>
                   {!isReadOnly && (
                     <Button
-                      className='is-primary'
+                      className="is-primary"
                       onClick={() => {
                         setIsEditing(true);
                       }}
@@ -343,7 +388,7 @@ const Table = ({
 
             {isInteractive && isEditing && (
               <React.Fragment>
-                <div className='column is-3 is-flex is-justify-content-flex-end'>
+                <div className="column is-3 is-flex is-justify-content-flex-end">
                   <Button
                     disabled={selectedIDs.length === 0}
                     onClick={() => {
@@ -354,7 +399,7 @@ const Table = ({
                   </Button>
                   &nbsp;&nbsp;
                   <Button
-                    className='is-secondary'
+                    className="is-secondary"
                     onClick={() => {
                       setIsAdding(true);
                     }}
@@ -363,7 +408,7 @@ const Table = ({
                   </Button>
                   &nbsp;&nbsp;
                   <Button
-                    className='is-primary'
+                    className="is-primary"
                     onClick={() => {
                       setIsEditing(false);
                     }}
@@ -397,14 +442,16 @@ const Table = ({
           }}
         />
       )}
-      <div className='table-container'>
+      <div className="table-container">
         <table
           {...getTableProps()}
-          className={'is-bordered is-striped is-narrow is-hoverable is-fullwidth table'}
+          className={
+            "is-bordered is-striped is-narrow is-hoverable is-fullwidth table"
+          }
         >
           <thead>
             {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()} key={'header'}>
+              <tr {...headerGroup.getHeaderGroupProps()} key={"header"}>
                 {headerGroup.headers.map((column) => (
                   <th
                     {...column.getHeaderProps()}
@@ -413,7 +460,7 @@ const Table = ({
                       changeSort(column.id);
                     }}
                   >
-                    {column.render('Header')}
+                    {column.render("Header")}
                   </th>
                 ))}
               </tr>
@@ -427,16 +474,16 @@ const Table = ({
                 <tr
                   {...row.getRowProps()}
                   key={row.id}
-                  className={selectedRow.isSelected ? 'is-selected' : ''}
+                  className={selectedRow.isSelected ? "is-selected" : ""}
                 >
                   {row.cells.map((cell) => {
                     return (
                       <td
                         {...cell.getCellProps()}
                         onDoubleClick={() => startEditing(cell)}
-                        key={row.id + '' + cell.column.id}
+                        key={row.id + "" + cell.column.id}
                       >
-                        {cell.render('Cell')}
+                        {cell.render("Cell")}
                       </td>
                     );
                   })}
@@ -450,23 +497,24 @@ const Table = ({
   );
 };
 
-const IndeterminateCheckbox = React.forwardRef<HTMLInputElement, { indeterminate: boolean }>(
-  ({ indeterminate, ...rest }, ref) => {
-    const defaultRef = React.useRef(null);
-    const resolvedRef: any = ref || defaultRef;
+const IndeterminateCheckbox = React.forwardRef<
+  HTMLInputElement,
+  { indeterminate: boolean }
+>(({ indeterminate, ...rest }, ref) => {
+  const defaultRef = React.useRef(null);
+  const resolvedRef: any = ref || defaultRef;
 
-    React.useEffect(() => {
-      resolvedRef.current.indeterminate = indeterminate;
-    }, [resolvedRef, indeterminate]);
+  React.useEffect(() => {
+    resolvedRef.current.indeterminate = indeterminate;
+  }, [resolvedRef, indeterminate]);
 
-    return (
-      <>
-        <input type='checkbox' ref={resolvedRef} {...rest} />
-      </>
-    );
-  },
-);
-IndeterminateCheckbox.displayName = 'IndeterminateCheckbox';
+  return (
+    <>
+      <input type="checkbox" ref={resolvedRef} {...rest} />
+    </>
+  );
+});
+IndeterminateCheckbox.displayName = "IndeterminateCheckbox";
 
 const HeaderSelectionComponent = ({ getToggleAllRowsSelectedProps }: any) => (
   <div>

@@ -1,5 +1,5 @@
-import React, { type FunctionComponent } from 'react';
-import AdvancedSettings from '../../components/settingfragments/advanced';
+import React, { type FunctionComponent } from "react";
+import AdvancedSettings from "../../components/settingfragments/advanced";
 
 const AdvancedSettingsPage: FunctionComponent<{}> = () => {
   return (

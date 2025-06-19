@@ -1,15 +1,19 @@
-import { type Action, type ThunkAction, configureStore } from '@reduxjs/toolkit';
-import allDBConnectionsReducer from './allDBConnectionsSlice';
-import apiReducer from './apiSlice';
-import configReducer from './configSlice';
-import consoleReducer from './consoleSlice';
-import currentUserReducer from './currentUserSlice';
-import dataModelReducer from './dataModelSlice';
-import dbConnectionReducer from './dbConnectionSlice';
-import dbHistoryReducer from './dbHistorySlice';
-import dbQueryReducer from './dbQuerySlice';
-import projectsReducer from './projectsSlice';
-import tabsReducer from './tabsSlice';
+import {
+  type Action,
+  type ThunkAction,
+  configureStore,
+} from "@reduxjs/toolkit";
+import allDBConnectionsReducer from "./allDBConnectionsSlice";
+import apiReducer from "./apiSlice";
+import configReducer from "./configSlice";
+import consoleReducer from "./consoleSlice";
+import currentUserReducer from "./currentUserSlice";
+import dataModelReducer from "./dataModelSlice";
+import dbConnectionReducer from "./dbConnectionSlice";
+import dbHistoryReducer from "./dbHistorySlice";
+import dbQueryReducer from "./dbQuerySlice";
+import projectsReducer from "./projectsSlice";
+import tabsReducer from "./tabsSlice";
 
 export function makeStore() {
   return configureStore({

@@ -1,22 +1,24 @@
-import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Constants from '../../constants';
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { AlertCircle, Circle, HelpCircle } from "lucide-react";
+import Constants from "../../constants";
 import {
   checkConnection,
   getDBDataModels,
   resetDBDataModels,
   selectDBConnection,
   selectIsDBConnected,
-} from '../../redux/dbConnectionSlice';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import styles from './footer.module.scss';
+} from "../../redux/dbConnectionSlice";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { Button } from "../ui/button";
+import { SidebarTrigger } from "../ui/sidebar";
 
 const Footer = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
 
-  const showStatus = location.pathname.startsWith('/db');
+  const showStatus = location.pathname.startsWith("/db");
 
   const dbConnection = useAppSelector(selectDBConnection);
   const isDBConnected = useAppSelector(selectIsDBConnected);
@@ -32,30 +34,35 @@ const Footer = () => {
   };
 
   return (
-    <footer className={styles.footer}>
-      <div>
-        {showStatus && isDBConnected !== undefined && (
-          <button className={styles.button + ' is-small'}>
-            <span className='icon is-small'>
-              {!isDBConnected && (
-                <i className='fa-solid fa-circle-exclamation' style={{ color: '#ff0000' }} />
-              )}
-              {isDBConnected && <i className='fas fa-circle' style={{ color: '#11ff00' }} />}
-            </span>
-            <span>
-              {isDBConnected !== undefined && isDBConnected ? ' connected' : ' not connected'}
-            </span>
-          </button>
-        )}
-      </div>
-      <div>
-        <button className={styles.button + ' is-small'} onClick={openSupport}>
-          <span className='icon is-small'>
-            <i className='far fa-circle-question' />
+    <footer className="fixed bottom-0 z-11 flex h-fit w-full flex-row items-center justify-between border-t border-gray-200 bg-gray-50 px-0 text-xs text-gray-600">
+      <SidebarTrigger />
+      {showStatus && isDBConnected !== undefined && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-5 border-none bg-transparent px-2 py-0 text-xs text-gray-600 hover:text-black"
+        >
+          {!isDBConnected ? (
+            <AlertCircle className="mr-1 h-3 w-3 text-red-500" />
+          ) : (
+            <Circle className="mr-1 h-3 w-3 fill-current text-green-500" />
+          )}
+          <span>
+            {isDBConnected !== undefined && isDBConnected
+              ? "connected"
+              : "not connected"}
           </span>
-          <span>Help & Feedback</span>
-        </button>
-      </div>
+        </Button>
+      )}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={openSupport}
+        className="h-5 border-none bg-transparent px-2 py-0 text-xs text-gray-600 hover:text-black"
+      >
+        <HelpCircle className="mr-1 h-3 w-3" />
+        <span>Help & Feedback</span>
+      </Button>
     </footer>
   );
 };

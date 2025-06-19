@@ -1,10 +1,10 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { TabType } from '../data/defaults';
-import type { Tab } from '../data/models';
-import apiService from '../network/apiService';
-import { reset as consoleReset } from './consoleSlice';
-import type { DBConnectionState } from './dbConnectionSlice';
-import type { AppState } from './store';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { TabType } from "../data/defaults";
+import type { Tab } from "../data/models";
+import apiService from "../network/apiService";
+import { reset as consoleReset } from "./consoleSlice";
+import type { DBConnectionState } from "./dbConnectionSlice";
+import type { AppState } from "./store";
 
 export interface TabState {
   tabs: Array<Tab>;
@@ -17,18 +17,20 @@ const initialState: TabState = {
 };
 
 export const createTab = createAsyncThunk(
-  'tabs/createTab',
+  "tabs/createTab",
   async (
     payload: { dbConnId: string; tabType: TabType; metadata?: any | undefined },
     { rejectWithValue, getState }: any,
   ) => {
     const dbConnectionId = payload.dbConnId;
     const tabType = payload.tabType;
-    const currentTabs = (getState()['tabs'] as TabState).tabs.filter((t) => t.type === tabType);
-    let mSchema = '';
-    let mName = '';
-    let queryId = '';
-    let query = '';
+    const currentTabs = (getState()["tabs"] as TabState).tabs.filter(
+      (t) => t.type === tabType,
+    );
+    let mSchema = "";
+    let mName = "";
+    let queryId = "";
+    let query = "";
     if (tabType === TabType.DATA || tabType === TabType.MODEL) {
       mSchema = payload.metadata.schema;
       mName = payload.metadata.name;
@@ -44,7 +46,7 @@ export const createTab = createAsyncThunk(
       queryId = payload.metadata.queryId;
       query = payload.metadata.query;
       const tab = currentTabs.find((t) => t.metadata.queryId === queryId);
-      if (queryId !== 'new' && tab) {
+      if (queryId !== "new" && tab) {
         return {
           activeTabId: tab!.id,
         };
@@ -77,15 +79,18 @@ export const createTab = createAsyncThunk(
 );
 
 export const updateActiveTab = createAsyncThunk(
-  'tabs/updateActiveTab',
-  async (payload: { tabType: TabType; metadata: object }, { getState, rejectWithValue }: any) => {
-    const { activeTabId } = getState()['tabs'] as TabState;
-    const { dbConnection } = getState()['dbConnection'] as DBConnectionState;
+  "tabs/updateActiveTab",
+  async (
+    payload: { tabType: TabType; metadata: object },
+    { getState, rejectWithValue }: any,
+  ) => {
+    const { activeTabId } = getState()["tabs"] as TabState;
+    const { dbConnection } = getState()["dbConnection"] as DBConnectionState;
     if (!activeTabId) {
-      return rejectWithValue('no active tab');
+      return rejectWithValue("no active tab");
     }
     if (!dbConnection) {
-      return rejectWithValue('no db connection active');
+      return rejectWithValue("no db connection active");
     }
     const tabType = payload.tabType;
     const metadata = payload.metadata;
@@ -106,7 +111,7 @@ export const updateActiveTab = createAsyncThunk(
 );
 
 export const getTabs = createAsyncThunk(
-  'tabs/getTabs',
+  "tabs/getTabs",
   async (payload: { dbConnId: string }, { rejectWithValue }: any) => {
     const dbConnectionId = payload.dbConnId;
     const result = await apiService.getTabsByDBConnection(dbConnectionId);
@@ -122,16 +127,18 @@ export const getTabs = createAsyncThunk(
 );
 
 export const closeTab = createAsyncThunk(
-  'tabs/closeTab',
+  "tabs/closeTab",
   async (
     payload: { dbConnId: string; tabId: string },
     { getState, rejectWithValue, dispatch }: any,
   ) => {
     const dbConnectionId = payload.dbConnId;
     const tabId = payload.tabId;
-    const tab = (getState('tabs').tabs as TabState).tabs.find((t) => t.id === tabId);
+    const tab = (getState("tabs").tabs as TabState).tabs.find(
+      (t) => t.id === tabId,
+    );
     if (!tab) {
-      return rejectWithValue('tab not open');
+      return rejectWithValue("tab not open");
     }
     const result = await apiService.closeTab(dbConnectionId, tabId);
     if (result.success) {
@@ -148,7 +155,7 @@ export const closeTab = createAsyncThunk(
 );
 
 export const tabsSlice = createSlice({
-  name: 'tabs',
+  name: "tabs",
   initialState,
   reducers: {
     reset: () => initialState,
@@ -171,8 +178,13 @@ export const tabsSlice = createSlice({
         state.tabs[idx] = action.payload.tab;
       })
       .addCase(closeTab.fulfilled, (state, action) => {
-        if (state.activeTabId === action.payload.tabId && state.tabs.length > 1) {
-          const idx = state.tabs.findIndex((t) => t.id === action.payload.tabId);
+        if (
+          state.activeTabId === action.payload.tabId &&
+          state.tabs.length > 1
+        ) {
+          const idx = state.tabs.findIndex(
+            (t) => t.id === action.payload.tabId,
+          );
           state.activeTabId = state.tabs[idx === 0 ? 1 : idx - 1].id;
         }
         state.tabs = state.tabs.filter((t) => t.id !== action.payload.tabId);

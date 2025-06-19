@@ -1,10 +1,10 @@
-import { useContext, useRef } from 'react';
-import toast from 'react-hot-toast';
-import type { DBConnection, Tab } from '../../../data/models';
-import { addDBDataModelField } from '../../../redux/dataModelSlice';
-import { useAppDispatch } from '../../../redux/hooks';
-import TabContext from '../../layouts/tabcontext';
-import { Button } from '../../ui/button';
+import { useContext, useRef } from "react";
+import toast from "react-hot-toast";
+import type { DBConnection, Tab } from "../../../data/models";
+import { addDBDataModelField } from "../../../redux/dataModelSlice";
+import { useAppDispatch } from "../../../redux/hooks";
+import TabContext from "../../layouts/tabcontext";
+import { Button } from "../../ui/button";
 
 type AddModal = {
   dbConn: DBConnection;
@@ -14,7 +14,13 @@ type AddModal = {
   onClose: () => void;
 };
 
-const AddFieldModal = ({ dbConn, mSchema, mName, onAddField, onClose }: AddModal) => {
+const AddFieldModal = ({
+  dbConn,
+  mSchema,
+  mName,
+  onAddField,
+  onClose,
+}: AddModal) => {
   const dispatch = useAppDispatch();
 
   const activeTab: Tab = useContext(TabContext)!;
@@ -34,7 +40,7 @@ const AddFieldModal = ({ dbConn, mSchema, mName, onAddField, onClose }: AddModal
       }),
     ).unwrap();
     if (result.success) {
-      toast.success('new field added');
+      toast.success("new field added");
       onAddField();
       onClose();
     } else {
@@ -43,32 +49,46 @@ const AddFieldModal = ({ dbConn, mSchema, mName, onAddField, onClose }: AddModal
   };
 
   return (
-    <div className='modal is-active'>
-      <div className='modal-background'></div>
-      <div className='modal-card'>
-        <header className='modal-card-head'>
-          <p className='modal-card-title'>
+    <div className="modal is-active">
+      <div className="modal-background"></div>
+      <div className="modal-card">
+        <header className="modal-card-head">
+          <p className="modal-card-title">
             Add new field to {mSchema}.{mName}
           </p>
-          <button className='delete' aria-label='close' onClick={onClose}></button>
+          <button
+            className="delete"
+            aria-label="close"
+            onClick={onClose}
+          ></button>
         </header>
-        <section className='modal-card-body'>
-          <div className='field'>
-            <label className='label'>New Field Name:</label>
-            <div className='control'>
-              <input ref={fieldNameRef} className='input' type='text' placeholder='Enter name' />
+        <section className="modal-card-body">
+          <div className="field">
+            <label className="label">New Field Name:</label>
+            <div className="control">
+              <input
+                ref={fieldNameRef}
+                className="input"
+                type="text"
+                placeholder="Enter name"
+              />
             </div>
           </div>
-          <div className='field'>
-            <label className='label'>New Field Type:</label>
-            <div className='control'>
-              <input ref={dataTypeRef} className='input' type='text' placeholder='Enter type' />
+          <div className="field">
+            <label className="label">New Field Type:</label>
+            <div className="control">
+              <input
+                ref={dataTypeRef}
+                className="input"
+                type="text"
+                placeholder="Enter type"
+              />
             </div>
           </div>
         </section>
-        <footer className='modal-card-foot'>
+        <footer className="modal-card-foot">
           <Button onClick={startAdding}>Add</Button>
-          <Button onClick={onClose} variant='destructive'>
+          <Button onClick={onClose} variant="destructive">
             Cancel
           </Button>
         </footer>

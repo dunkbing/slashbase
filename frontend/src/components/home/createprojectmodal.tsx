@@ -1,10 +1,10 @@
-import type React from 'react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Constants from '../../constants';
-import { useAppDispatch } from '../../redux/hooks';
-import { createNewProject } from '../../redux/projectsSlice';
-import { Button } from '../ui/button';
+import type React from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Constants from "../../constants";
+import { useAppDispatch } from "../../redux/hooks";
+import { createNewProject } from "../../redux/projectsSlice";
+import { Button } from "../ui/button";
 
 type CreateNewProjectModalPropType = {
   onClose: () => void;
@@ -14,7 +14,7 @@ const CreateNewProjectModal = ({ onClose }: CreateNewProjectModalPropType) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const [projectName, setProjectName] = useState('');
+  const [projectName, setProjectName] = useState("");
   const [loading, setLoading] = useState(false);
 
   const startCreatingProject = async () => {
@@ -25,26 +25,28 @@ const CreateNewProjectModal = ({ onClose }: CreateNewProjectModalPropType) => {
     const result = await dispatch(createNewProject({ projectName })).unwrap();
     if (result.success) {
       setLoading(false);
-      setProjectName('');
+      setProjectName("");
       onClose();
-      navigate(Constants.APP_PATHS.PROJECT.path.replace('[id]', result.project!.id));
+      navigate(
+        Constants.APP_PATHS.PROJECT.path.replace("[id]", result.project!.id),
+      );
     }
   };
 
   return (
-    <div className='modal is-active'>
-      <div className='modal-background' onClick={onClose}></div>
-      <div className='modal-content' style={{ width: 'initial' }}>
-        <div className='box'>
+    <div className="modal is-active">
+      <div className="modal-background" onClick={onClose}></div>
+      <div className="modal-content" style={{ width: "initial" }}>
+        <div className="box">
           <div style={{ paddingBottom: 12 }}>
             <h2>Create new project</h2>
           </div>
-          <div className='field'>
-            <div className='control is-expanded'>
+          <div className="field">
+            <div className="control is-expanded">
               <input
-                className='input'
-                type='text'
-                placeholder='Enter Project Name'
+                className="input"
+                type="text"
+                placeholder="Enter Project Name"
                 value={projectName}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setProjectName(e.target.value);
@@ -52,11 +54,14 @@ const CreateNewProjectModal = ({ onClose }: CreateNewProjectModalPropType) => {
               />
             </div>
           </div>
-          <div className='buttons'>
-            <Button className='is-small is-primary' onClick={startCreatingProject}>
-              {loading ? 'Creating' : 'Create'}
+          <div className="buttons">
+            <Button
+              className="is-small is-primary"
+              onClick={startCreatingProject}
+            >
+              {loading ? "Creating" : "Create"}
             </Button>
-            <Button variant='ghost' className='is-small' onClick={onClose}>
+            <Button variant="ghost" className="is-small" onClick={onClose}>
               Cancel
             </Button>
           </div>

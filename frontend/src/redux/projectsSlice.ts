@@ -1,11 +1,11 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import { toast } from 'react-hot-toast';
-import Constants from '../constants';
-import type { DBConnection, Project } from '../data/models';
-import apiService from '../network/apiService';
-import { getAllDBConnections } from './allDBConnectionsSlice';
-import type { AppState } from './store';
+import { toast } from "react-hot-toast";
+import Constants from "../constants";
+import type { DBConnection, Project } from "../data/models";
+import apiService from "../network/apiService";
+import { getAllDBConnections } from "./allDBConnectionsSlice";
+import type { AppState } from "./store";
 
 export interface ProjectState {
   projects: Array<Project>;
@@ -20,7 +20,7 @@ const initialState: ProjectState = {
 };
 
 export const getProjects = createAsyncThunk(
-  'projects/getProjects',
+  "projects/getProjects",
   async (_, {}: any) => {
     const result = await apiService.getProjects();
     const projects = result.success ? result.data : [];
@@ -30,7 +30,7 @@ export const getProjects = createAsyncThunk(
   },
   {
     condition: (_, { getState }: any) => {
-      const { projects, isFetching } = getState()['projects'] as ProjectState;
+      const { projects, isFetching } = getState()["projects"] as ProjectState;
       const isFetched = projects.length > 0;
       if (isFetched || isFetching) {
         return false;
@@ -41,10 +41,10 @@ export const getProjects = createAsyncThunk(
 );
 
 export const createNewProject = createAsyncThunk(
-  'projects/createNewProject',
+  "projects/createNewProject",
   async (payload: { projectName: string }, {}: any) => {
     if (payload.projectName.trim().length === 0) {
-      toast.error('Project Name cannot be empty!');
+      toast.error("Project Name cannot be empty!");
       return {
         success: false,
         project: null,
@@ -60,7 +60,7 @@ export const createNewProject = createAsyncThunk(
 );
 
 export const deleteProject = createAsyncThunk(
-  'projects/deleteProject',
+  "projects/deleteProject",
   async (payload: { projectId: string }, { dispatch }: any) => {
     const result = await apiService.deleteProject(payload.projectId);
     if (result.success) {
@@ -72,16 +72,18 @@ export const deleteProject = createAsyncThunk(
     } else {
       return {
         success: false,
-        projectId: '',
+        projectId: "",
       };
     }
   },
 );
 
 export const getDBConnectionsInProjects = createAsyncThunk(
-  'projects/getDBConnectionsInProjects',
+  "projects/getDBConnectionsInProjects",
   async (payload: { projectId: string }, {}: any) => {
-    const result = await apiService.getDBConnectionsByProject(payload.projectId);
+    const result = await apiService.getDBConnectionsByProject(
+      payload.projectId,
+    );
     const dbConnections = result.success ? result.data : [];
     return {
       dbConnectionsInProject: dbConnections,
@@ -90,7 +92,7 @@ export const getDBConnectionsInProjects = createAsyncThunk(
 );
 
 export const deleteDBConnectionInProject = createAsyncThunk(
-  'projects/deleteDBConnectionInProject',
+  "projects/deleteDBConnectionInProject",
   async (payload: { dbConnId: string }, { dispatch }: any) => {
     const result = await apiService.deleteDBConnection(payload.dbConnId);
     if (result.success) {
@@ -102,14 +104,14 @@ export const deleteDBConnectionInProject = createAsyncThunk(
     } else {
       return {
         success: false,
-        dbConnId: '',
+        dbConnId: "",
       };
     }
   },
 );
 
 export const projectsSlice = createSlice({
-  name: 'projects',
+  name: "projects",
   initialState,
   reducers: {
     reset: () => initialState,
@@ -130,7 +132,9 @@ export const projectsSlice = createSlice({
       })
       .addCase(deleteProject.fulfilled, (state, action) => {
         if (action.payload.success) {
-          state.projects = state.projects.filter((pro) => pro.id !== action.payload.projectId);
+          state.projects = state.projects.filter(
+            (pro) => pro.id !== action.payload.projectId,
+          );
         }
       })
       .addCase(getDBConnectionsInProjects.fulfilled, (state, action) => {
@@ -151,17 +155,23 @@ export const { reset } = projectsSlice.actions;
 export const selectProjects = (state: AppState) => state.projects.projects;
 
 export const selectCurrentProject = (state: AppState) =>
-  state.projects.projects.find((x) => x.id === state.dbConnection.dbConnection?.projectId);
+  state.projects.projects.find(
+    (x) => x.id === state.dbConnection.dbConnection?.projectId,
+  );
 
 export const selectDBConnectionsInProject = (state: AppState) =>
   state.projects.dbConnectionsInProject;
 
-export const selectProjectMemberPermissions = (state: AppState): ProjectPermissions => {
+export const selectProjectMemberPermissions = (
+  state: AppState,
+): ProjectPermissions => {
   const allPermissions = state.projects.projects.find(
     (x) => x.id === state.dbConnection.dbConnection?.projectId,
   )?.currentMember?.role.permissions;
   const permission: ProjectPermissions = {
-    readOnly: allPermissions?.find((x) => x.name === Constants.ROLES_PERMISSIONS.READ_ONLY)?.value
+    readOnly: allPermissions?.find(
+      (x) => x.name === Constants.ROLES_PERMISSIONS.READ_ONLY,
+    )?.value
       ? true
       : false,
   };

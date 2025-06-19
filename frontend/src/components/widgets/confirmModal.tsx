@@ -1,4 +1,4 @@
-import { Button } from '../ui/button';
+import { Button } from "../ui/button";
 
 type AddModal = {
   message: string;
@@ -8,17 +8,17 @@ type AddModal = {
 
 const ConfirmModal = ({ message, onConfirm, onClose }: AddModal) => {
   return (
-    <div className='modal is-active'>
-      <div className='modal-background' onClick={onClose}></div>
-      <div className='modal-content' style={{ width: 'initial' }}>
-        <div className='box'>
+    <div className="modal is-active">
+      <div className="modal-background" onClick={onClose}></div>
+      <div className="modal-content" style={{ width: "initial" }}>
+        <div className="box">
           <h2>{message}</h2>
           <br />
-          <Button className='is-small is-primary' onClick={onConfirm}>
+          <Button className="is-small is-primary" onClick={onConfirm}>
             Confirm
           </Button>
           &nbsp;
-          <Button className='is-small' onClick={onClose}>
+          <Button className="is-small" onClick={onClose}>
             Cancel
           </Button>
         </div>

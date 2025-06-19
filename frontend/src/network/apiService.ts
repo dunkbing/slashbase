@@ -1,7 +1,7 @@
-import type { AxiosResponse } from 'axios';
-import { EventsEmit } from '../../wailsjs/runtime/runtime';
-import Constants from '../constants';
-import type { TabType } from '../data/defaults';
+import type { AxiosResponse } from "axios";
+import { EventsEmit } from "../../wailsjs/runtime/runtime";
+import Constants from "../constants";
+import type { TabType } from "../data/defaults";
 import type {
   ApiResult,
   CTIDResponse,
@@ -19,14 +19,14 @@ import type {
   Tab,
   User,
   UserSession,
-} from '../data/models';
-import Events from './constants';
-import type { AddDBConnPayload, AddProjectMemberPayload } from './payloads';
-import Request from './request';
-import responseEvent from './responseEvent';
+} from "../data/models";
+import Events from "./constants";
+import type { AddDBConnPayload, AddProjectMemberPayload } from "./payloads";
+import Request from "./request";
+import responseEvent from "./responseEvent";
 
 const isapiService = (() => {
-  if (Constants.Build === 'server') {
+  if (Constants.Build === "server") {
     return false;
   }
   return true;
@@ -38,15 +38,20 @@ const getHealthCheck = async (): Promise<any> => {
     EventsEmit(Events.HEALTH_CHECK.REQUEST, Events.HEALTH_CHECK.RESPONSE);
     return response;
   }
-  return await Request.apiInstance.get<ApiResult<undefined>>('/health').then((res) => res.data);
+  return await Request.apiInstance
+    .get<ApiResult<undefined>>("/health")
+    .then((res) => res.data);
 };
 
-const loginUser = async (email: string, password: string): Promise<ApiResult<UserSession>> => {
+const loginUser = async (
+  email: string,
+  password: string,
+): Promise<ApiResult<UserSession>> => {
   if (isapiService) {
-    return Promise.reject('only api service');
+    return Promise.reject("only api service");
   }
   return await Request.apiInstance
-    .post<any, AxiosResponse<ApiResult<UserSession>>>('/user/login', {
+    .post<any, AxiosResponse<ApiResult<UserSession>>>("/user/login", {
       email,
       password,
     })
@@ -55,35 +60,42 @@ const loginUser = async (email: string, password: string): Promise<ApiResult<Use
 
 const isUserAuthenticated = async (): Promise<boolean> => {
   if (isapiService) {
-    return Promise.reject('only api service');
+    return Promise.reject("only api service");
   }
   return await Request.apiInstance
-    .get<ApiResult<undefined>>('/user/checkauth')
+    .get<ApiResult<undefined>>("/user/checkauth")
     .then((res) => res.data.success);
 };
 
 const logoutUser = async (): Promise<ApiResult<null>> => {
   if (isapiService) {
-    return Promise.reject('only api service');
-  }
-  return await Request.apiInstance.get<ApiResult<null>>('/user/logout').then((res) => res.data);
-};
-
-const editUser = async (name: string, profileImageUrl: string): Promise<ApiResult<User>> => {
-  if (isapiService) {
-    return Promise.reject('only api service');
+    return Promise.reject("only api service");
   }
   return await Request.apiInstance
-    .post<any, AxiosResponse<ApiResult<User>>>('/user/edit', {
+    .get<ApiResult<null>>("/user/logout")
+    .then((res) => res.data);
+};
+
+const editUser = async (
+  name: string,
+  profileImageUrl: string,
+): Promise<ApiResult<User>> => {
+  if (isapiService) {
+    return Promise.reject("only api service");
+  }
+  return await Request.apiInstance
+    .post<any, AxiosResponse<ApiResult<User>>>("/user/edit", {
       name,
       profileImageUrl,
     })
     .then((res) => res.data);
 };
 
-const getUsers = async (offset: number): Promise<PaginatedApiResult<User, number>> => {
+const getUsers = async (
+  offset: number,
+): Promise<PaginatedApiResult<User, number>> => {
   if (isapiService) {
-    return Promise.reject('only api service');
+    return Promise.reject("only api service");
   }
   return await Request.apiInstance
     .get<PaginatedApiResult<User, number>>(`/user/all?offset=${offset}`)
@@ -95,16 +107,21 @@ const searchUsers = async (
   offset: number,
 ): Promise<PaginatedApiResult<User, number>> => {
   if (isapiService) {
-    return Promise.reject('only api service');
+    return Promise.reject("only api service");
   }
   return await Request.apiInstance
-    .get<PaginatedApiResult<User, number>>(`/user/all?offset=${offset}&search=${searchTerm}`)
+    .get<
+      PaginatedApiResult<User, number>
+    >(`/user/all?offset=${offset}&search=${searchTerm}`)
     .then((res) => res.data);
 };
 
-const addUsers = async (email: string, password: string): Promise<ApiResult<undefined>> => {
+const addUsers = async (
+  email: string,
+  password: string,
+): Promise<ApiResult<undefined>> => {
   if (isapiService) {
-    return Promise.reject('only api service');
+    return Promise.reject("only api service");
   }
   return await Request.apiInstance
     .post<any, AxiosResponse<ApiResult<undefined>>>(`/user/add`, {
@@ -114,23 +131,39 @@ const addUsers = async (email: string, password: string): Promise<ApiResult<unde
     .then((res) => res.data);
 };
 
-const createNewProject = async (projectName: string): Promise<ApiResult<Project>> => {
+const createNewProject = async (
+  projectName: string,
+): Promise<ApiResult<Project>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<Project>>(Events.CREATE_PROJECT.RESPONSE);
-    EventsEmit(Events.CREATE_PROJECT.REQUEST, Events.CREATE_PROJECT.RESPONSE, projectName);
+    const response = responseEvent<ApiResult<Project>>(
+      Events.CREATE_PROJECT.RESPONSE,
+    );
+    EventsEmit(
+      Events.CREATE_PROJECT.REQUEST,
+      Events.CREATE_PROJECT.RESPONSE,
+      projectName,
+    );
     return response;
   }
   return await Request.apiInstance
-    .post<any, AxiosResponse<ApiResult<Project>>>('/project/create', {
+    .post<any, AxiosResponse<ApiResult<Project>>>("/project/create", {
       name: projectName,
     })
     .then((res) => res.data);
 };
 
-const deleteProject = async (projectId: string): Promise<ApiResult<undefined>> => {
+const deleteProject = async (
+  projectId: string,
+): Promise<ApiResult<undefined>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<undefined>>(Events.DELETE_PROJECT.RESPONSE);
-    EventsEmit(Events.DELETE_PROJECT.REQUEST, Events.DELETE_PROJECT.RESPONSE, projectId);
+    const response = responseEvent<ApiResult<undefined>>(
+      Events.DELETE_PROJECT.RESPONSE,
+    );
+    EventsEmit(
+      Events.DELETE_PROJECT.REQUEST,
+      Events.DELETE_PROJECT.RESPONSE,
+      projectId,
+    );
     return response;
   }
   return await Request.apiInstance
@@ -140,12 +173,14 @@ const deleteProject = async (projectId: string): Promise<ApiResult<undefined>> =
 
 const getProjects = async (): Promise<ApiResult<Array<Project>>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<Array<Project>>>(Events.GET_PROJECTS.RESPONSE);
+    const response = responseEvent<ApiResult<Array<Project>>>(
+      Events.GET_PROJECTS.RESPONSE,
+    );
     EventsEmit(Events.GET_PROJECTS.REQUEST, Events.GET_PROJECTS.RESPONSE);
     return response;
   }
   return await Request.apiInstance
-    .get<ApiResult<Array<Project>>>('/project/all')
+    .get<ApiResult<Array<Project>>>("/project/all")
     .then((res) => res.data);
 };
 
@@ -154,7 +189,7 @@ const addNewProjectMember = async (
   payload: AddProjectMemberPayload,
 ): Promise<ApiResult<ProjectMember>> => {
   if (isapiService) {
-    return Promise.reject('only api service');
+    return Promise.reject("only api service");
   }
   return await Request.apiInstance
     .post<
@@ -169,25 +204,31 @@ const deleteProjectMember = async (
   userId: string,
 ): Promise<ApiResult<undefined>> => {
   if (isapiService) {
-    return Promise.reject('only api service');
+    return Promise.reject("only api service");
   }
   return await Request.apiInstance
     .delete<ApiResult<undefined>>(`/project/${projectId}/members/${userId}`)
     .then((res) => res.data);
 };
 
-const getProjectMembers = async (projectId: string): Promise<ApiResult<Array<ProjectMember>>> => {
+const getProjectMembers = async (
+  projectId: string,
+): Promise<ApiResult<Array<ProjectMember>>> => {
   if (isapiService) {
-    return Promise.reject('only api service');
+    return Promise.reject("only api service");
   }
   return await Request.apiInstance
     .get<ApiResult<Array<ProjectMember>>>(`/project/${projectId}/members`)
     .then((res) => res.data);
 };
 
-const addNewDBConn = async (dbConnPayload: AddDBConnPayload): Promise<ApiResult<DBConnection>> => {
+const addNewDBConn = async (
+  dbConnPayload: AddDBConnPayload,
+): Promise<ApiResult<DBConnection>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<DBConnection>>(Events.CREATE_DBCONNECTION.RESPONSE);
+    const response = responseEvent<ApiResult<DBConnection>>(
+      Events.CREATE_DBCONNECTION.RESPONSE,
+    );
     EventsEmit(
       Events.CREATE_DBCONNECTION.REQUEST,
       Events.CREATE_DBCONNECTION.RESPONSE,
@@ -196,26 +237,38 @@ const addNewDBConn = async (dbConnPayload: AddDBConnPayload): Promise<ApiResult<
     return response;
   }
   return await Request.apiInstance
-    .post<any, AxiosResponse<ApiResult<DBConnection>>>('/dbconnection/create', dbConnPayload)
+    .post<
+      any,
+      AxiosResponse<ApiResult<DBConnection>>
+    >("/dbconnection/create", dbConnPayload)
     .then((res) => res.data);
 };
 
-const getAllDBConnections = async (): Promise<ApiResult<Array<DBConnection>>> => {
+const getAllDBConnections = async (): Promise<
+  ApiResult<Array<DBConnection>>
+> => {
   if (isapiService) {
     const response = responseEvent<ApiResult<Array<DBConnection>>>(
       Events.GET_DBCONNECTIONS.RESPONSE,
     );
-    EventsEmit(Events.GET_DBCONNECTIONS.REQUEST, Events.GET_DBCONNECTIONS.RESPONSE);
+    EventsEmit(
+      Events.GET_DBCONNECTIONS.REQUEST,
+      Events.GET_DBCONNECTIONS.RESPONSE,
+    );
     return response;
   }
   return await Request.apiInstance
-    .get<ApiResult<Array<DBConnection>>>('/dbconnection/all')
+    .get<ApiResult<Array<DBConnection>>>("/dbconnection/all")
     .then((res) => res.data);
 };
 
-const getSingleDBConnection = async (dbConnId: string): Promise<ApiResult<DBConnection>> => {
+const getSingleDBConnection = async (
+  dbConnId: string,
+): Promise<ApiResult<DBConnection>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<DBConnection>>(Events.GETSINGLE_DBCONNECTION.RESPONSE);
+    const response = responseEvent<ApiResult<DBConnection>>(
+      Events.GETSINGLE_DBCONNECTION.RESPONSE,
+    );
     EventsEmit(
       Events.GETSINGLE_DBCONNECTION.REQUEST,
       Events.GETSINGLE_DBCONNECTION.RESPONSE,
@@ -228,10 +281,18 @@ const getSingleDBConnection = async (dbConnId: string): Promise<ApiResult<DBConn
     .then((res) => res.data);
 };
 
-const deleteDBConnection = async (dbConnId: string): Promise<ApiResult<undefined>> => {
+const deleteDBConnection = async (
+  dbConnId: string,
+): Promise<ApiResult<undefined>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<undefined>>(Events.DELETE_DBCONNECTION.RESPONSE);
-    EventsEmit(Events.DELETE_DBCONNECTION.REQUEST, Events.DELETE_DBCONNECTION.RESPONSE, dbConnId);
+    const response = responseEvent<ApiResult<undefined>>(
+      Events.DELETE_DBCONNECTION.RESPONSE,
+    );
+    EventsEmit(
+      Events.DELETE_DBCONNECTION.REQUEST,
+      Events.DELETE_DBCONNECTION.RESPONSE,
+      dbConnId,
+    );
     return response;
   }
   return await Request.apiInstance
@@ -262,8 +323,14 @@ const getDBDataModelsByConnectionId = async (
   dbConnId: string,
 ): Promise<ApiResult<Array<DBDataModel>>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<Array<DBDataModel>>>(Events.GET_DATAMODELS.RESPONSE);
-    EventsEmit(Events.GET_DATAMODELS.REQUEST, Events.GET_DATAMODELS.RESPONSE, dbConnId);
+    const response = responseEvent<ApiResult<Array<DBDataModel>>>(
+      Events.GET_DATAMODELS.RESPONSE,
+    );
+    EventsEmit(
+      Events.GET_DATAMODELS.REQUEST,
+      Events.GET_DATAMODELS.RESPONSE,
+      dbConnId,
+    );
     return response;
   }
   return await Request.apiInstance
@@ -277,7 +344,9 @@ const getDBSingleDataModelByConnectionId = async (
   mName: string,
 ): Promise<ApiResult<DBDataModel>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<DBDataModel>>(Events.GETSINGLE_DATAMODEL.RESPONSE);
+    const response = responseEvent<ApiResult<DBDataModel>>(
+      Events.GETSINGLE_DATAMODEL.RESPONSE,
+    );
     EventsEmit(
       Events.GETSINGLE_DATAMODEL.REQUEST,
       Events.GETSINGLE_DATAMODEL.RESPONSE,
@@ -305,13 +374,17 @@ const addDBSingleDataModelField = async (
     const response = responseEvent<ApiResult<DBQueryResult>>(
       Events.ADDSINGLE_DATAMODELFIELD.RESPONSE,
     );
-    EventsEmit(Events.ADDSINGLE_DATAMODELFIELD.REQUEST, Events.ADDSINGLE_DATAMODELFIELD.RESPONSE, {
-      dbConnectionId: dbConnId,
-      schema: schemaName,
-      name: mName,
-      fieldName,
-      dataType,
-    });
+    EventsEmit(
+      Events.ADDSINGLE_DATAMODELFIELD.REQUEST,
+      Events.ADDSINGLE_DATAMODELFIELD.RESPONSE,
+      {
+        dbConnectionId: dbConnId,
+        schema: schemaName,
+        name: mName,
+        fieldName,
+        dataType,
+      },
+    );
     return response;
   }
   return await Request.apiInstance
@@ -364,14 +437,18 @@ const addDBSingleDataModelIndex = async (
     const response = responseEvent<ApiResult<DBQueryResult>>(
       Events.ADDSINGLE_DATAMODELINDEX.RESPONSE,
     );
-    EventsEmit(Events.ADDSINGLE_DATAMODELINDEX.REQUEST, Events.ADDSINGLE_DATAMODELINDEX.RESPONSE, {
-      dbConnectionId: dbConnId,
-      schema: schemaName,
-      name: mName,
-      indexName,
-      fieldNames,
-      isUnique,
-    });
+    EventsEmit(
+      Events.ADDSINGLE_DATAMODELINDEX.REQUEST,
+      Events.ADDSINGLE_DATAMODELINDEX.RESPONSE,
+      {
+        dbConnectionId: dbConnId,
+        schema: schemaName,
+        name: mName,
+        indexName,
+        fieldNames,
+        isUnique,
+      },
+    );
     return response;
   }
   return await Request.apiInstance
@@ -425,8 +502,8 @@ const getDBDataInDataModel = async (
 ): Promise<ApiResult<DBQueryData>> => {
   if (isapiService) {
     const responseEventName = Events.GET_DATA.RESPONSE.replaceAll(
-      '[schema.name]',
-      schemaName + '.' + mName,
+      "[schema.name]",
+      schemaName + "." + mName,
     );
     const response = responseEvent<ApiResult<DBQueryData>>(responseEventName);
     EventsEmit(Events.GET_DATA.REQUEST, responseEventName, {
@@ -465,15 +542,21 @@ const updateDBSingleData = async (
   value: string,
 ): Promise<ApiResult<CTIDResponse>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<CTIDResponse>>(Events.UPDATESINGLE_DATA.RESPONSE);
-    EventsEmit(Events.UPDATESINGLE_DATA.REQUEST, Events.UPDATESINGLE_DATA.RESPONSE, {
-      dbConnectionId: dbConnId,
-      schema: schemaName,
-      name: mName,
-      id,
-      columnName,
-      value,
-    });
+    const response = responseEvent<ApiResult<CTIDResponse>>(
+      Events.UPDATESINGLE_DATA.RESPONSE,
+    );
+    EventsEmit(
+      Events.UPDATESINGLE_DATA.REQUEST,
+      Events.UPDATESINGLE_DATA.RESPONSE,
+      {
+        dbConnectionId: dbConnId,
+        schema: schemaName,
+        name: mName,
+        id,
+        columnName,
+        value,
+      },
+    );
     return response;
   }
   return await Request.apiInstance
@@ -516,7 +599,9 @@ const deleteDBData = async (
   ids: string[],
 ): Promise<ApiResult<DBQueryResult>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<DBQueryResult>>(Events.DELETE_DATA.RESPONSE);
+    const response = responseEvent<ApiResult<DBQueryResult>>(
+      Events.DELETE_DATA.RESPONSE,
+    );
     EventsEmit(Events.DELETE_DATA.REQUEST, Events.DELETE_DATA.RESPONSE, {
       dbConnectionId: dbConnId,
       schema: schemaName,
@@ -540,7 +625,9 @@ const saveDBQuery = async (
   queryId: string,
 ): Promise<ApiResult<DBQuery>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<DBQuery>>(Events.SAVE_DBQUERY.RESPONSE);
+    const response = responseEvent<ApiResult<DBQuery>>(
+      Events.SAVE_DBQUERY.RESPONSE,
+    );
     EventsEmit(Events.SAVE_DBQUERY.REQUEST, Events.SAVE_DBQUERY.RESPONSE, {
       dbConnectionId: dbConnId,
       name,
@@ -558,18 +645,31 @@ const saveDBQuery = async (
     .then((res) => res.data);
 };
 
-const deleteDBQuery = async (queryId: string): Promise<ApiResult<undefined>> => {
+const deleteDBQuery = async (
+  queryId: string,
+): Promise<ApiResult<undefined>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<undefined>>(Events.DELETE_DBQUERY.RESPONSE);
-    EventsEmit(Events.DELETE_DBQUERY.REQUEST, Events.DELETE_DBQUERY.RESPONSE, queryId);
+    const response = responseEvent<ApiResult<undefined>>(
+      Events.DELETE_DBQUERY.RESPONSE,
+    );
+    EventsEmit(
+      Events.DELETE_DBQUERY.REQUEST,
+      Events.DELETE_DBQUERY.RESPONSE,
+      queryId,
+    );
     return response;
   }
   return await Request.apiInstance
-    .delete<any, AxiosResponse<ApiResult<undefined>>>(`/query/delete/${queryId}`)
+    .delete<
+      any,
+      AxiosResponse<ApiResult<undefined>>
+    >(`/query/delete/${queryId}`)
     .then((res) => res.data);
 };
 
-const getDBQueriesInDBConn = async (dbConnId: string): Promise<ApiResult<DBQuery[]>> => {
+const getDBQueriesInDBConn = async (
+  dbConnId: string,
+): Promise<ApiResult<DBQuery[]>> => {
   if (isapiService) {
     const response = responseEvent<ApiResult<DBQuery[]>>(
       Events.GET_DBQUERIES_INDBCONNECTION.RESPONSE,
@@ -586,10 +686,18 @@ const getDBQueriesInDBConn = async (dbConnId: string): Promise<ApiResult<DBQuery
     .then((res) => res.data);
 };
 
-const getSingleDBQuery = async (queryId: string): Promise<ApiResult<DBQuery>> => {
+const getSingleDBQuery = async (
+  queryId: string,
+): Promise<ApiResult<DBQuery>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<DBQuery>>(Events.GETSINGLE_DBQUERY.RESPONSE);
-    EventsEmit(Events.GETSINGLE_DBQUERY.REQUEST, Events.GETSINGLE_DBQUERY.RESPONSE, queryId);
+    const response = responseEvent<ApiResult<DBQuery>>(
+      Events.GETSINGLE_DBQUERY.RESPONSE,
+    );
+    EventsEmit(
+      Events.GETSINGLE_DBQUERY.REQUEST,
+      Events.GETSINGLE_DBQUERY.RESPONSE,
+      queryId,
+    );
     return response;
   }
   return await Request.apiInstance
@@ -616,7 +724,7 @@ const getDBHistory = async (
   return await Request.apiInstance
     .get<
       PaginatedApiResult<DBQueryLog, number>
-    >(`/query/history/${queryId}${before ? `?before=${before}` : ''}`)
+    >(`/query/history/${queryId}${before ? `?before=${before}` : ""}`)
     .then((res) => res.data);
 };
 
@@ -628,25 +736,30 @@ const runQuery = async (
     const response = responseEvent<ApiResult<DBQueryData | DBQueryResult>>(
       Events.RUN_QUERY.RESPONSE,
     );
-    EventsEmit(Events.RUN_QUERY.REQUEST, Events.RUN_QUERY.RESPONSE, dbConnId, query);
+    EventsEmit(
+      Events.RUN_QUERY.REQUEST,
+      Events.RUN_QUERY.RESPONSE,
+      dbConnId,
+      query,
+    );
     return response;
   }
   return await Request.apiInstance
     .post<
       any,
       AxiosResponse<ApiResult<DBQueryData | DBQueryResult>>
-    >('/query/run', { dbConnectionId: dbConnId, query })
+    >("/query/run", { dbConnectionId: dbConnId, query })
     .then((res) => res.data);
 };
 
 const getSingleSetting = async (name: string): Promise<ApiResult<any>> => {
   if (isapiService) {
     const response = responseEvent<ApiResult<any>>(
-      Events.GETSINGLE_SETTING.RESPONSE.replaceAll('[name]', name),
+      Events.GETSINGLE_SETTING.RESPONSE.replaceAll("[name]", name),
     );
     EventsEmit(
       Events.GETSINGLE_SETTING.REQUEST,
-      Events.GETSINGLE_SETTING.RESPONSE.replaceAll('[name]', name),
+      Events.GETSINGLE_SETTING.RESPONSE.replaceAll("[name]", name),
       name,
     );
     return response;
@@ -656,14 +769,17 @@ const getSingleSetting = async (name: string): Promise<ApiResult<any>> => {
     .then((res) => res.data);
 };
 
-const updateSingleSetting = async (name: string, value: string): Promise<ApiResult<undefined>> => {
+const updateSingleSetting = async (
+  name: string,
+  value: string,
+): Promise<ApiResult<undefined>> => {
   if (isapiService) {
     const response = responseEvent<ApiResult<any>>(
-      Events.UPDATESINGLE_SETTING.RESPONSE.replaceAll('[name]', name),
+      Events.UPDATESINGLE_SETTING.RESPONSE.replaceAll("[name]", name),
     );
     EventsEmit(
       Events.UPDATESINGLE_SETTING.REQUEST,
-      Events.UPDATESINGLE_SETTING.RESPONSE.replaceAll('[name]', name),
+      Events.UPDATESINGLE_SETTING.RESPONSE.replaceAll("[name]", name),
       name,
       value,
     );
@@ -711,9 +827,13 @@ const createTab = async (
     .then((res) => res.data);
 };
 
-const getTabsByDBConnection = async (dbConnectionId: string): Promise<ApiResult<Array<Tab>>> => {
+const getTabsByDBConnection = async (
+  dbConnectionId: string,
+): Promise<ApiResult<Array<Tab>>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<Array<Tab>>>(Events.GET_TABS_BYDBCONNECTION.RESPONSE);
+    const response = responseEvent<ApiResult<Array<Tab>>>(
+      Events.GET_TABS_BYDBCONNECTION.RESPONSE,
+    );
     EventsEmit(
       Events.GET_TABS_BYDBCONNECTION.REQUEST,
       Events.GET_TABS_BYDBCONNECTION.RESPONSE,
@@ -722,7 +842,10 @@ const getTabsByDBConnection = async (dbConnectionId: string): Promise<ApiResult<
     return response;
   }
   return await Request.apiInstance
-    .get<any, AxiosResponse<ApiResult<Array<Tab>>>>(`/tab/getall/${dbConnectionId}`)
+    .get<
+      any,
+      AxiosResponse<ApiResult<Array<Tab>>>
+    >(`/tab/getall/${dbConnectionId}`)
     .then((res) => res.data);
 };
 
@@ -754,14 +877,27 @@ const updateTab = async (
     .then((res) => res.data);
 };
 
-const closeTab = async (dbConnectionId: string, tabId: string): Promise<ApiResult<undefined>> => {
+const closeTab = async (
+  dbConnectionId: string,
+  tabId: string,
+): Promise<ApiResult<undefined>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<undefined>>(Events.CLOSE_TAB.RESPONSE);
-    EventsEmit(Events.CLOSE_TAB.REQUEST, Events.CLOSE_TAB.RESPONSE, dbConnectionId, tabId);
+    const response = responseEvent<ApiResult<undefined>>(
+      Events.CLOSE_TAB.RESPONSE,
+    );
+    EventsEmit(
+      Events.CLOSE_TAB.REQUEST,
+      Events.CLOSE_TAB.RESPONSE,
+      dbConnectionId,
+      tabId,
+    );
     return response;
   }
   return await Request.apiInstance
-    .delete<any, AxiosResponse<ApiResult<any>>>(`/tab/close/${dbConnectionId}/${tabId}`)
+    .delete<
+      any,
+      AxiosResponse<ApiResult<any>>
+    >(`/tab/close/${dbConnectionId}/${tabId}`)
     .then((res) => res.data);
 };
 
@@ -770,7 +906,9 @@ const runConsoleCommand = async (
   cmdString: string,
 ): Promise<ApiResult<string>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<string>>(Events.CONSOLE_RUN_COMMAND.RESPONSE);
+    const response = responseEvent<ApiResult<string>>(
+      Events.CONSOLE_RUN_COMMAND.RESPONSE,
+    );
     EventsEmit(
       Events.CONSOLE_RUN_COMMAND.REQUEST,
       Events.CONSOLE_RUN_COMMAND.RESPONSE,
@@ -787,26 +925,31 @@ const runConsoleCommand = async (
     .then((res) => res.data);
 };
 
-const checkConnection = async (dbConnectionId: string): Promise<ApiResult<undefined>> => {
+const checkConnection = async (
+  dbConnectionId: string,
+): Promise<ApiResult<undefined>> => {
   if (isapiService) {
     const response = responseEvent<ApiResult<undefined>>(
-      Events.CHECK_DBCONNECTION.RESPONSE.replaceAll('[dbid]', dbConnectionId),
+      Events.CHECK_DBCONNECTION.RESPONSE.replaceAll("[dbid]", dbConnectionId),
     );
     EventsEmit(
       Events.CHECK_DBCONNECTION.REQUEST,
-      Events.CHECK_DBCONNECTION.RESPONSE.replaceAll('[dbid]', dbConnectionId),
+      Events.CHECK_DBCONNECTION.RESPONSE.replaceAll("[dbid]", dbConnectionId),
       dbConnectionId,
     );
     return response;
   }
   return await Request.apiInstance
-    .get<any, AxiosResponse<ApiResult<undefined>>>(`/dbconnection/check/${dbConnectionId}`)
+    .get<
+      any,
+      AxiosResponse<ApiResult<undefined>>
+    >(`/dbconnection/check/${dbConnectionId}`)
     .then((res) => res.data);
 };
 
 const getRoles = async (): Promise<ApiResult<Role[]>> => {
   if (isapiService) {
-    return Promise.reject('only api service');
+    return Promise.reject("only api service");
   }
   return await Request.apiInstance
     .get<any, AxiosResponse<ApiResult<Role[]>>>(`/role/all`)
@@ -815,7 +958,7 @@ const getRoles = async (): Promise<ApiResult<Role[]>> => {
 
 const addRole = async (name: string): Promise<ApiResult<Role>> => {
   if (isapiService) {
-    return Promise.reject('only api service');
+    return Promise.reject("only api service");
   }
   return await Request.apiInstance
     .post<any, AxiosResponse<ApiResult<Role>>>(`/role/add`, { name })
@@ -824,7 +967,7 @@ const addRole = async (name: string): Promise<ApiResult<Role>> => {
 
 const deleteRole = async (roleId: string): Promise<ApiResult<Role>> => {
   if (isapiService) {
-    return Promise.reject('only api service');
+    return Promise.reject("only api service");
   }
   return await Request.apiInstance
     .delete<any, AxiosResponse<ApiResult<Role>>>(`/role/${roleId}`)
@@ -837,7 +980,7 @@ const updateRolePermission = async (
   value: boolean,
 ): Promise<ApiResult<RolePermission>> => {
   if (isapiService) {
-    return Promise.reject('only api service');
+    return Promise.reject("only api service");
   }
   return await Request.apiInstance
     .post<
@@ -847,10 +990,20 @@ const updateRolePermission = async (
     .then((res) => res.data);
 };
 
-const generateSQL = async (dbConnectionId: string, text: string): Promise<ApiResult<string>> => {
+const generateSQL = async (
+  dbConnectionId: string,
+  text: string,
+): Promise<ApiResult<string>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<string>>(Events.AI_GENSQL.RESPONSE);
-    EventsEmit(Events.AI_GENSQL.REQUEST, Events.AI_GENSQL.RESPONSE, dbConnectionId, text);
+    const response = responseEvent<ApiResult<string>>(
+      Events.AI_GENSQL.RESPONSE,
+    );
+    EventsEmit(
+      Events.AI_GENSQL.REQUEST,
+      Events.AI_GENSQL.RESPONSE,
+      dbConnectionId,
+      text,
+    );
     return response;
   }
   return await Request.apiInstance
@@ -863,8 +1016,13 @@ const generateSQL = async (dbConnectionId: string, text: string): Promise<ApiRes
 
 const listSupportedAIModels = async (): Promise<ApiResult<string[]>> => {
   if (isapiService) {
-    const response = responseEvent<ApiResult<string[]>>(Events.AI_LIST_SUPPORTEDMODELS.RESPONSE);
-    EventsEmit(Events.AI_LIST_SUPPORTEDMODELS.REQUEST, Events.AI_LIST_SUPPORTEDMODELS.RESPONSE);
+    const response = responseEvent<ApiResult<string[]>>(
+      Events.AI_LIST_SUPPORTEDMODELS.RESPONSE,
+    );
+    EventsEmit(
+      Events.AI_LIST_SUPPORTEDMODELS.REQUEST,
+      Events.AI_LIST_SUPPORTEDMODELS.RESPONSE,
+    );
     return response;
   }
   return await Request.apiInstance

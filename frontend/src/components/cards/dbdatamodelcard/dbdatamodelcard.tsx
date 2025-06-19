@@ -1,10 +1,9 @@
-import { List, Table } from 'lucide-react';
-import { DBConnType, TabType } from '../../../data/defaults';
-import type { DBConnection, DBDataModel } from '../../../data/models';
-import { useAppDispatch } from '../../../redux/hooks';
-import { updateActiveTab } from '../../../redux/tabsSlice';
-import { Button } from '../../ui/button';
-import styles from './dbdatamodelcard.module.scss';
+import { List, Table } from "lucide-react";
+import { DBConnType, TabType } from "../../../data/defaults";
+import type { DBConnection, DBDataModel } from "../../../data/models";
+import { useAppDispatch } from "../../../redux/hooks";
+import { updateActiveTab } from "../../../redux/tabsSlice";
+import { Button } from "../../ui/button";
 
 type DBDataModelPropType = {
   dbConnection: DBConnection;
@@ -33,24 +32,28 @@ const DBDataModelCard = ({ dataModel, dbConnection }: DBDataModelPropType) => {
   };
 
   return (
-    <div className={'card ' + styles.cardContainer}>
-      <div className={'card-content ' + styles.cardContent}>
-        <div>
+    <div className="my-4 max-w-[600px] rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+      <div className="flex items-center justify-between p-4">
+        <div className="font-semibold text-gray-900">
           {dbConnection.type === DBConnType.POSTGRES && (
-            <b>
+            <span>
               {dataModel.schemaName}.{dataModel.name}
-            </b>
+            </span>
           )}
-          {dbConnection.type === DBConnType.MONGO && <b>{dataModel.name}</b>}
-          {dbConnection.type === DBConnType.MYSQL && <b>{dataModel.name}</b>}
+          {dbConnection.type === DBConnType.MONGO && (
+            <span>{dataModel.name}</span>
+          )}
+          {dbConnection.type === DBConnType.MYSQL && (
+            <span>{dataModel.name}</span>
+          )}
         </div>
-        <div className='buttons'>
-          <Button onClick={updateActiveTabToData} variant='ghost'>
-            <Table />
+        <div className="flex gap-2">
+          <Button onClick={updateActiveTabToData} variant="ghost" size="sm">
+            <Table className="mr-2 h-4 w-4" />
             View Data
           </Button>
-          <Button variant='ghost' onClick={updateActiveTabToModel}>
-            <List />
+          <Button variant="ghost" size="sm" onClick={updateActiveTabToModel}>
+            <List className="mr-2 h-4 w-4" />
             View Model
           </Button>
         </div>

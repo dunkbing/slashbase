@@ -1,9 +1,9 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import type { DBConnection } from '../data/models';
-import apiService from '../network/apiService';
-import type { AddDBConnPayload } from '../network/payloads';
-import type { AppState } from './store';
+import type { DBConnection } from "../data/models";
+import apiService from "../network/apiService";
+import type { AddDBConnPayload } from "../network/payloads";
+import type { AppState } from "./store";
 
 export interface AllDBConnectionsState {
   dbConnections: Array<DBConnection>;
@@ -16,7 +16,7 @@ const initialState: AllDBConnectionsState = {
 };
 
 export const getAllDBConnections = createAsyncThunk(
-  'allDBConnections/getAllDBConnections',
+  "allDBConnections/getAllDBConnections",
   async (payload: { force?: boolean }) => {
     const result = await apiService.getAllDBConnections();
     const dbConnections = result.success ? result.data : [];
@@ -30,7 +30,9 @@ export const getAllDBConnections = createAsyncThunk(
       if (payload?.force === true) {
         return true;
       }
-      const { dbConnections, isFetching } = getState()['allDBConnections'] as AllDBConnectionsState;
+      const { dbConnections, isFetching } = getState()[
+        "allDBConnections"
+      ] as AllDBConnectionsState;
       const isFetched = dbConnections.length > 0;
       if (isFetched || isFetching) {
         return false;
@@ -41,7 +43,7 @@ export const getAllDBConnections = createAsyncThunk(
 );
 
 export const addNewDBConn = createAsyncThunk(
-  'allDBConnections/addNewDBConn',
+  "allDBConnections/addNewDBConn",
   async (payload: AddDBConnPayload, { rejectWithValue }: any) => {
     const response = await apiService.addNewDBConn({
       ...payload,
@@ -59,7 +61,7 @@ export const addNewDBConn = createAsyncThunk(
 );
 
 export const testNewDBConn = createAsyncThunk(
-  'allDBConnections/testNewDBConn',
+  "allDBConnections/testNewDBConn",
   async (payload: AddDBConnPayload, { rejectWithValue }: any) => {
     const response = await apiService.addNewDBConn({
       ...payload,
@@ -74,7 +76,7 @@ export const testNewDBConn = createAsyncThunk(
 );
 
 export const allDBConnectionSlice = createSlice({
-  name: 'allDBConnections',
+  name: "allDBConnections",
   initialState,
   reducers: {
     reset: () => initialState,
@@ -89,17 +91,21 @@ export const allDBConnectionSlice = createSlice({
         if (action.payload.force) {
           state.dbConnections = action.payload.dbConnections;
         } else {
-          state.dbConnections = state.dbConnections.concat(action.payload.dbConnections);
+          state.dbConnections = state.dbConnections.concat(
+            action.payload.dbConnections,
+          );
         }
       })
       .addCase(addNewDBConn.fulfilled, (state, action: any) => {
-        if (action.payload.dbConn) state.dbConnections.push(action.payload.dbConn);
+        if (action.payload.dbConn)
+          state.dbConnections.push(action.payload.dbConn);
       });
   },
 });
 
 export const { reset } = allDBConnectionSlice.actions;
 
-export const selectAllDBConnections = (state: AppState) => state.allDBConnections.dbConnections;
+export const selectAllDBConnections = (state: AppState) =>
+  state.allDBConnections.dbConnections;
 
 export default allDBConnectionSlice.reducer;

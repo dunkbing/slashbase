@@ -1,6 +1,6 @@
 interface ConstantsType {
   IsLive: boolean;
-  Build: 'desktop' | 'server';
+  Build: "desktop" | "server";
   APP_PATHS: {
     [key: string]: {
       path: string;
@@ -27,85 +27,87 @@ declare global {
 }
 
 const Constants: ConstantsType = {
-  IsLive: import.meta.env.MODE === 'prodserver' || import.meta.env.MODE === 'proddesktop',
-  Build: import.meta.env.MODE.endsWith('desktop') ? 'desktop' : 'server',
+  IsLive:
+    import.meta.env.MODE === "prodserver" ||
+    import.meta.env.MODE === "proddesktop",
+  Build: import.meta.env.MODE.endsWith("desktop") ? "desktop" : "server",
   APP_PATHS: {
     // APP
     HOME: {
-      path: '/',
+      path: "/",
     },
     PROJECT: {
-      path: '/project/[id]',
+      path: "/project/[id]",
     },
     PROJECT_MEMBERS: {
-      path: '/project/[id]/members',
+      path: "/project/[id]/members",
     },
     NEW_DB: {
-      path: '/project/[id]/newdb',
+      path: "/project/[id]/newdb",
     },
     DB: {
-      path: '/db/[id]',
+      path: "/db/[id]",
     },
     LOGOUT: {
-      path: '/logout',
+      path: "/logout",
     },
     // SETTINGS
     SETTINGS: {
-      path: '/settings',
+      path: "/settings",
     },
     SETTINGS_ACCOUNT: {
-      path: '/settings/account',
+      path: "/settings/account",
     },
     SETTINGS_ABOUT: {
-      path: '/settings/about',
+      path: "/settings/about",
     },
     SETTINGS_SUPPORT: {
-      path: '/settings/support',
+      path: "/settings/support",
     },
     SETTINGS_GENERAL: {
-      path: '/settings/general',
+      path: "/settings/general",
     },
     SETTINGS_ADVANCED: {
-      path: '/settings/advanced',
+      path: "/settings/advanced",
     },
     SETTINGS_USERS: {
-      path: '/settings/users',
+      path: "/settings/users",
     },
     SETTINGS_ADD_USER: {
-      path: '/settings/users/add',
+      path: "/settings/users/add",
     },
     SETTINGS_ROLES: {
-      path: '/settings/roles',
+      path: "/settings/roles",
     },
   },
   EXTERNAL_PATHS: {
-    OFFICIAL_WEBSITE: 'https://slashbase.com',
-    DISCORD_COMMUNITY: 'https://discord.gg/U6fXgm3FAX',
-    REPORT_BUGS: 'https://github.com/slashbaseide/slashbase/issues',
-    CHANGELOG: 'https://slashbase.com/updates',
-    SUPPORT_MAIL: 'mailto:slashbaseide@gmail.com',
+    OFFICIAL_WEBSITE: "https://slashbase.com",
+    DISCORD_COMMUNITY: "https://discord.gg/U6fXgm3FAX",
+    REPORT_BUGS: "https://github.com/slashbaseide/slashbase/issues",
+    CHANGELOG: "https://slashbase.com/updates",
+    SUPPORT_MAIL: "mailto:slashbaseide@gmail.com",
   },
   SETTING_KEYS: {
-    APP_ID: 'APP_ID',
-    TELEMETRY_ENABLED: 'TELEMETRY_ENABLED',
-    LOGS_EXPIRE: 'LOGS_EXPIRE',
-    OPENAI_KEY: 'OPENAI_KEY',
-    OPENAI_MODEL: 'OPENAI_MODEL',
+    APP_ID: "APP_ID",
+    TELEMETRY_ENABLED: "TELEMETRY_ENABLED",
+    LOGS_EXPIRE: "LOGS_EXPIRE",
+    OPENAI_KEY: "OPENAI_KEY",
+    OPENAI_MODEL: "OPENAI_MODEL",
   },
   ROLES: {
-    ADMIN: 'Admin',
+    ADMIN: "Admin",
   },
   ROLES_PERMISSIONS: {
-    READ_ONLY: 'READ_ONLY',
+    READ_ONLY: "READ_ONLY",
   },
 };
 
 export default Constants;
 
 export const GetAPIConfig = () => {
-  const API_HOST = Constants.IsLive ? '' : 'http://localhost:3000';
+  const API_HOST = Constants.IsLive ? "" : "http://localhost:3000";
   return {
     API_HOST: API_HOST,
-    API_URL: API_HOST + '/api/v1',
+    API_URL: API_HOST + "/api/v1",
   };
 };

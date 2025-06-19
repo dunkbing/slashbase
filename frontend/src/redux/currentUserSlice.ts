@@ -1,16 +1,16 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import type { User } from '../data/models';
-import storage from '../data/storage';
-import apiService from '../network/apiService';
-import { reset as allDBConnReset } from './allDBConnectionsSlice';
-import { reset as apiReset } from './apiSlice';
-import { reset as configReset } from './configSlice';
-import { reset as dataModelReset } from './dataModelSlice';
-import { reset as dbConnReset } from './dbConnectionSlice';
-import { reset as dbQueryReset } from './dbQuerySlice';
-import { reset as projectReset } from './projectsSlice';
-import type { AppState } from './store';
+import type { User } from "../data/models";
+import storage from "../data/storage";
+import apiService from "../network/apiService";
+import { reset as allDBConnReset } from "./allDBConnectionsSlice";
+import { reset as apiReset } from "./apiSlice";
+import { reset as configReset } from "./configSlice";
+import { reset as dataModelReset } from "./dataModelSlice";
+import { reset as dbConnReset } from "./dbConnectionSlice";
+import { reset as dbQueryReset } from "./dbQuerySlice";
+import { reset as projectReset } from "./projectsSlice";
+import type { AppState } from "./store";
 
 export interface CurrentUserState {
   user?: User;
@@ -22,9 +22,15 @@ const initialState: CurrentUserState = {
 };
 
 export const loginUser = createAsyncThunk(
-  'currentUser/loginUser',
-  async (payload: { email: string; password: string }, { dispatch, rejectWithValue }) => {
-    const response = await apiService.loginUser(payload.email, payload.password);
+  "currentUser/loginUser",
+  async (
+    payload: { email: string; password: string },
+    { dispatch, rejectWithValue },
+  ) => {
+    const response = await apiService.loginUser(
+      payload.email,
+      payload.password,
+    );
     if (response.success) {
       await storage.loginCurrentUser(response.data.user);
       return {
@@ -37,7 +43,7 @@ export const loginUser = createAsyncThunk(
   },
 );
 
-export const getUser = createAsyncThunk('currentUser/getUser', async () => {
+export const getUser = createAsyncThunk("currentUser/getUser", async () => {
   const isAuthenticated = await apiService.isUserAuthenticated();
   const currentUser = await storage.getCurrentUser();
   return {
@@ -47,9 +53,15 @@ export const getUser = createAsyncThunk('currentUser/getUser', async () => {
 });
 
 export const editUser = createAsyncThunk(
-  'currentUser/editUser',
-  async (payload: { name: string; profileImageUrl: string }, { rejectWithValue }) => {
-    const response = await apiService.editUser(payload.name, payload.profileImageUrl);
+  "currentUser/editUser",
+  async (
+    payload: { name: string; profileImageUrl: string },
+    { rejectWithValue },
+  ) => {
+    const response = await apiService.editUser(
+      payload.name,
+      payload.profileImageUrl,
+    );
     if (response.success) {
       await storage.updateCurrentUser(response.data);
       return {
@@ -62,7 +74,7 @@ export const editUser = createAsyncThunk(
 );
 
 export const updateUser = createAsyncThunk(
-  'currentUser/updateUser',
+  "currentUser/updateUser",
   async (payload: { user: User }, { rejectWithValue }) => {
     await storage.updateCurrentUser(payload.user);
     return {
@@ -71,32 +83,38 @@ export const updateUser = createAsyncThunk(
   },
 );
 
-export const logoutUser = createAsyncThunk('currentUser/logoutUser', async (_, { dispatch }) => {
-  await apiService.logoutUser();
-  dispatch(clearLogin());
-  return {
-    currentUser: undefined,
-    isAuthenticated: false,
-  };
-});
+export const logoutUser = createAsyncThunk(
+  "currentUser/logoutUser",
+  async (_, { dispatch }) => {
+    await apiService.logoutUser();
+    dispatch(clearLogin());
+    return {
+      currentUser: undefined,
+      isAuthenticated: false,
+    };
+  },
+);
 
-export const clearLogin = createAsyncThunk('currentUser/clearLogin', async (_, { dispatch }) => {
-  await storage.logoutUser();
-  dispatch(projectReset());
-  dispatch(allDBConnReset());
-  dispatch(dbConnReset());
-  dispatch(configReset());
-  dispatch(apiReset());
-  dispatch(dataModelReset());
-  dispatch(dbQueryReset());
-  return {
-    currentUser: undefined,
-    isAuthenticated: false,
-  };
-});
+export const clearLogin = createAsyncThunk(
+  "currentUser/clearLogin",
+  async (_, { dispatch }) => {
+    await storage.logoutUser();
+    dispatch(projectReset());
+    dispatch(allDBConnReset());
+    dispatch(dbConnReset());
+    dispatch(configReset());
+    dispatch(apiReset());
+    dispatch(dataModelReset());
+    dispatch(dbQueryReset());
+    return {
+      currentUser: undefined,
+      isAuthenticated: false,
+    };
+  },
+);
 
 export const userSlice = createSlice({
-  name: 'currentUser',
+  name: "currentUser",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -108,7 +126,9 @@ export const userSlice = createSlice({
         }
       })
       .addCase(getUser.fulfilled, (state, action: any) => {
-        state.user = action.payload.currentUser ? action.payload.currentUser : undefined;
+        state.user = action.payload.currentUser
+          ? action.payload.currentUser
+          : undefined;
         state.isAuthenticated = action.payload.isAuthenticated;
       })
       .addCase(clearLogin.fulfilled, (state, action: any) => {
@@ -136,6 +156,7 @@ export const selectCurrentUser = (state: AppState) => state.currentUser.user!;
 
 export const getCurrentUser = (state: AppState) => state.currentUser.user;
 
-export const selectIsAuthenticated = (state: AppState) => state.currentUser.isAuthenticated;
+export const selectIsAuthenticated = (state: AppState) =>
+  state.currentUser.isAuthenticated;
 
 export default userSlice.reducer;
