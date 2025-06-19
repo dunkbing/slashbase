@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/slashbaseide/slashbase/pkg/queryengines/utils"
 )
 
@@ -43,7 +43,7 @@ func (pxEngine *PostgresQueryEngine) getConnection(dbConnectionId, host string, 
 		connString += " sslmode=prefer"
 	}
 
-	pool, err := pgxpool.Connect(context.Background(), connString)
+	pool, err := pgxpool.New(context.Background(), connString)
 	if err != nil {
 		return
 	}

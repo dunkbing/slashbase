@@ -10,9 +10,11 @@ import (
 	"github.com/auxten/postgresql-parser/pkg/sql/parser"
 	"github.com/auxten/postgresql-parser/pkg/sql/sem/tree"
 	"github.com/auxten/postgresql-parser/pkg/walk"
-	"github.com/jackc/pgproto3/v2"
+
+	// "github.com/jackc/pgproto3/v2"
 	"github.com/jackc/pgtype"
-	"github.com/jackc/pgx/v4"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 func PgSqlRowsToJson(rows pgx.Rows) ([]string, []map[string]interface{}) {
@@ -202,7 +204,7 @@ func PgSqlRowsToJson(rows pgx.Rows) ([]string, []map[string]interface{}) {
 	return columns, tableData
 }
 
-func FieldType(fd pgproto3.FieldDescription) reflect.Type {
+func FieldType(fd pgconn.FieldDescription) reflect.Type {
 	switch fd.DataTypeOID {
 	case pgtype.Float8OID:
 		return reflect.TypeOf(sql.NullFloat64{})
