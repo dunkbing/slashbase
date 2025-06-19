@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Constants from "../../../constants";
 import type { DBConnection, Project } from "../../../data/models";
-import { selectAllDBConnections } from "../../../redux/allDBConnectionsSlice";
+import { useAllDBConnections } from "../../../contexts/db-connection-context";
 import { useAppSelector } from "../../../redux/hooks";
 import { selectProjects } from "../../../redux/projectsSlice";
 import CreateNewProjectModal from "../../home/createprojectmodal";
@@ -24,9 +24,7 @@ const HomeSidebar = (_: HomeSidebarPropType) => {
   const [isShowingCreateProject, setIsShowingCreateProject] = useState(false);
 
   const allProjects: Project[] = useAppSelector(selectProjects);
-  const allDBConnections: DBConnection[] = useAppSelector(
-    selectAllDBConnections,
-  );
+  const allDBConnections: DBConnection[] = useAllDBConnections();
 
   return (
     <React.Fragment>

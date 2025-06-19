@@ -37,7 +37,6 @@ type DBConnection struct {
 }
 
 func NewDBConnection(projectID string, name string, dbtype string, dbscheme, dbhost, dbport, dbuser, dbpassword, databaseName, useSSH, sshHost, sshUser, sshPassword, sshKeyFile string, useSSL bool) (*DBConnection, error) {
-
 	if !utils.ContainsString([]string{qemodels.DBUSESSH_NONE, qemodels.DBUSESSH_PASSWORD, qemodels.DBUSESSH_KEYFILE, qemodels.DBUSESSH_PASSKEYFILE}, useSSH) {
 		return nil, errors.New("useSSH is not correct")
 	}

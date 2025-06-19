@@ -10,6 +10,10 @@ import {
 } from "react-router-dom";
 import AppLayout from "./components/layouts/applayout";
 import Constants from "./constants";
+import {
+  DBConnectionsProvider,
+  useDBConnections,
+} from "./contexts/db-connection-context";
 import DBPage from "./pages/db";
 import HomePage from "./pages/home";
 import LogoutPage from "./pages/logout";
@@ -24,13 +28,13 @@ import ManageRolesPage from "./pages/settings/roles";
 import SupportPage from "./pages/settings/support";
 import UsersPage from "./pages/settings/users";
 import AddNewUserPage from "./pages/settings/usersAdd";
-import { getAllDBConnections } from "./redux/allDBConnectionsSlice";
 import { getConfig } from "./redux/configSlice";
 import { getUser, selectIsAuthenticated } from "./redux/currentUserSlice";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { getProjects } from "./redux/projectsSlice";
 
-function App() {
+// Inner App component that uses the context
+function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -39,6 +43,7 @@ function App() {
     "desktop";
 
   const dispatch = useAppDispatch();
+  const { getAllDBConnections } = useDBConnections();
 
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
@@ -51,10 +56,10 @@ function App() {
   useEffect(() => {
     if (isAuthenticated || Constants.Build === "desktop") {
       dispatch(getProjects());
-      dispatch(getAllDBConnections({}));
+      getAllDBConnections();
       dispatch(getConfig());
     }
-  }, [dispatch, isAuthenticated]);
+  }, [dispatch, isAuthenticated, getAllDBConnections]);
 
   useEffect(() => {
     if (Constants.Build === "desktop") return;
@@ -91,6 +96,15 @@ function App() {
       </Routes>
       <Toaster />
     </div>
+  );
+}
+
+// Main App component with context provider
+function App() {
+  return (
+    <DBConnectionsProvider>
+      <AppContent />
+    </DBConnectionsProvider>
   );
 }
 

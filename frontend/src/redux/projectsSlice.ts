@@ -4,7 +4,6 @@ import { toast } from "react-hot-toast";
 import Constants from "../constants";
 import type { DBConnection, Project } from "../data/models";
 import apiService from "../network/apiService";
-import { getAllDBConnections } from "./allDBConnectionsSlice";
 import type { AppState } from "./store";
 
 export interface ProjectState {
@@ -64,7 +63,6 @@ export const deleteProject = createAsyncThunk(
   async (payload: { projectId: string }, { dispatch }: any) => {
     const result = await apiService.deleteProject(payload.projectId);
     if (result.success) {
-      await dispatch(getAllDBConnections({ force: true }));
       return {
         success: true,
         projectId: payload.projectId,
@@ -96,7 +94,6 @@ export const deleteDBConnectionInProject = createAsyncThunk(
   async (payload: { dbConnId: string }, { dispatch }: any) => {
     const result = await apiService.deleteDBConnection(payload.dbConnId);
     if (result.success) {
-      await dispatch(getAllDBConnections({ force: true }));
       return {
         success: true,
         dbConnId: payload.dbConnId,

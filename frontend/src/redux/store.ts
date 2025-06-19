@@ -3,7 +3,6 @@ import {
   type ThunkAction,
   configureStore,
 } from "@reduxjs/toolkit";
-import allDBConnectionsReducer from "./allDBConnectionsSlice";
 import apiReducer from "./apiSlice";
 import configReducer from "./configSlice";
 import consoleReducer from "./consoleSlice";
@@ -23,7 +22,6 @@ export function makeStore() {
       projects: projectsReducer,
       dbConnection: dbConnectionReducer,
       tabs: tabsReducer,
-      allDBConnections: allDBConnectionsReducer,
       dataModel: dataModelReducer,
       dbQuery: dbQueryReducer,
       dbHistory: dbHistoryReducer,

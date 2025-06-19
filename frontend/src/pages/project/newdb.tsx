@@ -4,22 +4,21 @@ import toast, { Toaster } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { Database, Settings, Loader2, TestTube, Plus } from "lucide-react";
 import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
 import InputTextField from "../../components/input-text-field";
 import PasswordInputField from "../../components/password-input-field";
 import Constants from "../../constants";
+import { useDBConnections } from "../../contexts/db-connection-context";
 import { DBConnType, DBConnectionUseSSHType } from "../../data/defaults";
 import type { Project } from "../../data/models";
 import type { AddDBConnPayload } from "../../network/payloads";
-import { addNewDBConn, testNewDBConn } from "../../redux/allDBConnectionsSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useAppSelector } from "../../redux/hooks";
 import { selectProjects } from "../../redux/projectsSlice";
 
 const NewDBPage: FunctionComponent<{}> = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const dispatch = useAppDispatch();
+  const { addNewDBConn, testNewDBConn } = useDBConnections();
   const projects: Project[] = useAppSelector(selectProjects);
   const project = projects.find((x) => x.id === id);
   const [addingError, setAddingError] = useState(false);
@@ -150,7 +149,7 @@ const NewDBPage: FunctionComponent<{}> = () => {
       isTest: false,
     };
     try {
-      await dispatch(addNewDBConn(payload)).unwrap();
+      await addNewDBConn(payload);
       navigate(Constants.APP_PATHS.PROJECT.path.replace("[id]", project.id));
     } catch (e: any) {
       errorHandler(e, payload);
@@ -180,7 +179,7 @@ const NewDBPage: FunctionComponent<{}> = () => {
       isTest: true,
     };
     try {
-      await dispatch(testNewDBConn(payload)).unwrap();
+      await testNewDBConn(payload);
       success();
     } catch (e: any) {
       errorHandler(e, payload);
@@ -380,31 +379,29 @@ const NewDBPage: FunctionComponent<{}> = () => {
             </div>
 
             {/* SSL Option for MongoDB */}
-            {data.dbType === DBConnType.MONGO && (
-              <div className="flex items-start">
-                <div className="flex h-5 items-center">
-                  <input
-                    id="ssl-checkbox"
-                    name="dbUseSSL"
-                    type="checkbox"
-                    onChange={handleChange}
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="ml-3 text-sm">
-                  <label
-                    htmlFor="ssl-checkbox"
-                    className="font-medium text-gray-700"
-                  >
-                    Enable SSL
-                  </label>
-                  <p className="text-gray-500">
-                    If you are connecting to database which enforce/require SSL
-                    connection. (Example: Azure CosmosDB)
-                  </p>
-                </div>
+            <div className="flex items-start">
+              <div className="flex h-5 items-center">
+                <input
+                  id="ssl-checkbox"
+                  name="dbUseSSL"
+                  type="checkbox"
+                  onChange={handleChange}
+                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
               </div>
-            )}
+              <div className="ml-3 text-sm">
+                <label
+                  htmlFor="ssl-checkbox"
+                  className="font-medium text-gray-700"
+                >
+                  Enable SSL
+                </label>
+                <p className="text-gray-500">
+                  If you are connecting to database which enforce/require SSL
+                  connection. (Example: Azure CosmosDB)
+                </p>
+              </div>
+            </div>
 
             {/* SSH Fields */}
             {data.dbUseSSH !== DBConnectionUseSSHType.NONE && (
@@ -460,8 +457,8 @@ const NewDBPage: FunctionComponent<{}> = () => {
 
         {/* Error Message */}
         {!adding && addingError && (
-          <div className="rounded-md border border-red-200 bg-red-50 p-3">
-            <p className="text-sm text-red-600">{addingError}</p>
+          <div className="rounded-md border border-red-200 bg-red-50 p-3 select-all">
+            <p className="text-sm text-red-600 select-all">{String(addingError)}</p>
           </div>
         )}
 

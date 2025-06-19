@@ -11,7 +11,7 @@ import {
 import Constants from "../../constants";
 import type { DBConnection, Project } from "../../data/models";
 import { openInBrowser } from "../../lib/utils";
-import { selectAllDBConnections } from "../../redux/allDBConnectionsSlice";
+import { useAllDBConnections } from "../../contexts/db-connection-context";
 import {
   getDBDataModels,
   resetDBDataModels,
@@ -43,7 +43,7 @@ const Header = () => {
   const dispatch = useAppDispatch();
 
   const projects: Project[] = useAppSelector(selectProjects);
-  const dbConnections: DBConnection[] = useAppSelector(selectAllDBConnections);
+  const dbConnections: DBConnection[] = useAllDBConnections();
   const currentDBConnection: DBConnection | undefined =
     useAppSelector(selectDBConnection);
 

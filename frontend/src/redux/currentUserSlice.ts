@@ -3,7 +3,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { User } from "../data/models";
 import storage from "../data/storage";
 import apiService from "../network/apiService";
-import { reset as allDBConnReset } from "./allDBConnectionsSlice";
 import { reset as apiReset } from "./apiSlice";
 import { reset as configReset } from "./configSlice";
 import { reset as dataModelReset } from "./dataModelSlice";
@@ -100,7 +99,6 @@ export const clearLogin = createAsyncThunk(
   async (_, { dispatch }) => {
     await storage.logoutUser();
     dispatch(projectReset());
-    dispatch(allDBConnReset());
     dispatch(dbConnReset());
     dispatch(configReset());
     dispatch(apiReset());
