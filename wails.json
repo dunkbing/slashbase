@@ -3,9 +3,9 @@
   "name": "Slashbase",
   "outputfilename": "Slashbase",
   "frontend:dir": "frontend",
-  "frontend:install": "yarn install",
-  "frontend:build": "yarn build",
-  "frontend:dev:watcher": "yarn dev",
+  "frontend:install": "bun install",
+  "frontend:build": "bun run build",
+  "frontend:dev:watcher": "bun run dev",
   "frontend:dev:serverUrl": "auto",
   "author": {
     "name": "Slashbase",
