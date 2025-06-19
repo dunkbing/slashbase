@@ -1,27 +1,22 @@
 import type React from "react";
 import { useContext, useEffect, useRef, useState } from "react";
 import type { Tab } from "../../data/models";
-import {
-  initConsole,
-  runConsoleCmd,
-  selectBlocks,
-} from "../../redux/consoleSlice";
-import { selectDBConnection } from "../../redux/dbConnectionSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useApp } from "../../hooks/useApp";
 import TabContext from "../layouts/tabcontext";
 
 type DBConsolePropType = {};
 
 const DBConsoleFragment = ({}: DBConsolePropType) => {
-  const dispatch = useAppDispatch();
+  const { selectDBConnection, selectBlocks, initConsole, runConsoleCmd } =
+    useApp();
 
   const currentTab: Tab = useContext(TabContext)!;
 
   const consoleRef = useRef<HTMLDivElement>(null);
   const consoleEndRef = useRef<HTMLDivElement>(null);
 
-  const dbConnection = useAppSelector(selectDBConnection);
-  const output = useAppSelector(selectBlocks);
+  const dbConnection = selectDBConnection;
+  const output = selectBlocks;
   const [input, setInput] = useState("");
   const [nfocus, setFocus] = useState<number>(0);
   const history = output
@@ -30,7 +25,7 @@ const DBConsoleFragment = ({}: DBConsolePropType) => {
     .map((e) => e.text);
 
   useEffect(() => {
-    dispatch(initConsole(dbConnection!.id));
+    initConsole(dbConnection!.id);
   }, [dbConnection]);
 
   useEffect(() => {
@@ -38,7 +33,7 @@ const DBConsoleFragment = ({}: DBConsolePropType) => {
   }, [output]);
 
   const confirmInput = () => {
-    dispatch(runConsoleCmd({ dbConnId: dbConnection!.id, cmdString: input }));
+    runConsoleCmd(dbConnection!.id, input);
     setInput("");
   };
 

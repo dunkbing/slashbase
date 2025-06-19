@@ -12,12 +12,7 @@ import { Save, AlignLeft, Book, Trash2, Play, Loader2 } from "lucide-react";
 import { DBConnType } from "../../../data/defaults";
 import type { DBConnection, Tab } from "../../../data/models";
 import apiService from "../../../network/apiService";
-import {
-  deleteDBQuery,
-  saveDBQuery,
-  selectDBConnection,
-} from "../../../redux/dbConnectionSlice";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { useApp } from "../../../hooks/useApp";
 import TabContext from "../../layouts/tabcontext";
 import CheatSheetModal from "../cheatsheet/cheatsheet";
 import { Button } from "../../ui/button";
@@ -48,7 +43,7 @@ const QueryEditor = ({
   onSave,
   onDelete,
 }: QueryEditorPropType) => {
-  const dispatch = useAppDispatch();
+  const { selectDBConnection, saveDBQuery, deleteDBQuery } = useApp();
 
   const [value, setValue] = useState(initialValue);
   const [queryName, setQueryName] = useState(initQueryName);
@@ -58,8 +53,7 @@ const QueryEditor = ({
   const [showCheatsheet, setShowCheatsheet] = useState<boolean>(false);
   const editorRef = useRef<ReactCodeMirrorRef | null>(null);
 
-  const dbConnection: DBConnection | undefined =
-    useAppSelector(selectDBConnection);
+  const dbConnection: DBConnection | undefined = selectDBConnection;
   const currentTab: Tab = useContext(TabContext)!;
 
   const onChange = useCallback((value: any) => {
@@ -87,14 +81,12 @@ const QueryEditor = ({
     }
     setSaving(true);
     try {
-      const result = await dispatch(
-        saveDBQuery({
-          dbConnId: dbConnection!.id,
-          queryId,
-          name: queryName,
-          query: value,
-        }),
-      ).unwrap();
+      const result = await saveDBQuery(
+        dbConnection!.id,
+        queryId,
+        queryName,
+        value,
+      );
       toast.success("Saved Successfully!");
       onSave(result.dbQuery.id, result.dbQuery.query);
     } catch (e) {
@@ -109,7 +101,7 @@ const QueryEditor = ({
     }
     setDeleting(true);
     try {
-      await dispatch(deleteDBQuery({ queryId })).unwrap();
+      await deleteDBQuery(queryId);
       toast.success("Query Deleted");
       onDelete();
     } catch (e) {

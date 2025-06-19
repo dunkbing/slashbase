@@ -8,15 +8,7 @@ import type {
   DBQueryResult,
   Tab,
 } from "../../data/models";
-import { selectDBConnection } from "../../redux/dbConnectionSlice";
-import {
-  getDBQuery,
-  runQuery,
-  selectDBQuery,
-  setDBQuery,
-} from "../../redux/dbQuerySlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { closeTab, updateActiveTab } from "../../redux/tabsSlice";
+import { useApp } from "../../hooks/useApp";
 import TabContext from "../layouts/tabcontext";
 import Chart from "./chart/chart";
 import JsonTable from "./jsontable/jsontable";
@@ -24,11 +16,18 @@ import QueryEditor from "./queryeditor/queryeditor";
 import Table from "./table/table";
 
 const DBQueryFragment = () => {
-  const dispatch = useAppDispatch();
+  const {
+    selectDBConnection,
+    selectDBQuery,
+    getDBQuery,
+    runQuery,
+    setDBQuery,
+    closeTab,
+    updateActiveTab,
+  } = useApp();
 
-  const dbConnection: DBConnection | undefined =
-    useAppSelector(selectDBConnection);
-  const dbQuery = useAppSelector(selectDBQuery);
+  const dbConnection: DBConnection | undefined = selectDBConnection;
+  const dbQuery = selectDBQuery;
 
   const currentTab: Tab = useContext(TabContext)!;
 
@@ -42,15 +41,13 @@ const DBQueryFragment = () => {
   useEffect(() => {
     (async () => {
       if (queryId && queryId !== "new") {
-        dispatch(
-          getDBQuery({ queryId: String(queryId), tabId: currentTab.id }),
-        );
+        getDBQuery(String(queryId), currentTab.id);
       }
       if (queryId === "new") {
-        dispatch(setDBQuery({ data: undefined, tabId: currentTab.id }));
+        setDBQuery(currentTab.id, undefined);
       }
     })();
-  }, [dispatch, queryId]);
+  }, [queryId]);
 
   useEffect(() => {
     setQueryData(undefined);
@@ -59,9 +56,7 @@ const DBQueryFragment = () => {
   }, [queryId]);
 
   const onRunQueryBtn = async (query: string, callback: () => void) => {
-    const result = await dispatch(
-      runQuery({ dbConnectionId: dbConnection!.id, query }),
-    ).unwrap();
+    const result = await runQuery(dbConnection!.id, query);
     if (result.success) {
       toast.success("Success");
       if ((result.data as DBQueryResult).message) {
@@ -82,16 +77,11 @@ const DBQueryFragment = () => {
   };
 
   const onQuerySaved = (queryId: string, query: string) => {
-    dispatch(
-      updateActiveTab({
-        tabType: TabType.QUERY,
-        metadata: { queryId: queryId, query: query },
-      }),
-    );
+    updateActiveTab(TabType.QUERY, { queryId: queryId, query: query });
   };
 
   const onDelete = () => {
-    dispatch(closeTab({ dbConnId: dbConnection!.id, tabId: currentTab.id }));
+    closeTab(dbConnection!.id, currentTab.id);
   };
 
   return (

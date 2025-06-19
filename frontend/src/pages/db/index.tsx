@@ -11,37 +11,38 @@ import DBShowModelFragment from "../../components/dbfragments/showmodel";
 import TabContext from "../../components/layouts/tabcontext";
 import { TabType } from "../../data/defaults";
 import type { Tab } from "../../data/models";
-import {
-  getDBConnection,
-  getDBDataModels,
-  getDBQueries,
-} from "../../redux/dbConnectionSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { getTabs, selectActiveTab, selectTabs } from "../../redux/tabsSlice";
+import { useApp } from "../../hooks/useApp";
 
 const DBPage: FunctionComponent<{}> = () => {
   const { id } = useParams();
   const [error404, setError404] = useState(false);
-  const dispatch = useAppDispatch();
+  const {
+    getDBConnection,
+    getTabs,
+    getDBDataModels,
+    getDBQueries,
+    selectTabs,
+    selectActiveTab,
+  } = useApp();
 
-  const tabs: Tab[] = useAppSelector(selectTabs);
-  const activeTab = useAppSelector(selectActiveTab);
+  const tabs: Tab[] = selectTabs;
+  const activeTab = selectActiveTab;
 
   useEffect(() => {
     (async () => {
       if (id) {
         try {
-          await dispatch(getDBConnection({ dbConnId: String(id) })).unwrap();
+          await getDBConnection(String(id));
         } catch (e) {
           setError404(true);
           return;
         }
-        dispatch(getTabs({ dbConnId: String(id) }));
-        dispatch(getDBDataModels({ dbConnId: String(id) }));
-        dispatch(getDBQueries({ dbConnId: String(id) }));
+        getTabs(String(id));
+        getDBDataModels(String(id));
+        getDBQueries(String(id));
       }
     })();
-  }, [dispatch, id]);
+  }, [getDBConnection, getTabs, getDBDataModels, getDBQueries, id]);
 
   if (error404) {
     return (

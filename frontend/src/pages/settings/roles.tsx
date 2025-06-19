@@ -8,8 +8,7 @@ import { Input } from "../../components/ui/input";
 import Constants from "../../constants";
 import type { Role } from "../../data/models";
 import apiService from "../../network/apiService";
-import { selectCurrentUser } from "../../redux/currentUserSlice";
-import { useAppSelector } from "../../redux/hooks";
+import { useApp } from "../../hooks/useApp";
 
 const ManageRolesPage: FunctionComponent<{}> = () => {
   const navigate = useNavigate();
@@ -23,7 +22,8 @@ const ManageRolesPage: FunctionComponent<{}> = () => {
 
   const newRoleInputRef = useRef<HTMLInputElement>(null);
 
-  const currentUser = useAppSelector(selectCurrentUser);
+  const { selectCurrentUser } = useApp();
+  const currentUser = selectCurrentUser;
   useEffect(() => {
     if (currentUser && !currentUser.isRoot) {
       navigate(Constants.APP_PATHS.SETTINGS_ACCOUNT.path);

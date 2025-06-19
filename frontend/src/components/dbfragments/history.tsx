@@ -3,14 +3,7 @@ import { useContext, useEffect } from "react";
 import toast from "react-hot-toast";
 import InfiniteScroll from "react-infinite-scroll-component";
 import type { DBConnection, Tab } from "../../data/models";
-import { selectDBConnection } from "../../redux/dbConnectionSlice";
-import {
-  getDBQueryLogs,
-  reset,
-  selectDBQueryLogs,
-  selectDBQueryLogsNext,
-} from "../../redux/dbHistorySlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useApp } from "../../hooks/useApp";
 import TabContext from "../layouts/tabcontext";
 import { Button } from "../ui/button";
 import { RefreshCcw } from "lucide-react";
@@ -18,35 +11,38 @@ import { RefreshCcw } from "lucide-react";
 type DBHistoryPropType = {};
 
 const DBHistoryFragment = ({}: DBHistoryPropType) => {
-  const dispatch = useAppDispatch();
+  const {
+    selectDBConnection,
+    selectDBQueryLogs,
+    selectDBQueryLogsNext,
+    getDBQueryLogs,
+    resetDBQueryLogs,
+  } = useApp();
 
   const currentTab: Tab = useContext(TabContext)!;
 
-  const dbConnection: DBConnection | undefined =
-    useAppSelector(selectDBConnection);
-  const dbQueryLogs = useAppSelector(selectDBQueryLogs);
-  const dbQueryLogsNext = useAppSelector(selectDBQueryLogsNext);
+  const dbConnection: DBConnection | undefined = selectDBConnection;
+  const dbQueryLogs = selectDBQueryLogs;
+  const dbQueryLogsNext = selectDBQueryLogsNext;
 
   useEffect(() => {
     if (dbConnection) {
       (async () => {
-        dispatch(reset());
+        resetDBQueryLogs();
       })();
       fetchDBQueryLogs();
     }
-  }, [dispatch, dbConnection]);
+  }, [dbConnection]);
 
   const fetchDBQueryLogs = async () => {
-    const result = await dispatch(
-      getDBQueryLogs({ dbConnId: dbConnection!.id }),
-    ).unwrap();
+    const result = await getDBQueryLogs(dbConnection!.id);
     if (!result.success) {
       toast.error(result.error!);
     }
   };
 
   function refreshHandler() {
-    dispatch(reset());
+    resetDBQueryLogs();
     fetchDBQueryLogs();
   }
 

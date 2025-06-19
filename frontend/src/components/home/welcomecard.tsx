@@ -3,18 +3,17 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo-icon.svg";
 import Constants from "../../constants";
 import type { Project } from "../../data/models";
-import { loginUser, selectIsAuthenticated } from "../../redux/currentUserSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { selectProjects } from "../../redux/projectsSlice";
+import { useApp } from "../../hooks/useApp";
 import { Button } from "../ui/button";
 import CreateNewProjectModal from "./createprojectmodal";
 import { FolderPlus } from "lucide-react";
 
 export const WelcomeCard: FunctionComponent<{}> = () => {
   const navigate = useNavigate();
+  const { selectProjects } = useApp();
 
   const [isShowingCreateProject, setIsShowingCreateProject] = useState(false);
-  const projects: Project[] = useAppSelector(selectProjects);
+  const projects: Project[] = selectProjects;
 
   const navigateToNewDB = () => {
     if (projects.length > 0) {
@@ -66,10 +65,11 @@ export const WelcomeCard: FunctionComponent<{}> = () => {
 
 export const WelcomeCardServer: FunctionComponent<{}> = () => {
   const navigate = useNavigate();
+  const { selectIsAuthenticated, selectProjects } = useApp();
 
   const [isShowingCreateProject, setIsShowingCreateProject] = useState(false);
-  const isAuthenticated = useAppSelector(selectIsAuthenticated);
-  const projects: Project[] = useAppSelector(selectProjects);
+  const isAuthenticated = selectIsAuthenticated;
+  const projects: Project[] = selectProjects;
 
   const navigateToNewDB = () => {
     if (projects.length > 0) {
@@ -118,7 +118,7 @@ export const WelcomeCardServer: FunctionComponent<{}> = () => {
 };
 
 const LoginComponent = () => {
-  const dispatch = useAppDispatch();
+  const { loginUser } = useApp();
 
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
@@ -127,11 +127,12 @@ const LoginComponent = () => {
   const onLoginBtn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await dispatch(
-        loginUser({ email: userEmail, password: userPassword }),
-      ).unwrap();
+      const result = await loginUser(userEmail, userPassword);
+      if (!result.success) {
+        setLoginError(result.error);
+      }
     } catch (e: any) {
-      setLoginError(e);
+      setLoginError(String(e));
     }
   };
 

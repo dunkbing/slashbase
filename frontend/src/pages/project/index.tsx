@@ -9,30 +9,29 @@ import { Button } from "../../components/ui/button";
 import ConfirmModal from "../../components/widgets/confirmModal";
 import Constants from "../../constants";
 import type { DBConnection, Project } from "../../data/models";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import {
-  deleteDBConnectionInProject,
-  deleteProject,
-  getDBConnectionsInProjects,
-  selectDBConnectionsInProject,
-  selectProjects,
-} from "../../redux/projectsSlice";
+import { useApp } from "../../hooks/useApp";
 
 const ProjectPage: FunctionComponent<{}> = () => {
   const { id } = useParams();
 
-  const dispatch = useAppDispatch();
+  const {
+    selectDBConnectionsInProject,
+    selectProjects,
+    getDBConnectionsInProjects,
+    deleteDBConnectionInProject,
+    deleteProject,
+  } = useApp();
   const navigate = useNavigate();
 
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const databases = useAppSelector(selectDBConnectionsInProject);
-  const projects: Project[] = useAppSelector(selectProjects);
+  const databases = selectDBConnectionsInProject;
+  const projects: Project[] = selectProjects;
   const project: Project | undefined = projects.find((x) => x.id === id);
 
   useEffect(() => {
-    dispatch(getDBConnectionsInProjects({ projectId: String(id) }));
-  }, [dispatch, id]);
+    getDBConnectionsInProjects(String(id));
+  }, [id]);
 
   if (!project) {
     return (
@@ -56,12 +55,12 @@ const ProjectPage: FunctionComponent<{}> = () => {
       );
       return;
     }
-    dispatch(deleteDBConnectionInProject({ dbConnId }));
+    deleteDBConnectionInProject(dbConnId);
     setIsDeleting(false);
   };
 
   const onDeleteProject = async () => {
-    await dispatch(deleteProject({ projectId: project.id }));
+    await deleteProject(project.id);
     navigate(Constants.APP_PATHS.HOME.path);
   };
 

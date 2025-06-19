@@ -1,17 +1,16 @@
 import { type FunctionComponent, useEffect } from "react";
 import { Package } from "lucide-react";
 import logo from "../../assets/images/logo-icon.svg";
-import { healthCheck, selectAPIVersion } from "../../redux/apiSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useApp } from "../../hooks/useApp";
 
 const AboutPage: FunctionComponent<{}> = () => {
-  const dispatch = useAppDispatch();
+  const { selectAPIVersion, healthCheck } = useApp();
 
-  const version = useAppSelector(selectAPIVersion);
+  const version = selectAPIVersion;
 
   useEffect(() => {
-    dispatch(healthCheck());
-  }, [dispatch]);
+    healthCheck();
+  }, []);
 
   return (
     <div className="max-w-2xl">

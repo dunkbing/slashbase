@@ -11,8 +11,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import Constants from "../../../constants";
 import type { User } from "../../../data/models";
-import { selectCurrentUser } from "../../../redux/currentUserSlice";
-import { useAppSelector } from "../../../redux/hooks";
+import { useApp } from "../../../hooks/useApp";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -24,7 +23,8 @@ import {
 type SettingSidebarPropType = {};
 
 const SettingSidebar = (_: SettingSidebarPropType) => {
-  const currentUser: User = useAppSelector(selectCurrentUser);
+  const { selectCurrentUser } = useApp();
+  const currentUser: User = selectCurrentUser;
   const location = useLocation();
 
   return (

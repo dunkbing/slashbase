@@ -2,8 +2,7 @@ import type React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Constants from "../../constants";
-import { useAppDispatch } from "../../redux/hooks";
-import { createNewProject } from "../../redux/projectsSlice";
+import { useApp } from "../../hooks/useApp";
 import { Button } from "../ui/button";
 
 type CreateNewProjectModalPropType = {
@@ -12,7 +11,7 @@ type CreateNewProjectModalPropType = {
 
 const CreateNewProjectModal = ({ onClose }: CreateNewProjectModalPropType) => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const { createNewProject } = useApp();
 
   const [projectName, setProjectName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +21,7 @@ const CreateNewProjectModal = ({ onClose }: CreateNewProjectModalPropType) => {
       return;
     }
     setLoading(true);
-    const result = await dispatch(createNewProject({ projectName })).unwrap();
+    const result = await createNewProject(projectName);
     if (result.success) {
       setLoading(false);
       setProjectName("");

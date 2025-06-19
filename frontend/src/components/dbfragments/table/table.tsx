@@ -4,12 +4,7 @@ import toast from "react-hot-toast";
 import { type Cell, useRowSelect, useTable } from "react-table";
 import { DBConnType } from "../../../data/defaults";
 import type { DBConnection, DBQueryData, Tab } from "../../../data/models";
-import {
-  deleteDBData,
-  setQueryData,
-  updateDBSingleData,
-} from "../../../redux/dataModelSlice";
-import { useAppDispatch } from "../../../redux/hooks";
+import { useApp } from "../../../hooks/useApp";
 import TabContext from "../../layouts/tabcontext";
 import { Button } from "../../ui/button";
 import ConfirmModal from "../../widgets/confirmModal";
@@ -44,7 +39,7 @@ const Table = ({
   onSortChanged,
   onRefresh,
 }: TablePropType) => {
-  const dispatch = useAppDispatch();
+  const { updateDBSingleData, deleteDBData, setQueryData } = useApp();
 
   const activeTab: Tab = useContext(TabContext)!;
 
@@ -130,17 +125,14 @@ const Table = ({
               }))
               .reduce((r, c) => Object.assign(r, c), {}),
           );
-    const result = await dispatch(
-      updateDBSingleData({
-        dbConnectionId: dbConnection.id,
-        schemaName: mSchema,
-        name: mName,
-        id: uniqueId,
-        columnName,
-        newValue,
-        columnIdx,
-      }),
-    ).unwrap();
+    const result = await updateDBSingleData({
+      dbConnectionId: dbConnection.id,
+      schemaName: mSchema,
+      name: mName,
+      id: uniqueId,
+      columnName,
+      newValue,
+    });
     if (result.success) {
       if (rowIdx !== -1) {
         const newQueryData: DBQueryData = {
@@ -156,7 +148,7 @@ const Table = ({
           newQueryData!.rows[rowIdx] = { ...newQueryData!.rows[rowIdx] };
         }
         newQueryData!.rows[rowIdx][columnIdx] = newValue;
-        dispatch(setQueryData({ data: newQueryData, tabId: activeTab.id }));
+        setQueryData(activeTab.id, newQueryData);
       } else {
         // fetchData(false)
       }
@@ -227,21 +219,19 @@ const Table = ({
       );
     }
     if (selectedIDs.length > 0) {
-      const result = await dispatch(
-        deleteDBData({
-          dbConnectionId: dbConnection.id,
-          schemaName: mSchema,
-          name: mName,
-          selectedIDs: selectedIDs,
-        }),
-      ).unwrap();
+      const result = await deleteDBData({
+        dbConnectionId: dbConnection.id,
+        schemaName: mSchema,
+        name: mName,
+        selectedIDs: selectedIDs,
+      });
       if (result.success) {
         toast.success("rows deleted");
         const filteredRows = queryData!.rows.filter(
           (_, i) => !selectedRows.includes(i),
         );
         const newQueryData: DBQueryData = { ...queryData!, rows: filteredRows };
-        dispatch(setQueryData({ data: newQueryData, tabId: activeTab.id }));
+        setQueryData(activeTab.id, newQueryData);
       } else {
         toast.error(result.error!);
       }

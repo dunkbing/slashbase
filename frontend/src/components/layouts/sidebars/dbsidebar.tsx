@@ -2,13 +2,7 @@ import { Database, File, Plus, Sparkles, Terminal, Wrench } from "lucide-react";
 import React, { useState } from "react";
 import { DBConnType, TabType } from "../../../data/defaults";
 import type { DBConnection, DBDataModel, DBQuery } from "../../../data/models";
-import {
-  selectDBConnection,
-  selectDBDQueries,
-  selectDBDataModels,
-} from "../../../redux/dbConnectionSlice";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { createTab } from "../../../redux/tabsSlice";
+import { useApp } from "../../../hooks/useApp";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -26,55 +20,31 @@ enum DBSidebarTabType {
 type DatabaseSidebarPropType = {};
 
 const DatabaseSidebar = (_: DatabaseSidebarPropType) => {
-  const dispatch = useAppDispatch();
+  const { createTab, selectDBConnection, selectDBDataModels, selectDBQueries } =
+    useApp();
 
   const [currentSidebarTab, setCurrentSidebarTab] = useState<DBSidebarTabType>(
     DBSidebarTabType.DATABASE,
   );
 
-  const dbConnection: DBConnection | undefined =
-    useAppSelector(selectDBConnection);
-  const dbDataModels: DBDataModel[] = useAppSelector(selectDBDataModels);
-  const dbQueries: DBQuery[] = useAppSelector(selectDBDQueries);
+  const dbConnection: DBConnection | undefined = selectDBConnection;
+  const dbDataModels: DBDataModel[] = selectDBDataModels;
+  const dbQueries: DBQuery[] = selectDBQueries;
 
   const openDataTab = (schema: string, name: string) => {
-    dispatch(
-      createTab({
-        dbConnId: dbConnection!.id,
-        tabType: TabType.DATA,
-        metadata: { schema, name },
-      }),
-    );
+    createTab(dbConnection!.id, TabType.DATA, { schema, name });
   };
 
   const openQueryTab = (queryId: string) => {
-    dispatch(
-      createTab({
-        dbConnId: dbConnection!.id,
-        tabType: TabType.QUERY,
-        metadata: { queryId },
-      }),
-    );
+    createTab(dbConnection!.id, TabType.QUERY, { queryId });
   };
 
   const openConsoleTab = () => {
-    dispatch(
-      createTab({
-        dbConnId: dbConnection!.id,
-        tabType: TabType.CONSOLE,
-        metadata: {},
-      }),
-    );
+    createTab(dbConnection!.id, TabType.CONSOLE, {});
   };
 
   const openGenerateSQLTab = () => {
-    dispatch(
-      createTab({
-        dbConnId: dbConnection!.id,
-        tabType: TabType.GENSQL,
-        metadata: {},
-      }),
-    );
+    createTab(dbConnection!.id, TabType.GENSQL, {});
   };
 
   const switchSidebarTab = (tabType: DBSidebarTabType) => {

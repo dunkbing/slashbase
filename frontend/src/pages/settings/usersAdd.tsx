@@ -7,13 +7,13 @@ import { Input } from "../../components/ui/input";
 import Constants from "../../constants";
 import type { User } from "../../data/models";
 import apiService from "../../network/apiService";
-import { selectCurrentUser } from "../../redux/currentUserSlice";
-import { useAppSelector } from "../../redux/hooks";
+import { useApp } from "../../hooks/useApp";
 
 const AddNewUserPage: FunctionComponent<{}> = () => {
   const navigate = useNavigate();
 
-  const currentUser: User = useAppSelector(selectCurrentUser);
+  const { selectCurrentUser } = useApp();
+  const currentUser: User = selectCurrentUser;
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");

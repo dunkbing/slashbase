@@ -4,8 +4,7 @@ import { Link } from "react-router-dom";
 import Constants from "../../../constants";
 import type { DBConnection, Project } from "../../../data/models";
 import { useAllDBConnections } from "../../../contexts/db-connection-context";
-import { useAppSelector } from "../../../redux/hooks";
-import { selectProjects } from "../../../redux/projectsSlice";
+import { useApp } from "../../../hooks/useApp";
 import CreateNewProjectModal from "../../home/createprojectmodal";
 import {
   SidebarGroup,
@@ -22,8 +21,9 @@ type HomeSidebarPropType = {};
 
 const HomeSidebar = (_: HomeSidebarPropType) => {
   const [isShowingCreateProject, setIsShowingCreateProject] = useState(false);
+  const { selectProjects } = useApp();
 
-  const allProjects: Project[] = useAppSelector(selectProjects);
+  const allProjects: Project[] = selectProjects;
   const allDBConnections: DBConnection[] = useAllDBConnections();
 
   return (

@@ -7,16 +7,14 @@ import { Play, Edit, Copy, Loader2 } from "lucide-react";
 import { TabType } from "../../data/defaults";
 import type { Tab } from "../../data/models";
 import apiService from "../../network/apiService";
-import { selectDBConnection } from "../../redux/dbConnectionSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { createTab } from "../../redux/tabsSlice";
+import { useApp } from "../../hooks/useApp";
 import TabContext from "../layouts/tabcontext";
 import { Button } from "../ui/button";
 
 type DBGenSQLPropType = {};
 
 const DBGenSQLFragment = ({}: DBGenSQLPropType) => {
-  const dispatch = useAppDispatch();
+  const { selectDBConnection, createTab } = useApp();
 
   const currentTab: Tab = useContext(TabContext)!;
 
@@ -24,7 +22,7 @@ const DBGenSQLFragment = ({}: DBGenSQLPropType) => {
   const [generating, setGenerating] = useState<boolean>(false);
   const [outputValue, setOutputValue] = useState<string | undefined>();
 
-  const dbConnection = useAppSelector(selectDBConnection);
+  const dbConnection = selectDBConnection;
 
   const onChange = useCallback((value: any) => {
     setOutputValue(value);
@@ -42,13 +40,10 @@ const DBGenSQLFragment = ({}: DBGenSQLPropType) => {
   };
 
   const openInQueryEditor = () => {
-    dispatch(
-      createTab({
-        dbConnId: dbConnection!.id,
-        tabType: TabType.QUERY,
-        metadata: { queryId: "new", query: outputValue },
-      }),
-    );
+    createTab(dbConnection!.id, TabType.QUERY, {
+      queryId: "new",
+      query: outputValue,
+    });
   };
 
   const copyToClipboard = () => {

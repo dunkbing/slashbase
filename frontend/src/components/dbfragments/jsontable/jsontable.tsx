@@ -2,12 +2,7 @@ import React, { useContext, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useRowSelect, useTable } from "react-table";
 import type { DBConnection, DBQueryData, Tab } from "../../../data/models";
-import {
-  deleteDBData,
-  setQueryData,
-  updateDBSingleData,
-} from "../../../redux/dataModelSlice";
-import { useAppDispatch } from "../../../redux/hooks";
+import { useApp } from "../../../hooks/useApp";
 import TabContext from "../../layouts/tabcontext";
 import ConfirmModal from "../../widgets/confirmModal";
 import AddModal from "./addmodel";
@@ -37,7 +32,7 @@ const JsonTable = ({
   onSortChanged,
   onRefresh,
 }: JsonTablePropType) => {
-  const dispatch = useAppDispatch();
+  const { updateDBSingleData, deleteDBData, setQueryData } = useApp();
 
   const activeTab: Tab = useContext(TabContext)!;
 
@@ -99,16 +94,14 @@ const JsonTable = ({
   };
 
   const onSaveCell = async (underscoreId: string, newData: string) => {
-    const result = await dispatch(
-      updateDBSingleData({
-        dbConnectionId: dbConnection.id,
-        schemaName: "",
-        name: mName,
-        id: underscoreId,
-        columnName: "",
-        newValue: newData,
-      }),
-    ).unwrap();
+    const result = await updateDBSingleData({
+      dbConnectionId: dbConnection.id,
+      schemaName: "",
+      name: mName,
+      id: underscoreId,
+      columnName: "",
+      newValue: newData,
+    });
     if (result.success) {
       const rowIdx = queryData!.data.findIndex((x) => x["_id"] == underscoreId);
       if (rowIdx) {
@@ -120,7 +113,7 @@ const JsonTable = ({
           _id: underscoreId,
           ...JSON.parse(newData),
         };
-        dispatch(setQueryData({ data: newQueryData, tabId: activeTab.id }));
+        setQueryData(activeTab.id, newQueryData);
       } else {
         // fetchData(false)
       }
@@ -171,21 +164,19 @@ const JsonTable = ({
 
   const deleteRows = async () => {
     if (selectedUnderscoreIDs.length > 0) {
-      const result = await dispatch(
-        deleteDBData({
-          dbConnectionId: dbConnection.id,
-          schemaName: "",
-          name: mName,
-          selectedIDs: selectedUnderscoreIDs,
-        }),
-      ).unwrap();
+      const result = await deleteDBData({
+        dbConnectionId: dbConnection.id,
+        schemaName: "",
+        name: mName,
+        selectedIDs: selectedUnderscoreIDs,
+      });
       if (result.success) {
         toast.success("rows deleted");
         const filteredRows = queryData!.data.filter(
           (_, i) => !selectedRows.includes(i),
         );
         const newQueryData: DBQueryData = { ...queryData!, data: filteredRows };
-        dispatch(setQueryData({ data: newQueryData, tabId: activeTab.id }));
+        setQueryData(activeTab.id, newQueryData);
       } else {
         toast.error(result.error!);
       }

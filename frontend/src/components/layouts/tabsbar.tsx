@@ -1,32 +1,24 @@
 import { X, Plus } from "lucide-react";
 import { TabType } from "../../data/defaults";
 import type { Tab } from "../../data/models";
-import { selectDBConnection } from "../../redux/dbConnectionSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import {
-  closeTab,
-  createTab,
-  selectTabs,
-  setActiveTab,
-} from "../../redux/tabsSlice";
+import { useApp } from "../../hooks/useApp";
 import { Button } from "../ui/button";
 
 type TabsBarPropType = {};
 
 const TabsBar = (_: TabsBarPropType) => {
-  const dispatch = useAppDispatch();
+  const { createTab, setActiveTab, closeTab, selectDBConnection, selectTabs } =
+    useApp();
 
-  const dbConnection = useAppSelector(selectDBConnection);
-  const tabs: Tab[] = useAppSelector(selectTabs);
+  const dbConnection = selectDBConnection;
+  const tabs: Tab[] = selectTabs;
 
   const createNewTab = async () => {
-    await dispatch(
-      createTab({ dbConnId: dbConnection!.id, tabType: TabType.BLANK }),
-    );
+    await createTab(dbConnection!.id, TabType.BLANK);
   };
 
   const switchToTab = async (tabId: string) => {
-    dispatch(setActiveTab(tabId));
+    setActiveTab(tabId);
   };
 
   const handleCloseTab = async (
@@ -34,7 +26,7 @@ const TabsBar = (_: TabsBarPropType) => {
     tabId: string,
   ) => {
     e.stopPropagation();
-    await dispatch(closeTab({ dbConnId: dbConnection!.id, tabId }));
+    await closeTab(dbConnection!.id, tabId);
   };
 
   const getTabLabel = (tab: Tab) => {

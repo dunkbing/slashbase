@@ -6,15 +6,15 @@ import ProjectMemberCard from "../../components/cards/projectmembercard/projectm
 import Constants from "../../constants";
 import type { Project, ProjectMember } from "../../data/models";
 import apiService from "../../network/apiService";
-import { useAppSelector } from "../../redux/hooks";
-import { selectProjects } from "../../redux/projectsSlice";
+import { useApp } from "../../hooks/useApp";
 
 const ProjectMembersPage: FunctionComponent<{}> = () => {
   const { id } = useParams();
 
   const [projectMembers, setProjectMembers] = useState<ProjectMember[]>([]);
 
-  const projects: Project[] = useAppSelector(selectProjects);
+  const { selectProjects } = useApp();
+  const projects: Project[] = selectProjects;
   const project: Project | undefined = projects.find((x) => x.id === id);
 
   useEffect(() => {

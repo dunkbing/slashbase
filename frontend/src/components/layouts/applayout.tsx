@@ -1,10 +1,6 @@
 import { type FunctionComponent } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import {
-  selectIsShowingSidebar,
-  setIsShowingSidebar,
-} from "../../redux/configSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useApp } from "../../hooks/useApp";
 import { SidebarInset, SidebarProvider } from "../ui/sidebar";
 import Footer from "./footer";
 import Header from "./header";
@@ -13,14 +9,14 @@ import TabsBar from "./tabsbar";
 
 const AppLayout: FunctionComponent = () => {
   const location = useLocation();
-  const dispatch = useAppDispatch();
+  const { selectIsShowingSidebar, setIsShowingSidebar } = useApp();
 
-  const isShowingSidebar: boolean = useAppSelector(selectIsShowingSidebar);
+  const isShowingSidebar: boolean = selectIsShowingSidebar;
 
   const showTabsBar = location.pathname.startsWith("/db") ? true : false;
 
   const handleSidebarOpenChange = (open: boolean) => {
-    dispatch(setIsShowingSidebar(open));
+    setIsShowingSidebar(open);
   };
 
   return (

@@ -1,7 +1,6 @@
 import { useLocation } from "react-router-dom";
 import type { DBConnection } from "../../data/models";
-import { selectDBConnection } from "../../redux/dbConnectionSlice";
-import { useAppSelector } from "../../redux/hooks";
+import { useApp } from "../../hooks/useApp";
 import {
   Sidebar as ShadcnSidebar,
   SidebarContent,
@@ -19,6 +18,7 @@ enum SidebarViewType {
 
 const AppSidebar = () => {
   const location = useLocation();
+  const { selectDBConnection } = useApp();
 
   const sidebarView: SidebarViewType = location.pathname.startsWith("/db")
     ? SidebarViewType.DATABASE
@@ -26,8 +26,7 @@ const AppSidebar = () => {
       ? SidebarViewType.SETTINGS
       : SidebarViewType.HOME;
 
-  const dbConnection: DBConnection | undefined =
-    useAppSelector(selectDBConnection);
+  const dbConnection: DBConnection | undefined = selectDBConnection;
 
   return (
     <ShadcnSidebar collapsible="icon">

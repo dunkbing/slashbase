@@ -12,13 +12,7 @@ import Constants from "../../constants";
 import type { DBConnection, Project } from "../../data/models";
 import { openInBrowser } from "../../lib/utils";
 import { useAllDBConnections } from "../../contexts/db-connection-context";
-import {
-  getDBDataModels,
-  resetDBDataModels,
-  selectDBConnection,
-} from "../../redux/dbConnectionSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { selectProjects } from "../../redux/projectsSlice";
+import { useApp } from "../../hooks/useApp";
 import { SidebarTrigger } from "../ui/sidebar";
 import { Button } from "../ui/button";
 import {
@@ -40,12 +34,16 @@ const Header = () => {
   const navigate = useNavigate();
   const params = useParams();
 
-  const dispatch = useAppDispatch();
+  const {
+    getDBDataModels,
+    resetDBDataModels,
+    selectProjects,
+    selectDBConnection,
+  } = useApp();
 
-  const projects: Project[] = useAppSelector(selectProjects);
+  const projects: Project[] = selectProjects;
   const dbConnections: DBConnection[] = useAllDBConnections();
-  const currentDBConnection: DBConnection | undefined =
-    useAppSelector(selectDBConnection);
+  const currentDBConnection: DBConnection | undefined = selectDBConnection;
 
   const onNavigate = (path: string) => {
     navigate(path);
@@ -79,8 +77,8 @@ const Header = () => {
   ];
 
   const refreshDataModels = () => {
-    dispatch(resetDBDataModels());
-    dispatch(getDBDataModels({ dbConnId: currentDBConnection!.id }));
+    resetDBDataModels();
+    getDBDataModels(currentDBConnection!.id);
   };
 
   return (

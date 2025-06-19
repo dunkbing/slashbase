@@ -1,13 +1,7 @@
 import { useContext } from "react";
 import { TabType } from "../../data/defaults";
 import type { DBConnection, DBDataModel, Tab } from "../../data/models";
-import {
-  selectDBConnection,
-  selectDBDataModels,
-  selectIsFetchingDBDataModels,
-} from "../../redux/dbConnectionSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { updateActiveTab } from "../../redux/tabsSlice";
+import { useApp } from "../../hooks/useApp";
 import DBDataModelCard from "../cards/dbdatamodelcard/dbdatamodelcard";
 import TabContext from "../layouts/tabcontext";
 import { Button } from "../ui/button";
@@ -16,27 +10,26 @@ import { CirclePlus, History, Loader2 } from "lucide-react";
 type DBHomePropType = {};
 
 const DBHomeFragment = ({}: DBHomePropType) => {
-  const dispatch = useAppDispatch();
+  const {
+    updateActiveTab,
+    selectDBConnection,
+    selectDBDataModels,
+    selectIsFetchingDBDataModels,
+  } = useApp();
 
   const currentTab: Tab = useContext(TabContext)!;
 
-  const dbConnection: DBConnection | undefined =
-    useAppSelector(selectDBConnection);
-  const dbDataModels: DBDataModel[] = useAppSelector(selectDBDataModels);
+  const dbConnection: DBConnection | undefined = selectDBConnection;
+  const dbDataModels: DBDataModel[] = selectDBDataModels;
 
-  const isFetching: boolean = useAppSelector(selectIsFetchingDBDataModels);
+  const isFetching: boolean = selectIsFetchingDBDataModels;
 
   const updateActiveTabToQuery = () => {
-    dispatch(
-      updateActiveTab({
-        tabType: TabType.QUERY,
-        metadata: { queryId: "new", query: "" },
-      }),
-    );
+    updateActiveTab(TabType.QUERY, { queryId: "new", query: "" });
   };
 
   const updateActiveTabToHistory = () => {
-    dispatch(updateActiveTab({ tabType: TabType.HISTORY, metadata: {} }));
+    updateActiveTab(TabType.HISTORY, {});
   };
 
   return (

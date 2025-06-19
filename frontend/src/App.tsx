@@ -28,10 +28,8 @@ import ManageRolesPage from "./pages/settings/roles";
 import SupportPage from "./pages/settings/support";
 import UsersPage from "./pages/settings/users";
 import AddNewUserPage from "./pages/settings/usersAdd";
-import { getConfig } from "./redux/configSlice";
-import { getUser, selectIsAuthenticated } from "./redux/currentUserSlice";
-import { useAppDispatch, useAppSelector } from "./redux/hooks";
-import { getProjects } from "./redux/projectsSlice";
+import { useAppActions } from "./hooks/useAppActions";
+import { useAppSelectors } from "./hooks/useAppSelectors";
 
 // Inner App component that uses the context
 function AppContent() {
@@ -42,24 +40,25 @@ function AppContent() {
     Bowser.getParser(window.navigator.userAgent).getPlatformType(true) ===
     "desktop";
 
-  const dispatch = useAppDispatch();
+  const { getUser, getProjects, getConfig } = useAppActions();
   const { getAllDBConnections } = useDBConnections();
+  const { selectIsAuthenticated } = useAppSelectors();
 
-  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const isAuthenticated = selectIsAuthenticated;
 
   useEffect(() => {
     if (Constants.Build === "desktop") return;
     if (isAuthenticated) return;
-    dispatch(getUser());
-  }, [isAuthenticated, dispatch]);
+    getUser();
+  }, [isAuthenticated, getUser]);
 
   useEffect(() => {
     if (isAuthenticated || Constants.Build === "desktop") {
-      dispatch(getProjects());
+      getProjects();
       getAllDBConnections();
-      dispatch(getConfig());
+      getConfig();
     }
-  }, [dispatch, isAuthenticated, getAllDBConnections]);
+  }, [getProjects, getConfig, isAuthenticated, getAllDBConnections]);
 
   useEffect(() => {
     if (Constants.Build === "desktop") return;

@@ -2,32 +2,25 @@ import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AlertCircle, Circle, HelpCircle } from "lucide-react";
 import Constants from "../../constants";
-import {
-  checkConnection,
-  getDBDataModels,
-  resetDBDataModels,
-  selectDBConnection,
-  selectIsDBConnected,
-} from "../../redux/dbConnectionSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useApp } from "../../hooks/useApp";
 import { Button } from "../ui/button";
 import { SidebarTrigger } from "../ui/sidebar";
 
 const Footer = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useAppDispatch();
+  const { checkConnection, selectDBConnection, selectIsDBConnected } = useApp();
 
   const showStatus = location.pathname.startsWith("/db");
 
-  const dbConnection = useAppSelector(selectDBConnection);
-  const isDBConnected = useAppSelector(selectIsDBConnected);
+  const dbConnection = selectDBConnection;
+  const isDBConnected = selectIsDBConnected;
 
   useEffect(() => {
     if (showStatus && dbConnection) {
-      dispatch(checkConnection());
+      checkConnection();
     }
-  }, [showStatus, dbConnection]);
+  }, [showStatus, dbConnection, checkConnection]);
 
   const openSupport = () => {
     navigate(Constants.APP_PATHS.SETTINGS_SUPPORT.path);

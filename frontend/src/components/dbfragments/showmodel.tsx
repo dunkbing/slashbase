@@ -1,13 +1,12 @@
 import { useContext } from "react";
 import type { DBConnection, Tab } from "../../data/models";
-import { selectDBConnection } from "../../redux/dbConnectionSlice";
-import { useAppSelector } from "../../redux/hooks";
+import { useApp } from "../../hooks/useApp";
 import TabContext from "../layouts/tabcontext";
 import DataModel from "./datamodel/datamodel";
 
 const DBShowModelFragment = () => {
-  const dbConnection: DBConnection | undefined =
-    useAppSelector(selectDBConnection);
+  const { selectDBConnection } = useApp();
+  const dbConnection: DBConnection | undefined = selectDBConnection;
   const currentTab: Tab = useContext(TabContext)!;
 
   const mschema = currentTab.metadata.schema;

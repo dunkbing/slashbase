@@ -4,13 +4,7 @@ import { Tooltip } from "react-tooltip";
 import { Key, Circle, DotIcon, Check, Pen, Plus, Trash2 } from "lucide-react";
 import { DBConnType } from "../../../data/defaults";
 import type { DBConnection, Tab } from "../../../data/models";
-import {
-  deleteDBDataModelField,
-  deleteDBDataModelIndex,
-  getSingleDataModel,
-  selectSingleDataModel,
-} from "../../../redux/dataModelSlice";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { useApp } from "../../../hooks/useApp";
 import TabContext from "../../layouts/tabcontext";
 import { Button } from "../../ui/button";
 import ConfirmModal from "../../widgets/confirmModal";
@@ -30,10 +24,15 @@ const DataModel = ({
   mname,
   isEditable,
 }: DataModelPropType) => {
-  const dispatch = useAppDispatch();
+  const {
+    selectSingleDataModel,
+    getSingleDataModel,
+    deleteDBDataModelField,
+    deleteDBDataModelIndex,
+  } = useApp();
 
   const currentTab: Tab = useContext(TabContext)!;
-  const dataModel = useAppSelector(selectSingleDataModel);
+  const dataModel = selectSingleDataModel;
 
   const [isEditingModel, setIsEditingModel] = useState<boolean>(false);
   const [isEditingIndex, setIsEditingIndex] = useState<boolean>(false);
@@ -47,15 +46,13 @@ const DataModel = ({
 
   useEffect(() => {
     if (!dbConn) return;
-    dispatch(
-      getSingleDataModel({
-        tabId: currentTab.id,
-        dbConnectionId: dbConn!.id,
-        schemaName: String(mschema),
-        name: String(mname),
-      }),
-    );
-  }, [dispatch, dbConn, mschema, mname, refresh]);
+    getSingleDataModel({
+      tabId: currentTab.id,
+      dbConnectionId: dbConn!.id,
+      schemaName: String(mschema),
+      name: String(mname),
+    });
+  }, [dbConn, mschema, mname, refresh]);
 
   const refreshModel = () => {
     setRefresh(Date.now());
@@ -70,15 +67,13 @@ const DataModel = ({
       : `${dataModel.name}`;
 
   const deleteField = async () => {
-    const result = await dispatch(
-      deleteDBDataModelField({
-        tabId: currentTab.id,
-        dbConnectionId: dbConn.id,
-        schemaName: dataModel.schemaName!,
-        name: dataModel.name,
-        fieldName: deletingField,
-      }),
-    ).unwrap();
+    const result = await deleteDBDataModelField({
+      tabId: currentTab.id,
+      dbConnectionId: dbConn.id,
+      schemaName: dataModel.schemaName!,
+      name: dataModel.name,
+      fieldName: deletingField,
+    });
     if (result.success) {
       toast.success(`deleted field ${deletingField}`);
       refreshModel();
@@ -89,14 +84,12 @@ const DataModel = ({
   };
 
   const deleteIndex = async () => {
-    const result = await dispatch(
-      deleteDBDataModelIndex({
-        dbConnectionId: dbConn.id,
-        schemaName: dataModel.schemaName!,
-        name: dataModel.name,
-        indexName: deletingIndex,
-      }),
-    ).unwrap();
+    const result = await deleteDBDataModelIndex({
+      dbConnectionId: dbConn.id,
+      schemaName: dataModel.schemaName!,
+      name: dataModel.name,
+      indexName: deletingIndex,
+    });
     if (result.success) {
       toast.success(`deleted index ${deletingIndex}`);
       refreshModel();

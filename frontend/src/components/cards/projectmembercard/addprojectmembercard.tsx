@@ -5,8 +5,7 @@ import Constants from "../../../constants";
 import type { Project, ProjectMember, Role, User } from "../../../data/models";
 import apiService from "../../../network/apiService";
 import type { AddProjectMemberPayload } from "../../../network/payloads";
-import { selectCurrentUser } from "../../../redux/currentUserSlice";
-import { useAppSelector } from "../../../redux/hooks";
+import { useApp } from "../../../hooks/useApp";
 import ProfileImage from "../../user/profileimage";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
@@ -20,7 +19,8 @@ const AddNewProjectMemberCard = ({
   project,
   onAdded,
 }: AddNewProjectMemberCardPropType) => {
-  const currentUser: User = useAppSelector(selectCurrentUser);
+  const { selectCurrentUser } = useApp();
+  const currentUser: User = selectCurrentUser;
 
   const [showing, setShowing] = useState(false);
   const searchTerm = useRef<HTMLInputElement>(null);

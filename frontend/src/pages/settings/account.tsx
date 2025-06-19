@@ -7,17 +7,15 @@ import ProfileImage, {
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import type { User } from "../../data/models";
-import { editUser, selectCurrentUser } from "../../redux/currentUserSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useApp } from "../../hooks/useApp";
 
 const AccountPage: FunctionComponent<{}> = () => {
-  const currentUser: User = useAppSelector(selectCurrentUser);
+  const { selectCurrentUser, editUser } = useApp();
+  const currentUser: User = selectCurrentUser;
 
   const [editableUser, setEditableUser] = useState<User | null>(null);
   const [saving, setSaving] = useState(false);
   const [savingError, setSavingError] = useState(false);
-
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setEditableUser(currentUser);
@@ -40,12 +38,7 @@ const AccountPage: FunctionComponent<{}> = () => {
     setSaving(true);
     setSavingError(false);
     try {
-      await dispatch(
-        editUser({
-          name: editableUser!.name ?? "",
-          profileImageUrl: editableUser!.profileImageUrl,
-        }),
-      ).unwrap();
+      await editUser(editableUser!.name ?? "", editableUser!.profileImageUrl);
     } catch (e) {
       setSavingError(true);
     }

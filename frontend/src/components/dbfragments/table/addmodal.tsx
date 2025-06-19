@@ -9,8 +9,7 @@ import type {
   DBQueryData,
   Tab,
 } from "../../../data/models";
-import { addDBData, setQueryData } from "../../../redux/dataModelSlice";
-import { useAppDispatch } from "../../../redux/hooks";
+import { useApp } from "../../../hooks/useApp";
 import TabContext from "../../layouts/tabcontext";
 import { Button } from "../../ui/button";
 
@@ -29,7 +28,7 @@ const AddModal = ({
   mName,
   onClose,
 }: AddModal) => {
-  const dispatch = useAppDispatch();
+  const { addDBData, setQueryData } = useApp();
 
   const activeTab: Tab = useContext(TabContext)!;
 
@@ -45,14 +44,12 @@ const AddModal = ({
   };
 
   const startAdding = async () => {
-    const result: ApiResult<AddDataResponse> = await dispatch(
-      addDBData({
-        dbConnectionId: dbConnection.id,
-        schemaName: mSchema,
-        name: mName,
-        data: newData,
-      }),
-    ).unwrap();
+    const result: ApiResult<AddDataResponse> = await addDBData({
+      dbConnectionId: dbConnection.id,
+      schemaName: mSchema,
+      name: mName,
+      data: newData,
+    });
     if (result.success) {
       toast.success("data added");
       let mNewData: any;
@@ -72,7 +69,7 @@ const AddModal = ({
       }
       const updatedRows = [mNewData, ...queryData!.rows];
       const updateQueryData: DBQueryData = { ...queryData!, rows: updatedRows };
-      dispatch(setQueryData({ data: updateQueryData, tabId: activeTab.id }));
+      setQueryData(activeTab.id, updateQueryData);
       onClose();
     } else {
       toast.error(result.error!);

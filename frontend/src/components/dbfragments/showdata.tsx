@@ -7,43 +7,39 @@ import type {
   Project,
   Tab,
 } from "../../data/models";
-import { selectIsShowingSidebar } from "../../redux/configSlice";
-import {
-  getDBDataInDataModel,
-  selectIsFetchingQueryData,
-  selectQueryData,
-} from "../../redux/dataModelSlice";
-import {
-  selectDBConnection,
-  selectDBDataModels,
-} from "../../redux/dbConnectionSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import {
-  type ProjectPermissions,
-  selectCurrentProject,
-  selectProjectMemberPermissions,
-} from "../../redux/projectsSlice";
+import { useApp } from "../../hooks/useApp";
+
+type ProjectPermissions = {
+  readOnly: boolean;
+};
 import TabContext from "../layouts/tabcontext";
 import { Button } from "../ui/button";
 import JsonTable from "./jsontable/jsontable";
 import Table from "./table/table";
 
 const DBShowDataFragment = () => {
-  const dispatch = useAppDispatch();
-
-  const dbConnection: DBConnection | undefined =
-    useAppSelector(selectDBConnection);
-  const dbDataModels: DBDataModel[] = useAppSelector(selectDBDataModels);
-  const isShowingSidebar: boolean = useAppSelector(selectIsShowingSidebar);
-  const project: Project | undefined = useAppSelector(selectCurrentProject);
-  const projectMemberPermissions: ProjectPermissions = useAppSelector(
+  const {
+    selectDBConnection,
+    selectDBDataModels,
+    selectIsShowingSidebar,
+    selectCurrentProject,
     selectProjectMemberPermissions,
-  );
+    selectIsFetchingQueryData,
+    selectQueryData,
+    getDBDataInDataModel,
+  } = useApp();
+
+  const dbConnection: DBConnection | undefined = selectDBConnection;
+  const dbDataModels: DBDataModel[] = selectDBDataModels;
+  const isShowingSidebar: boolean = selectIsShowingSidebar;
+  const project: Project | undefined = selectCurrentProject;
+  const projectMemberPermissions: ProjectPermissions =
+    selectProjectMemberPermissions;
   const currentTab: Tab = useContext(TabContext)!;
 
   const [dataModel, setDataModel] = useState<DBDataModel>();
-  const dataLoading = useAppSelector(selectIsFetchingQueryData);
-  const queryData = useAppSelector(selectQueryData);
+  const dataLoading = selectIsFetchingQueryData;
+  const queryData = selectQueryData;
   const [queryOffset, setQueryOffset] = useState(0);
   const [queryCount, setQueryCount] = useState<number | undefined>(undefined);
   const [queryLimit] = useState(
@@ -88,20 +84,18 @@ const DBShowDataFragment = () => {
   const fetchData = async (isFirstFetch: boolean) => {
     if (!dataModel) return;
     try {
-      const result = await dispatch(
-        getDBDataInDataModel({
-          tabId: currentTab.id,
-          dbConnectionId: dbConnection!.id,
-          schemaName: dataModel!.schemaName ?? "",
-          name: dataModel!.name,
-          queryLimit,
-          queryOffset,
-          isFirstFetch,
-          queryFilter,
-          querySort,
-        }),
-      ).unwrap();
-      if (isFirstFetch) {
+      const result = await getDBDataInDataModel({
+        tabId: currentTab.id,
+        dbConnectionId: dbConnection!.id,
+        schemaName: dataModel!.schemaName ?? "",
+        name: dataModel!.name,
+        queryLimit,
+        queryOffset,
+        isFirstFetch,
+        queryFilter,
+        querySort,
+      });
+      if (isFirstFetch && result?.data) {
         setQueryCount(result.data.count);
       }
     } catch (e) {

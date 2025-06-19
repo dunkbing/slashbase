@@ -1,8 +1,7 @@
 import { useContext, useRef } from "react";
 import toast from "react-hot-toast";
 import type { DBConnection, Tab } from "../../../data/models";
-import { addDBDataModelField } from "../../../redux/dataModelSlice";
-import { useAppDispatch } from "../../../redux/hooks";
+import { useApp } from "../../../hooks/useApp";
 import TabContext from "../../layouts/tabcontext";
 import { Button } from "../../ui/button";
 
@@ -21,7 +20,7 @@ const AddFieldModal = ({
   onAddField,
   onClose,
 }: AddModal) => {
-  const dispatch = useAppDispatch();
+  const { addDBDataModelField } = useApp();
 
   const activeTab: Tab = useContext(TabContext)!;
 
@@ -29,16 +28,13 @@ const AddFieldModal = ({
   const dataTypeRef = useRef<HTMLInputElement>(null);
 
   const startAdding = async () => {
-    const result = await dispatch(
-      addDBDataModelField({
-        tabId: activeTab.id,
-        dbConnectionId: dbConn.id,
-        schemaName: mSchema!,
-        name: mName,
-        fieldName: fieldNameRef.current!.value,
-        dataType: dataTypeRef.current!.value,
-      }),
-    ).unwrap();
+    const result = await addDBDataModelField({
+      dbConnectionId: dbConn.id,
+      schemaName: mSchema!,
+      name: mName,
+      fieldName: fieldNameRef.current!.value,
+      dataType: dataTypeRef.current!.value,
+    });
     if (result.success) {
       toast.success("new field added");
       onAddField();

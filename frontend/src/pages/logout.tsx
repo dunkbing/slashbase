@@ -2,20 +2,19 @@ import { type FunctionComponent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import Constants from "../constants";
-import { logoutUser } from "../redux/currentUserSlice";
-import { useAppDispatch } from "../redux/hooks";
+import { useApp } from "../hooks/useApp";
 
 const Logout: FunctionComponent<{}> = () => {
   const navigate = useNavigate();
 
-  const dispatch = useAppDispatch();
+  const { logoutUser } = useApp();
 
   useEffect(() => {
     (async () => {
-      await dispatch(logoutUser()).unwrap();
+      await logoutUser();
       navigate(Constants.APP_PATHS.HOME.path);
     })();
-  }, []);
+  }, [logoutUser, navigate]);
 
   return (
     <div className="flex min-h-96 items-center justify-center">

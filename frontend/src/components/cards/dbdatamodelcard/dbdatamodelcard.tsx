@@ -1,8 +1,7 @@
 import { List, Table } from "lucide-react";
 import { DBConnType, TabType } from "../../../data/defaults";
 import type { DBConnection, DBDataModel } from "../../../data/models";
-import { useAppDispatch } from "../../../redux/hooks";
-import { updateActiveTab } from "../../../redux/tabsSlice";
+import { useApp } from "../../../hooks/useApp";
 import { Button } from "../../ui/button";
 
 type DBDataModelPropType = {
@@ -11,24 +10,20 @@ type DBDataModelPropType = {
 };
 
 const DBDataModelCard = ({ dataModel, dbConnection }: DBDataModelPropType) => {
-  const dispatch = useAppDispatch();
+  const { updateActiveTab } = useApp();
 
   const updateActiveTabToData = () => {
-    dispatch(
-      updateActiveTab({
-        tabType: TabType.DATA,
-        metadata: { schema: dataModel.schemaName, name: dataModel.name },
-      }),
-    );
+    updateActiveTab(TabType.DATA, {
+      schema: dataModel.schemaName,
+      name: dataModel.name,
+    });
   };
 
   const updateActiveTabToModel = () => {
-    dispatch(
-      updateActiveTab({
-        tabType: TabType.MODEL,
-        metadata: { schema: dataModel.schemaName, name: dataModel.name },
-      }),
-    );
+    updateActiveTab(TabType.MODEL, {
+      schema: dataModel.schemaName,
+      name: dataModel.name,
+    });
   };
 
   return (

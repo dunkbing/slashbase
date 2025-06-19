@@ -11,15 +11,15 @@ import { useDBConnections } from "../../contexts/db-connection-context";
 import { DBConnType, DBConnectionUseSSHType } from "../../data/defaults";
 import type { Project } from "../../data/models";
 import type { AddDBConnPayload } from "../../network/payloads";
-import { useAppSelector } from "../../redux/hooks";
-import { selectProjects } from "../../redux/projectsSlice";
+import { useApp } from "../../hooks/useApp";
 
 const NewDBPage: FunctionComponent<{}> = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const { addNewDBConn, testNewDBConn } = useDBConnections();
-  const projects: Project[] = useAppSelector(selectProjects);
+  const { selectProjects } = useApp();
+  const projects: Project[] = selectProjects;
   const project = projects.find((x) => x.id === id);
   const [addingError, setAddingError] = useState(false);
   const [adding, setAdding] = useState(false);
@@ -207,10 +207,11 @@ const NewDBPage: FunctionComponent<{}> = () => {
     onClick: () => void;
   }) => (
     <div
-      className={`flex h-12 w-28 cursor-pointer flex-col items-center justify-center rounded-lg border transition-colors ${isActive
-        ? "border-blue-500 bg-blue-50 text-blue-700"
-        : "border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200"
-        } `}
+      className={`flex h-12 w-28 cursor-pointer flex-col items-center justify-center rounded-lg border transition-colors ${
+        isActive
+          ? "border-blue-500 bg-blue-50 text-blue-700"
+          : "border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200"
+      } `}
       onClick={onClick}
     >
       <h6 className="text-sm font-medium">{label}</h6>
@@ -396,7 +397,9 @@ const NewDBPage: FunctionComponent<{}> = () => {
                   Enable SSL
                 </label>
                 <p className="text-gray-500">
-                  Enable SSL/TLS encryption for database connections. Required for databases that enforce SSL connections (e.g., PostgreSQL with SSL requirement, Azure CosmosDB, AWS RDS with SSL).
+                  Enable SSL/TLS encryption for database connections. Required
+                  for databases that enforce SSL connections (e.g., PostgreSQL
+                  with SSL requirement, Azure CosmosDB, AWS RDS with SSL).
                 </p>
               </div>
             </div>
@@ -423,31 +426,31 @@ const NewDBPage: FunctionComponent<{}> = () => {
 
                 {(data.dbUseSSH === DBConnectionUseSSHType.PASSWORD ||
                   data.dbUseSSH === DBConnectionUseSSHType.PASSKEYFILE) && (
-                    <PasswordInputField
-                      label="SSH Password:"
-                      name="dbSSHPassword"
-                      value={data.dbSSHPassword}
-                      onChange={handleChange}
-                      placeholder="Enter SSH Password"
-                    />
-                  )}
+                  <PasswordInputField
+                    label="SSH Password:"
+                    name="dbSSHPassword"
+                    value={data.dbSSHPassword}
+                    onChange={handleChange}
+                    placeholder="Enter SSH Password"
+                  />
+                )}
 
                 {(data.dbUseSSH === DBConnectionUseSSHType.KEYFILE ||
                   data.dbUseSSH === DBConnectionUseSSHType.PASSKEYFILE) && (
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-gray-700">
-                        SSH Identity File:
-                      </label>
-                      <textarea
-                        name="dbSSHKeyFile"
-                        value={data.dbSSHKeyFile}
-                        onChange={handleChange}
-                        placeholder="Paste the contents of SSH Identity File here"
-                        rows={4}
-                        className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
-                      />
-                    </div>
-                  )}
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                      SSH Identity File:
+                    </label>
+                    <textarea
+                      name="dbSSHKeyFile"
+                      value={data.dbSSHKeyFile}
+                      onChange={handleChange}
+                      placeholder="Paste the contents of SSH Identity File here"
+                      rows={4}
+                      className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                    />
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -456,7 +459,9 @@ const NewDBPage: FunctionComponent<{}> = () => {
         {/* Error Message */}
         {!adding && addingError && (
           <div className="rounded-md border border-red-200 bg-red-50 p-3 select-all">
-            <p className="text-sm text-red-600 select-all">{String(addingError)}</p>
+            <p className="text-sm text-red-600 select-all">
+              {String(addingError)}
+            </p>
           </div>
         )}
 

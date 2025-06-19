@@ -8,11 +8,11 @@ import { Button } from "../../components/ui/button";
 import Constants from "../../constants";
 import type { User } from "../../data/models";
 import apiService from "../../network/apiService";
-import { selectCurrentUser } from "../../redux/currentUserSlice";
-import { useAppSelector } from "../../redux/hooks";
+import { useApp } from "../../hooks/useApp";
 
 const UsersPage: FunctionComponent<{}> = () => {
-  const currentUser: User = useAppSelector(selectCurrentUser);
+  const { selectCurrentUser } = useApp();
+  const currentUser: User = selectCurrentUser;
 
   const navigate = useNavigate();
 
