@@ -1,87 +1,81 @@
-import Button from "../../ui/Button";
-import styles from "./table.module.scss";
-import React from "react";
+import React from 'react';
+import { Button } from '../../ui/button';
+import styles from './table.module.scss';
+import { Check, X } from 'lucide-react';
 
 const EditableCell = ({
-	value: initialValue,
-	row: { index, original },
-	column: { id },
-	editCell,
-	resetEditCell,
-	onSaveCell,
+  value: initialValue,
+  row: { index, original },
+  column: { id },
+  editCell,
+  resetEditCell,
+  onSaveCell,
 }: any) => {
-	initialValue = Array.isArray(initialValue)
-		? `{${initialValue.join(",")}}`
-		: initialValue;
+  initialValue = Array.isArray(initialValue) ? `{${initialValue.join(',')}}` : initialValue;
 
-	initialValue =
-		initialValue !== null && typeof initialValue === "object"
-			? JSON.stringify(initialValue)
-			: initialValue;
+  initialValue =
+    initialValue !== null && typeof initialValue === 'object'
+      ? JSON.stringify(initialValue)
+      : initialValue;
 
-	// We need to keep and update the state of the cell normally
-	const [value, setValue] = React.useState(initialValue);
+  // We need to keep and update the state of the cell normally
+  const [value, setValue] = React.useState(initialValue);
 
-	// If the initialValue is changed external, sync it up with our state
-	React.useEffect(() => {
-		setValue(initialValue);
-	}, [initialValue]);
+  // If the initialValue is changed external, sync it up with our state
+  React.useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
 
-	const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setValue(e.target.value);
-	};
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value);
+  };
 
-	const cancelEdit = () => {
-		setValue(initialValue);
-		resetEditCell();
-	};
+  const cancelEdit = () => {
+    setValue(initialValue);
+    resetEditCell();
+  };
 
-	const onSave = async () => {
-		onSaveCell(index, original, id, value);
-	};
+  const onSave = async () => {
+    onSaveCell(index, original, id, value);
+  };
 
-	const isEditingCell =
-		editCell.length == 2 && editCell[0] === index && editCell[1] === id;
+  const isEditingCell = editCell.length == 2 && editCell[0] === index && editCell[1] === id;
 
-	if (isEditingCell) {
-		return (
-			<div className="field has-addons">
-				<div className="control is-expanded">
-					<input
-						className={"input is-small " + styles.cellinput}
-						type="text"
-						placeholder={"Enter " + id}
-						value={value}
-						onChange={onChange}
-					/>
-				</div>
-				<div className="control">
-					<Button
-						className="is-small"
-						icon={<i className="fas fa-check" />}
-						onClick={onSave}
-					/>
-				</div>
-				<div className="control">
-					<Button
-						className="is-small"
-						icon={<i className="fas fa-times" />}
-						onClick={cancelEdit}
-					/>
-				</div>
-			</div>
-		);
-	}
+  if (isEditingCell) {
+    return (
+      <div className='field has-addons'>
+        <div className='control is-expanded'>
+          <input
+            className={'input is-small ' + styles.cellinput}
+            type='text'
+            placeholder={'Enter ' + id}
+            value={value}
+            onChange={onChange}
+          />
+        </div>
+        <div className='control'>
+          <Button className='is-small' onClick={onSave}>
+            <Check />
+          </Button>
+        </div>
+        <div className='control'>
+          <Button className='is-small' onClick={cancelEdit}>
+            <X />
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
-	return initialValue === null ? (
-		<span className={styles.nullValue}>NULL</span>
-	) : initialValue === false ? (
-		<span>false</span>
-	) : initialValue === true ? (
-		<span>true</span>
-	) : (
-		initialValue
-	);
+  return initialValue === null ? (
+    <span className={styles.nullValue}>NULL</span>
+  ) : initialValue === false ? (
+    <span>false</span>
+  ) : initialValue === true ? (
+    <span>true</span>
+  ) : (
+    initialValue
+  );
 };
 
 export default EditableCell;

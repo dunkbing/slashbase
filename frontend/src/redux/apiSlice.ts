@@ -1,34 +1,34 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import apiService from "../network/apiService";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import apiService from '../network/apiService';
 
-import type { AppState } from "./store";
+import type { AppState } from './store';
 
 export interface APIState {
-	version: string;
+  version: string;
 }
 
 const initialState: APIState = {
-	version: "",
+  version: '',
 };
 
-export const healthCheck = createAsyncThunk("api/healthCheck", async () => {
-	const response = await apiService.getHealthCheck();
-	return {
-		version: response.version,
-	};
+export const healthCheck = createAsyncThunk('api/healthCheck', async () => {
+  const response = await apiService.getHealthCheck();
+  return {
+    version: response.version,
+  };
 });
 
 export const apiSlice = createSlice({
-	name: "api",
-	initialState,
-	reducers: {
-		reset: () => initialState,
-	},
-	extraReducers: (builder) => {
-		builder.addCase(healthCheck.fulfilled, (state, action: any) => {
-			state.version = action.payload.version;
-		});
-	},
+  name: 'api',
+  initialState,
+  reducers: {
+    reset: () => initialState,
+  },
+  extraReducers: (builder) => {
+    builder.addCase(healthCheck.fulfilled, (state, action: any) => {
+      state.version = action.payload.version;
+    });
+  },
 });
 
 export const { reset } = apiSlice.actions;

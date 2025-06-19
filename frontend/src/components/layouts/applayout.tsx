@@ -1,40 +1,39 @@
-import React, { FunctionComponent } from "react";
-import Header from "./header";
-import Footer from "./footer";
-import Sidebar from "./sidebar";
-import { Outlet, useLocation } from "react-router-dom";
-import { useAppSelector } from "../../redux/hooks";
-import { selectIsShowingSidebar } from "../../redux/configSlice";
-import TabsBar from "./tabsbar";
+import React, { type FunctionComponent } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import { selectIsShowingSidebar } from '../../redux/configSlice';
+import { useAppSelector } from '../../redux/hooks';
+import { SidebarInset, SidebarProvider } from '../ui/sidebar';
+import Footer from './footer';
+import Header from './header';
+import Sidebar from './sidebar';
+import TabsBar from './tabsbar';
 
 const AppLayout: FunctionComponent = () => {
-	const location = useLocation();
+  const location = useLocation();
 
-	const isShowingSidebar: boolean = useAppSelector(selectIsShowingSidebar);
+  const isShowingSidebar: boolean = useAppSelector(selectIsShowingSidebar);
 
-	let showTabsBar = location.pathname.startsWith("/db") ? true : false;
+  const showTabsBar = location.pathname.startsWith('/db') ? true : false;
 
-	return (
-		<React.Fragment>
-			<div>
-				<Header />
-				<div className="appcontent">
-					{isShowingSidebar && <Sidebar />}
-					<main
-						className={
-							"maincontainer" + (isShowingSidebar ? " withsidebar" : "")
-						}
-					>
-						{showTabsBar && <TabsBar />}
-						<div id="maincontent" className="maincontent">
-							<Outlet />
-						</div>
-					</main>
-				</div>
-				<Footer />
-			</div>
-		</React.Fragment>
-	);
+  return (
+    <SidebarProvider open={isShowingSidebar}>
+      <div className='flex min-h-screen w-full'>
+        <Sidebar />
+        <SidebarInset className='flex flex-1 flex-col'>
+          <Header />
+          <div className='flex flex-1'>
+            <main className='flex flex-1 flex-col'>
+              {showTabsBar && <TabsBar />}
+              <div id='maincontent' className='flex-1 p-4'>
+                <Outlet />
+              </div>
+            </main>
+          </div>
+          <Footer />
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
+  );
 };
 
 export default AppLayout;

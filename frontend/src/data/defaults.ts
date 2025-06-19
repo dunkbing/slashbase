@@ -1,27 +1,27 @@
 export enum DBConnType {
-	POSTGRES = "POSTGRES",
-	MONGO = "MONGO",
-	MYSQL = "MYSQL",
+  POSTGRES = 'POSTGRES',
+  MONGO = 'MONGO',
+  MYSQL = 'MYSQL',
 }
 
 export enum DBConnectionUseSSHType {
-	NONE = "NONE",
-	PASSWORD = "PASSWORD",
-	KEYFILE = "KEYFILE",
-	PASSKEYFILE = "PASSKEYFILE",
+  NONE = 'NONE',
+  PASSWORD = 'PASSWORD',
+  KEYFILE = 'KEYFILE',
+  PASSKEYFILE = 'PASSKEYFILE',
 }
 
 export enum TabType {
-	BLANK = "BLANK",
-	DATA = "DATA",
-	MODEL = "MODEL",
-	QUERY = "QUERY",
-	HISTORY = "HISTORY",
-	CONSOLE = "CONSOLE",
-	GENSQL = "GENSQL",
+  BLANK = 'BLANK',
+  DATA = 'DATA',
+  MODEL = 'MODEL',
+  QUERY = 'QUERY',
+  HISTORY = 'HISTORY',
+  CONSOLE = 'CONSOLE',
+  GENSQL = 'GENSQL',
 }
 
 export enum DBConnectionLoginType {
-	USE_ROOT = "USE_ROOT",
-	// ROLE_ACCOUNTS = "ROLE_ACCOUNTS",
+  USE_ROOT = 'USE_ROOT',
+  // ROLE_ACCOUNTS = "ROLE_ACCOUNTS",
 }

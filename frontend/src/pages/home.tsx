@@ -1,14 +1,14 @@
-import React, { FunctionComponent } from "react";
-import { WelcomeCard, WelcomeCardServer } from "../components/home/welcomecard";
-import Constants from "../constants";
+import React, { type FunctionComponent } from 'react';
+import { WelcomeCard, WelcomeCardServer } from '../components/home/welcomecard';
+import Constants from '../constants';
 
 const HomePage: FunctionComponent<{}> = () => {
-	return (
-		<React.Fragment>
-			{Constants.Build === "desktop" && <WelcomeCard />}
-			{Constants.Build === "server" && <WelcomeCardServer />}
-		</React.Fragment>
-	);
+  return (
+    <React.Fragment>
+      {Constants.Build === 'desktop' && <WelcomeCard />}
+      {Constants.Build === 'server' && <WelcomeCardServer />}
+    </React.Fragment>
+  );
 };
 
 export default HomePage;

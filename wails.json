@@ -1,20 +1,20 @@
 {
-  "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "Slashbase",
-  "outputfilename": "Slashbase",
-  "frontend:dir": "frontend",
-  "frontend:install": "bun install",
-  "frontend:build": "bun run build",
-  "frontend:dev:watcher": "bun run dev",
-  "frontend:dev:serverUrl": "auto",
-  "author": {
-    "name": "Slashbase",
-    "email": "slashbaseide@gmail.com"
-  },
-  "info": {
-    "productName": "Slashbase",
-    "productVersion": "v0.10.3",
-    "copyright": "Copyright © Slashbase.com",
-    "comments": "Open-source Modern database IDE"
-  }
+	"$schema": "https://wails.io/schemas/config.v2.json",
+	"name": "Slashbase",
+	"outputfilename": "Slashbase",
+	"frontend:dir": "frontend",
+	"frontend:install": "bun install",
+	"frontend:build": "bun run build",
+	"frontend:dev:watcher": "bun run dev",
+	"frontend:dev:serverUrl": "auto",
+	"author": {
+		"name": "Slashbase",
+		"email": "slashbaseide@gmail.com"
+	},
+	"info": {
+		"productName": "Slashbase",
+		"productVersion": "v0.10.3",
+		"copyright": "Copyright © Slashbase.com",
+		"comments": "Open-source Modern database IDE"
+	}
 }
