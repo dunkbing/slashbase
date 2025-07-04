@@ -1,6 +1,7 @@
 import React, { useContext, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useRowSelect, useTable } from "react-table";
+
 import type { DBConnection, DBQueryData, Tab } from "../../../data/models";
 import { useApp } from "../../../hooks/useApp";
 import TabContext from "../../layouts/tabcontext";

@@ -41,7 +41,6 @@ function AppContent() {
     "desktop";
 
   const { getUser, getProjects, getConfig } = useAppActions();
-  const { getAllDBConnections } = useDBConnections();
   const { selectIsAuthenticated } = useAppSelectors();
 
   const isAuthenticated = selectIsAuthenticated;
@@ -55,10 +54,9 @@ function AppContent() {
   useEffect(() => {
     if (isAuthenticated || Constants.Build === "desktop") {
       getProjects();
-      getAllDBConnections();
       getConfig();
     }
-  }, [getProjects, getConfig, isAuthenticated, getAllDBConnections]);
+  }, [getProjects, getConfig, isAuthenticated]);
 
   useEffect(() => {
     if (Constants.Build === "desktop") return;

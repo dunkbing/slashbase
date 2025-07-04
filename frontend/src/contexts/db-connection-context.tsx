@@ -1,9 +1,10 @@
-import React, {
+import {
   createContext,
   useContext,
   useReducer,
   useCallback,
   type ReactNode,
+  useEffect,
 } from "react";
 import type { DBConnection } from "../data/models";
 import apiService from "../network/apiService";
@@ -53,15 +54,20 @@ function dbConnectionsReducer(
         isFetching: true,
         error: null,
       };
-    case "FETCH_SUCCESS":
+    case "FETCH_SUCCESS": {
+      const dbConnections = action.payload.force
+        ? action.payload.dbConnections
+        : [...state.dbConnections, ...action.payload.dbConnections];
+      const uniqueConnections = dbConnections.filter(
+        (obj, index, self) => index === self.findIndex((o) => o.id === obj.id),
+      );
       return {
         ...state,
         isFetching: false,
-        dbConnections: action.payload.force
-          ? action.payload.dbConnections
-          : [...state.dbConnections, ...action.payload.dbConnections],
+        dbConnections: uniqueConnections,
         error: null,
       };
+    }
     case "FETCH_ERROR":
       return {
         ...state,
@@ -97,7 +103,6 @@ export function DBConnectionsProvider({
 
   const getAllDBConnections = useCallback(
     async (force = false) => {
-      // Skip if already fetched and not forcing refresh
       if (!force && state.dbConnections.length > 0 && !state.isFetching) {
         return;
       }
@@ -106,6 +111,7 @@ export function DBConnectionsProvider({
 
       try {
         const result = await apiService.getAllDBConnections();
+        console.log("getAllDBConnections", result);
         const dbConnections = result.success ? result.data : [];
 
         dispatch({
@@ -124,6 +130,11 @@ export function DBConnectionsProvider({
     },
     [state.dbConnections.length, state.isFetching],
   );
+
+  useEffect(() => {
+    void getAllDBConnections();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const addNewDBConn = useCallback(
     async (payload: AddDBConnPayload): Promise<DBConnection> => {

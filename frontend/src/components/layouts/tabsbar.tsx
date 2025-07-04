@@ -1,3 +1,4 @@
+import { MouseEvent } from "react";
 import { X, Plus } from "lucide-react";
 import { TabType } from "../../data/defaults";
 import type { Tab } from "../../data/models";
@@ -21,10 +22,7 @@ const TabsBar = (_: TabsBarPropType) => {
     setActiveTab(tabId);
   };
 
-  const handleCloseTab = async (
-    e: React.MouseEvent<HTMLElement>,
-    tabId: string,
-  ) => {
+  const handleCloseTab = async (e: MouseEvent<HTMLElement>, tabId: string) => {
     e.stopPropagation();
     await closeTab(dbConnection!.id, tabId);
   };
